@@ -28,6 +28,9 @@ class LightPattern(object):
     print "next: state %i" %self.count
     exec('self.state_'+str(self.count)+'()')
 
+  def set_all_panels(self, pat):
+    for i, panel in self.board.panels.items():
+        panel.set_pat(pat)
 
 class PatternController:
 

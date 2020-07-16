@@ -22,6 +22,9 @@ class Panel:
   def clear(self):
     for key, val in self.lights.items():
       val.state = 0
+  def full(self):
+    for key, val in self.lights.items():
+      val.state = 1
 
   def set_middle(self):
     self.lights[0].state = 0

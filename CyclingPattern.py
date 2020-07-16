@@ -2,7 +2,18 @@ from LightPattern import LightPattern
 
 
 class LogicPattern(LightPattern):
-    pass
+  def __init__(self, board):
+    LightPattern.__init__(self, board, states_count=4)
+  def state_0(self):
+    self.set_all_panels('o---')
+  def state_1(self):
+    self.set_all_panels('-o--')
+  def state_2(self):
+    self.set_all_panels('--o-')
+  def state_3(self):
+    self.set_all_panels('---o')
+  def state_4(self):
+    self.state_0()
 
 class PanelsHorizontalVertical(LightPattern):
   def __init__(self, board):
@@ -11,11 +22,11 @@ class PanelsHorizontalVertical(LightPattern):
   def state_0(self):
     self.board.panels['t'].set_pat('oooo')
     self.board.panels['b'].set_pat('oooo')
-    self.board.panels['r'].set_pat('----')
-    self.board.panels['l'].set_pat('----')
+    self.board.panels['r'].clear()
+    self.board.panels['l'].clear()
   def state_1(self):
-    self.board.panels['t'].set_pat('----')
-    self.board.panels['b'].set_pat('----')
+    self.board.panels['t'].clear()
+    self.board.panels['b'].clear()
     self.board.panels['l'].set_pat('oooo')
     self.board.panels['r'].set_pat('oooo')
   def state_2(self):
