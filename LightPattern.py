@@ -19,13 +19,13 @@ class LightPattern(object):
     self.state_0()
 
   def next_state(self):
-    print " state %i" %self.count
+    print(" state %i" %self.count)
     if self.count == self.states_count:
       self.count = 0
 
     self.count += 1
     #self.state_cur = self.states[self.count]
-    print "next: state %i" %self.count
+    print("next: state %i" %self.count)
     exec('self.state_'+str(self.count)+'()')
 
   def set_all_panels(self, pat):

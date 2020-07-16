@@ -1,4 +1,4 @@
-import Tkinter as tk
+import tkinter as tk
 
 class GameBoard(tk.Frame):
     def __init__(self, parent, rows=6, columns=6, size=32, color1="white", color2="grey"):
@@ -68,7 +68,7 @@ class GameBoard(tk.Frame):
     def enlighten(self):
         for i, panel in self.panels.items():
             for i, light in panel.lights.items():
-                print light
+                print(light)
                 #print light.position
                 self.set_square_color_atpos(light.position, light.state)
 

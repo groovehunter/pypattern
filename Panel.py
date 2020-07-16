@@ -39,7 +39,7 @@ class Panel:
 
   def __repr__(self):
     for key, light in self.items():
-      print light,
+      print(light,)
 
   def set_pat(self, pat):
     for i, char in enumerate(pat):

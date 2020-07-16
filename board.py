@@ -1,5 +1,5 @@
 
-import Tkinter as tk
+import tkinter as tk
 from time import sleep
 
 from LightPattern import PatternController
