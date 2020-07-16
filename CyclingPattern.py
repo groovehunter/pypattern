@@ -1,6 +1,22 @@
 from LightPattern import LightPattern
 
 
+class CyclingPanels(LightPattern):
+  def state_0(self):
+    self.board.panels['t'].full()
+    self.set_panels_to_pat('rbl', '----')
+  def state_1(self):
+    self.board.panels['r'].full()
+    self.set_panels_to_pat('tbl', '----')
+  def state_2(self):
+    self.board.panels['b'].full()
+    self.set_panels_to_pat('trl', '----')
+  def state_3(self):
+    self.board.panels['l'].full()
+    self.set_panels_to_pat('trb', '----')
+  def state_4(self):
+    self.state_0()
+
 class LogicPattern(LightPattern):
   def __init__(self, board):
     LightPattern.__init__(self, board, states_count=4)

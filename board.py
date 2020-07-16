@@ -1,9 +1,10 @@
 
 import tkinter as tk
 from time import sleep
-
+import inspect
 from LightPattern import PatternController
 from CyclingPattern import *
+import CyclingPattern
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
@@ -16,20 +17,50 @@ class PatternControllerDisplay(object):
     self.pc = PatternController()
     self.root = tk.Tk()
     #self.board = GameBoard(self.root)
-#    self.board = SquareFramePanels(self.root)
-    self.board = StackedPanelsSquare(self.root)
+    self.board = SquareFramePanels(self.root)
+#    self.board = StackedPanelsSquare(self.root)
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
     self.board.ctrl=self
+    self.gui_setup()
+
+  def get_pattern_classes(self):
+    pattern_list = []
+    for name, obj in inspect.getmembers(CyclingPattern):
+      if inspect.isclass(obj):
+        pattern_list.append(obj.__name__)
+    pattern_list.remove('LightPattern')
+    return pattern_list
 
   def gui_setup(self):
-    pass
-    #l1 = tk.Label(text="Test", fg="black", bg="white")
+
+    def set_pattern():
+      pat_name = variable.get()
+      constructor = globals()[pat_name]
+      self.pattern = constructor(self.board)
+
+    OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes()
+    variable = tk.StringVar(self.root)
+    variable.set(OPTIONS[0]) # default value
+    l1 = tk.Label(text="Pattern", fg="black", bg="white")
+    l1.pack()
+
+    w = tk.OptionMenu(self.root, variable, *OPTIONS)
+    w.pack()
+
+    button = tk.Button(self.root, text="OK", command=set_pattern)
+    button.pack()
+    button = tk.Button(self.root, text="RUN", command=self.repeater)
+    button.pack()
+
   def init(self):
+    self.msecs = 800
     self.board.init_keys()
     self.board.init()
-#    self.pattern = Middle_Edge_Cycling(self.board)
-#    self.pattern = PanelsHorizontalVertical(self.board)
-    self.pattern = LogicPattern(self.board)
+
+  def repeater(self):
+    self.pattern.next_state()
+    self.board.enlighten()
+    self.board.after(self.msecs, self.repeater)    # reschedule handler
 
   def run(self):
     self.root.mainloop()
@@ -39,7 +70,7 @@ class PatternControllerDisplay(object):
     self.change_board()
 
   def change_board(self):
-      self.board.enlighten()
+    self.board.enlighten()
     #self.pattern.state_cur.__repr__()
 
 

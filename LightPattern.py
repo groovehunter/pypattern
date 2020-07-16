@@ -9,7 +9,7 @@ from Panel import Panel
 # number of states!
 
 class LightPattern(object):
-  def __init__(self, board, states_count=0):
+  def __init__(self, board, states_count=4):
     self.states_count = states_count
     self.states = []
     self.board = board
@@ -19,18 +19,20 @@ class LightPattern(object):
     self.state_0()
 
   def next_state(self):
-    print(" state %i" %self.count)
     if self.count == self.states_count:
       self.count = 0
 
     self.count += 1
-    #self.state_cur = self.states[self.count]
     print("next: state %i" %self.count)
     exec('self.state_'+str(self.count)+'()')
 
   def set_all_panels(self, pat):
     for i, panel in self.board.panels.items():
         panel.set_pat(pat)
+
+  def set_panels_to_pat(self, panel_indexes, pat):
+    for i in panel_indexes:
+      self.board.panels[i].set_pat(pat)
 
 class PatternController:
 
