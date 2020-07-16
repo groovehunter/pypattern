@@ -1,9 +1,22 @@
 from BoardCanvas import GameBoard
-
+from Panel import Panel
 
 class StackedPanelsSquare(GameBoard):
     def __init__(self, parent):
         GameBoard.__init__(self, parent)
+
+    def init_panels(self):
+        self.panels = {
+          't' : Panel(orientation='H'),
+          'r' : Panel(orientation='H'),
+          'b' : Panel(orientation='H'),
+          'l' : Panel(orientation='H'),
+        }
+        # offset is  row, col
+        self.panels['t'].offset = (1, 1)
+        self.panels['r'].offset = (2, 1)
+        self.panels['b'].offset = (3, 1)
+        self.panels['l'].offset = (4, 1)
 
     def mark_light_position(self):
         col_outline = "grey"

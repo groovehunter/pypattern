@@ -16,8 +16,8 @@ class PatternControllerDisplay(object):
     self.pc = PatternController()
     self.root = tk.Tk()
     #self.board = GameBoard(self.root)
-    self.board = SquareFramePanels(self.root)
-#    self.board = StackedPanelsSquare(self.root)
+#    self.board = SquareFramePanels(self.root)
+    self.board = StackedPanelsSquare(self.root)
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
     self.board.ctrl=self
 
