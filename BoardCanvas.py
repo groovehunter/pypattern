@@ -34,7 +34,7 @@ class GameBoard(tk.Frame):
         self.init_panels()
         self.init_panel_lights()
         self.enlighten()
-        self.mark_panels()
+#        self.mark_panels()
 
     def set_sizes(self, event):
         xsize = int((event.width-1) / self.columns)
@@ -46,7 +46,7 @@ class GameBoard(tk.Frame):
         self.init_panels()
         self.init_panel_lights()
         self.enlighten()
-        self.mark_panels()
+#        self.mark_panels()
 
     def create_grid(self):
         col_outline = "grey"

@@ -39,9 +39,9 @@ class Panel(dict):
   def set_pat(self, pat):
     for i, char in enumerate(pat):
       if char=='o':
-        self.lights[i] = 1
+        self.lights[i].state = 1
       if char=='-':
-        self.lights[i] = 0
+        self.lights[i].state = 0
 
   def init_lights(self):
     (row, col) = self.offset

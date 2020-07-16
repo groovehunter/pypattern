@@ -19,9 +19,12 @@ class PatternControllerDisplay(object):
     self.board = SquareFramePanels(self.root)
 #    self.board = StackedPanelsSquare(self.root)
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
-
-  def init(self):
     self.board.ctrl=self
+
+  def gui_setup(self):
+    pass  
+    #l1 = tk.Label(text="Test", fg="black", bg="white")
+  def init(self):
     self.board.init_keys()
     self.board.init()
     self.pattern = Middle_Edge_Cycling(self.board)

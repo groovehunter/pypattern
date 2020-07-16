@@ -14,14 +14,16 @@ class Middle_Edge_Cycling(LightPattern):
   def state_0(self):
     self.board.panels['t'].set_pat('-oo-')
     self.board.panels['l'].set_pat('-oo-')
+    self.board.panels['r'].set_pat('-oo-')
+    self.board.panels['b'].set_pat('-oo-')
   def state_1(self):
-    self.panels['t'].set_pat('o--o')
-    self.panels['l'].set_pat('o--o')
+    self.board.panels['t'].set_pat('o--o')
+    self.board.panels['l'].set_pat('o--o')
+    self.board.panels['r'].set_pat('o--o')
+    self.board.panels['b'].set_pat('o--o')
   def state_2(self):
-    self.panels['t'].set_pat('-oo-')
-    self.panels['l'].set_pat('-oo-')
+    self.state_0()
   def state_3(self):
-    self.panels['t'].set_pat('o--o')
-    self.panels['l'].set_pat('o--o')
+    self.state_1()
   def state_4(self):
     self.state_0()
