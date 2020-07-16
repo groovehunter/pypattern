@@ -1,7 +1,5 @@
 from time import sleep
 from Panel import Panel
-# panel is row of [OL, IL, IR, OR] lights
-# middle = IL + IR
 # edge =
 # panels: Top, Left, Botton, Right
 # panels = {

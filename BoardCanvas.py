@@ -16,7 +16,7 @@ class GameBoard(tk.Frame):
 
         tk.Frame.__init__(self, parent)
         self.canvas = tk.Canvas(self, borderwidth=0, highlightthickness=0,
-                                width=canvas_width, height=canvas_height, background="bisque")
+            width=canvas_width, height=canvas_height, background="bisque")
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
 
         # this binding will cause a refresh if the user interactively

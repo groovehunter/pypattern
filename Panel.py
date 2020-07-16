@@ -12,7 +12,7 @@ class Light:
     return "Light (%i, %i): %i" %(x, y, self.state)
 
 
-class Panel(dict):
+class Panel:
 
   def __init__(self, orientation=None):
     self.lights = {}
@@ -22,11 +22,13 @@ class Panel(dict):
   def clear(self):
     for key, val in self.lights.items():
       val.state = 0
+
   def set_middle(self):
     self.lights[0].state = 0
-    self.lights[3].state = 0
     self.lights[1].state = 1
     self.lights[2].state = 1
+    self.lights[3].state = 0
+
   def reverse(self):
     for key, light in self.lights.items():
       if light.state == 0: light.state = 1
@@ -55,8 +57,3 @@ class Panel(dict):
       self.lights[1] = Light((row+1, col))
       self.lights[2] = Light((row+2, col))
       self.lights[3] = Light((row+3, col))
-
-
-class TopPanel(Panel):
-  def __init__(self):
-    Panel.__init__(self)

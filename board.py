@@ -3,7 +3,7 @@ import Tkinter as tk
 from time import sleep
 
 from LightPattern import PatternController
-from CyclingPattern import Middle_Edge_Cycling
+from CyclingPattern import *
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
@@ -22,12 +22,13 @@ class PatternControllerDisplay(object):
     self.board.ctrl=self
 
   def gui_setup(self):
-    pass  
+    pass
     #l1 = tk.Label(text="Test", fg="black", bg="white")
   def init(self):
     self.board.init_keys()
     self.board.init()
     self.pattern = Middle_Edge_Cycling(self.board)
+    self.pattern = PanelsHorizontalVertical(self.board)
 
   def run(self):
     self.root.mainloop()
