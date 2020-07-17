@@ -34,8 +34,10 @@ class LightPattern(object):
     for i in panel_indexes:
       self.board.panels[i].set_pat(pat)
 
-class PatternController:
 
+
+
+class PatternController:
   def __init__(self):
     # init as a list  - (of lists, appending later)
     self.pattern = []
