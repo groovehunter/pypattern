@@ -37,7 +37,7 @@ class PatternControllerDisplay(object):
       pat_name = variable.get()
       constructor = globals()[pat_name]
       self.pattern = constructor(self.board)
-
+      self.pattern.initial_state()
     OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes()
     variable = tk.StringVar(self.root)
     variable.set(OPTIONS[0]) # default value
@@ -53,7 +53,7 @@ class PatternControllerDisplay(object):
     button.pack()
 
   def init(self):
-    self.msecs = 800
+    self.msecs = 200
     self.board.init_keys()
     self.board.init()
 

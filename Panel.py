@@ -14,10 +14,15 @@ class Light:
 
 class Panel:
 
-  def __init__(self, orientation=None):
-    self.lights = {}
+  def __init__(self, orientation=None, rev=False):
+    """ orientation:
+        (H)orizontal l2r / or reverse
+        (V)ertical t2b / or reverse
+    """
     self.orientation = orientation
-    self.state = 1
+    self.reverse = rev
+    self.lights = {}
+    #self.state = 1
 
   def clear(self):
     for key, val in self.lights.items():
@@ -50,13 +55,16 @@ class Panel:
 
   def init_lights(self):
     (row, col) = self.offset
+    add = 1
+    if self.reverse:
+      add = -1
     if self.orientation == 'H':
       self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row, col+1))
-      self.lights[2] = Light((row, col+2))
-      self.lights[3] = Light((row, col+3))
+      self.lights[1] = Light((row, col + add))
+      self.lights[2] = Light((row, col + 2*add))
+      self.lights[3] = Light((row, col + 3*add))
     if self.orientation == 'V':
       self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row+1, col))
-      self.lights[2] = Light((row+2, col))
-      self.lights[3] = Light((row+3, col))
+      self.lights[1] = Light((row + add, col))
+      self.lights[2] = Light((row + 2*add, col))
+      self.lights[3] = Light((row + 3*add, col))

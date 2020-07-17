@@ -8,9 +8,36 @@ from Panel import Panel
 # example: cycling middles and edges
 # number of states!
 
+# Panels might have a property of cycling through states too
+# they get informed about board state nr, so they know what state they are
+
+"""
+And cycling pattern, ie 16 step pattern, with algorithmic logic
+use geometric relationships and properties
+ie. around the clock numbered lights 0-15
+just increase counter
+enable light with number == counter
+disable other lights, resp. last enabled light
+
+"""
+
+class LogicPattern:
+  def __init__(self, board):
+    self.board = board
+    
+class PairedLightsCycling(LogicPattern):
+  def initial_state(self):
+    self.board.panels['t'].set_pat('oo--')
+    self.board.set_panels_to_pat('rbl', '----')
+  def next_state(self):
+    pass
+
+
+
 class LightPattern(object):
-  def __init__(self, board, states_count=4):
-    self.states_count = states_count
+  states_count = 4
+  def __init__(self, board):
+#    self.states_count = states_count
     self.states = []
     self.board = board
     self.count = 1

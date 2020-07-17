@@ -2,7 +2,7 @@ from LightPattern import LightPattern
     # vom bisherigen state zum diesem, was sind fuer aenderungen
     # notwendig? Ist ja wie ein programm, transitions quasi
     # also die ganze struktur, die panels durchlaufen
-"""
+
 class SingleLightCycling(LightPattern):
   states_count = 16
   def state_0(self):
@@ -27,16 +27,25 @@ class SingleLightCycling(LightPattern):
     self.board.panels['r'].clear()
     self.board.panels['b'].set_pat('o---')
   def state_9(self):
+    self.board.panels['b'].set_pat('-o--')
   def state_10(self):
+    self.board.panels['b'].set_pat('--o-')
   def state_11(self):
+    self.board.panels['b'].set_pat('---o')
   def state_12(self):
+    self.board.panels['b'].clear()
+    self.board.panels['l'].set_pat('o---')
   def state_13(self):
+    self.board.panels['l'].set_pat('-o--')
   def state_14(self):
+    self.board.panels['l'].set_pat('--o-')
   def state_15(self):
+    self.board.panels['l'].set_pat('---o')
   def state_16(self):
     self.state_0()
-"""
+
 class CyclingPanels(LightPattern):
+  states_count = 4
   def state_0(self):
     self.board.panels['t'].full()
     self.set_panels_to_pat('rbl', '----')
@@ -52,7 +61,8 @@ class CyclingPanels(LightPattern):
   def state_4(self):
     self.state_0()
 
-class LogicPattern(LightPattern):
+class WindmillPattern(LightPattern):
+  states_count = 4
   def state_0(self):
     self.set_all_panels('o---')
   def state_1(self):
@@ -65,6 +75,7 @@ class LogicPattern(LightPattern):
     self.state_0()
 
 class PanelsHorizontalVertical(LightPattern):
+  states_count = 2
   def state_0(self):
     self.board.panels['t'].set_pat('oooo')
     self.board.panels['b'].set_pat('oooo')
@@ -80,15 +91,10 @@ class PanelsHorizontalVertical(LightPattern):
 
 
 class Middle_Edge_Cycling(LightPattern):
-#  def __init__(self, board):
-#    LightPattern.__init__(self, board, states_count=4)
+  states_count = 2
   def state_0(self):
     self.set_all_panels('-oo-')
   def state_1(self):
     self.set_all_panels('o--o')
   def state_2(self):
-    self.state_0()
-  def state_3(self):
-    self.state_1()
-  def state_4(self):
     self.state_0()
