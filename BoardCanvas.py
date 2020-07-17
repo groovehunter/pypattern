@@ -19,21 +19,18 @@ class GameBoard(tk.Frame):
             width=canvas_width, height=canvas_height, background="bisque")
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
 
-        # this binding will cause a refresh if the user interactively
-        # changes the window size
         self.canvas.bind("<Configure>", self.refresh2)
         self.canvas.bind("<Button-1>", self.set_square_color)
 
     def init_keys(self):
         self.canvas.bind("<Button-3>", self.ctrl.next_state )
 
-
     def refresh2(self, event):
         self.set_sizes(event)
         self.create_grid()
-        self.init_panels()
-        self.init_panel_lights()
-        self.enlighten()
+#        self.init_panels()
+#        self.init_panel_lights()
+#        self.enlighten()
 #        self.mark_panels()
 
     def set_sizes(self, event):
@@ -45,7 +42,7 @@ class GameBoard(tk.Frame):
         self.create_grid()
         self.init_panels()
         self.init_panel_lights()
-        self.enlighten()
+#        self.enlighten()
 #        self.mark_panels()
 
     def create_grid(self):
@@ -68,8 +65,6 @@ class GameBoard(tk.Frame):
     def enlighten(self):
         for i, panel in self.panels.items():
             for i, light in panel.lights.items():
-                #print(light)
-                #print light.position
                 self.set_square_color_atpos(light.position, light.state)
 
     def set_square_color(self, event):
