@@ -2,34 +2,42 @@
 import tkinter as tk
 from time import sleep
 import inspect
-from LightPattern import PatternController
+#from PatternController import PatternController
+from LogicPattern import *
 from CyclingPattern import *
+import LogicPattern
 import CyclingPattern
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
 
 
-class PatternControllerDisplay(object):
-  """ make pattern of pattern controller visible """
+class Base(object):
+#  def __init__(self):
+#    self.board = SquareFramePanels(self.root)
 
-  def __init__(self):
-    self.pc = PatternController()
-    self.root = tk.Tk()
-    #self.board = GameBoard(self.root)
-    self.board = SquareFramePanels(self.root)
-#    self.board = StackedPanelsSquare(self.root)
-    self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
-    self.board.ctrl=self
-    self.gui_setup()
-
-  def get_pattern_classes(self):
+  def get_pattern_classes(self, module):
     pattern_list = []
-    for name, obj in inspect.getmembers(CyclingPattern):
+    for name, obj in inspect.getmembers(module):
       if inspect.isclass(obj):
         pattern_list.append(obj.__name__)
     pattern_list.remove('LightPattern')
     return pattern_list
+
+
+class PatternControllerDisplay(Base):
+  """ make pattern of pattern controller visible """
+
+  def __init__(self):
+    Base.__init__(self)
+    self.root = tk.Tk()
+    #self.board = GameBoard(self.root)
+#    self.board = StackedPanelsSquare(self.root)
+    self.board = SquareFramePanels(self.root)
+    self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
+    self.board.ctrl=self
+    self.gui_setup()
+
 
   def gui_setup(self):
 
@@ -38,7 +46,8 @@ class PatternControllerDisplay(object):
       constructor = globals()[pat_name]
       self.pattern = constructor(self.board)
       self.pattern.initial_state()
-    OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes()
+    OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes(CyclingPattern)
+    OPTIONS += self.get_pattern_classes(LogicPattern)
     variable = tk.StringVar(self.root)
     variable.set(OPTIONS[0]) # default value
     l1 = tk.Label(text="Pattern", fg="black", bg="white")
@@ -53,9 +62,12 @@ class PatternControllerDisplay(object):
     button.pack()
 
   def init(self):
-    self.msecs = 200
+    self.msecs = 500
     self.board.init_keys()
     self.board.init()
+
+    self.pattern = PairedLightsCycling(self.board)
+    self.pattern.initial_state()
 
   def repeater(self):
     self.pattern.next_state()

@@ -21,18 +21,6 @@ disable other lights, resp. last enabled light
 
 """
 
-class LogicPattern:
-  def __init__(self, board):
-    self.board = board
-    
-class PairedLightsCycling(LogicPattern):
-  def initial_state(self):
-    self.board.panels['t'].set_pat('oo--')
-    self.board.set_panels_to_pat('rbl', '----')
-  def next_state(self):
-    pass
-
-
 
 class LightPattern(object):
   states_count = 4
@@ -60,28 +48,3 @@ class LightPattern(object):
   def set_panels_to_pat(self, panel_indexes, pat):
     for i in panel_indexes:
       self.board.panels[i].set_pat(pat)
-
-
-
-
-class PatternController:
-  def __init__(self):
-    # init as a list  - (of lists, appending later)
-    self.pattern = []
-
-  def loop(self):
-    for p in self.pattern:
-      self.current = p
-      self.show()
-      sleep(1)
-
-  def show(self):
-    print(self.current)
-
-  def load(self, fn):
-    """ load pattern sequence from a graphical file representation """
-    f = open(fn, 'r')
-    for line in f:
-      if line.startswith('#') or line.startswith('_'):
-        continue
-      self.pattern.append(line)

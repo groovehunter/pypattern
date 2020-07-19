@@ -20,6 +20,7 @@ class SquareFramePanels(GameBoard):
     self.panels['l'].offset = (4, 0)
 
   def mark_panels(self):
+    """ draw a black border around the panel """
     col_outline = 'black'
     for i, panel in self.panels.items():
       fac = 4
@@ -43,6 +44,7 @@ class SquareFramePanels(GameBoard):
 
 
   def mark_light_position(self):
+    """ mark all lights, and show them lighting """
     col_outline = "grey"
     color = "yellow"
     for col in range(1, 5):

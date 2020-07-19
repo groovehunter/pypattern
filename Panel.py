@@ -1,7 +1,4 @@
 
-
-
-
 class Light:
   """ has a row+col position """
   def __init__(self, position=None):
@@ -47,6 +44,9 @@ class Panel:
       print(light,)
 
   def set_pat(self, pat):
+    """ set light state according to a graphical representation
+        i.e. 'oooo' and '--oo'
+    """ 
     for i, char in enumerate(pat):
       if char=='o':
         self.lights[i].state = 1
@@ -54,6 +54,9 @@ class Panel:
         self.lights[i].state = 0
 
   def init_lights(self):
+    """ calc light row+col positions relative to their panels,
+        depending on orientation and if reverse
+    """
     (row, col) = self.offset
     add = 1
     if self.reverse:
