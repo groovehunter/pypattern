@@ -3,7 +3,7 @@ import time
 import random
 
 from LightPattern import LightPattern
-from Panel import Light
+from Panel0 import Light
 from CyclingPattern import *
 
 led_pin = 9
@@ -15,6 +15,10 @@ class LED(Light):
   """
   def __init__(self, pin):
     self.pin = pin
+
+
+from gpiozero import LED
+
 
 class RaspiBoard:
   def __init__(self):

@@ -2,6 +2,9 @@ from LightPattern import LightPattern
 
 
 class LogicPattern(LightPattern):
+  """ pattern superclass for pattern running
+      by setting next state changes
+  """
   def __init__(self, board):
     self.board = board
     self.lights = {}
@@ -19,12 +22,18 @@ class LogicPattern(LightPattern):
 
   def next_state(self):
     print('next PLC: ', self.count)
-    if self.count > 15:
+    if self.count > self.states_count-1:
+      print("reset counter")
       self.count = 0
     pass
 
+# Pattern subclasses
+
+class AroundPattern(LogicPattern):
+  pass
 
 class PairedLightsCycling(LogicPattern):
+  states_count = 16
   def initial_state(self):
     self.board.panels['t'].set_pat('oo--')
     self.set_panels_to_pat('rbl', '----')
@@ -37,6 +46,7 @@ class PairedLightsCycling(LogicPattern):
     self.count += 1
 
 class SingleDarkspotCycling(LogicPattern):
+  states_count = 16
   def initial_state(self):
     self.set_panels_to_pat('trbl', 'oooo')
 

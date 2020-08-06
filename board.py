@@ -5,8 +5,10 @@ import inspect
 #from PatternController import PatternController
 from LogicPattern import *
 from CyclingPattern import *
+from NextStatePattern import *
 import LogicPattern
 import CyclingPattern
+import NextStatePattern
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
@@ -48,6 +50,7 @@ class PatternControllerDisplay(Base):
       self.pattern.initial_state()
     OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes(CyclingPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
+    OPTIONS += self.get_pattern_classes(NextStatePattern)
     variable = tk.StringVar(self.root)
     variable.set(OPTIONS[0]) # default value
     l1 = tk.Label(text="Pattern", fg="black", bg="white")

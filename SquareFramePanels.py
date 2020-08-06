@@ -1,5 +1,5 @@
 from BoardCanvas import GameBoard
-from LightPattern import Panel
+from Panel import Panel
 
 
 class SquareFramePanels(GameBoard):

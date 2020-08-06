@@ -4,6 +4,9 @@ class Light:
   def __init__(self, position=None):
     self.position = position
     self.state = 1
+  def viceversa(self):
+    if self.state == 0: self.state = 1
+    if self.state == 1: self.state = 0
   def __repr__(self):
     (x, y) = self.position
     return "Light (%i, %i): %i" %(x, y, self.state)
@@ -34,10 +37,11 @@ class Panel:
     self.lights[2].state = 1
     self.lights[3].state = 0
 
-  def reverse(self):
+  def viceversa(self):
     for key, light in self.lights.items():
-      if light.state == 0: light.state = 1
-      if light.state == 1: light.state = 0
+      light.viceversa()
+#      if light.state == 0: light.state = 1
+#      if light.state == 1: light.state = 0
 
   def __repr__(self):
     for key, light in self.items():
@@ -46,7 +50,7 @@ class Panel:
   def set_pat(self, pat):
     """ set light state according to a graphical representation
         i.e. 'oooo' and '--oo'
-    """ 
+    """
     for i, char in enumerate(pat):
       if char=='o':
         self.lights[i].state = 1
