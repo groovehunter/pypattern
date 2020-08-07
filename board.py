@@ -12,22 +12,10 @@ import NextStatePattern
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
+from DisplayBase import DisplayBase
 
 
-class Base(object):
-#  def __init__(self):
-#    self.board = SquareFramePanels(self.root)
-
-  def get_pattern_classes(self, module):
-    pattern_list = []
-    for name, obj in inspect.getmembers(module):
-      if inspect.isclass(obj):
-        pattern_list.append(obj.__name__)
-    pattern_list.remove('LightPattern')
-    return pattern_list
-
-
-class PatternControllerDisplay(Base):
+class PatternControllerDisplay(DisplayBase):
   """ make pattern of pattern controller visible """
 
   def __init__(self):

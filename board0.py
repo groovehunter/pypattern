@@ -1,32 +1,15 @@
 
-import inspect
-from LogicPattern import *
-import LogicPattern
-from BoardCanvas0 import GameBoard
-from SquareFramePanels0 import SquareFramePanels0
+from RaspiDisplay import RaspiDisplay
 
 
-class Base(object):
-#  def __init__(self):
-#    self.board = SquareFramePanels(self.root)
-  pass
-
-
-
-class PatternControllerDisplay(Base):
+class PatternControllerDisplay:
   """ make pattern of pattern controller visible """
 
   def __init__(self):
-    Base.__init__(self)
-    self.board = SquareFramePanels0()
-    self.board.ctrl=self
+    self.board = RaspiDisplay()
 
   def init(self):
-    self.msecs = 500
     self.board.init()
-
-    self.pattern = PairedLightsCycling(self.board)
-    self.pattern.initial_state()
 
   def repeater(self):
     self.pattern.next_state()
@@ -44,3 +27,7 @@ class PatternControllerDisplay(Base):
 if __name__ == "__main__":
   pcd = PatternControllerDisplay()
   pcd.init()
+  pcd.board.set_pattern('SingleDarkspotCycling')
+  pcd.board.pattern.initial_state()
+  #pcd.test_pattern()
+  pcd.board.run()
