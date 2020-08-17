@@ -8,14 +8,19 @@ class Light:
     if self.state == 0: self.state = 1
     if self.state == 1: self.state = 0
   def __repr__(self):
-    return "Light %i" %(self.state)
+    return "%i" %(self.state)
 
 
 
 class Panel:
 
-  def __init__(self):
+  def __init__(self, pid):
     self.lights = {}
+    self.pid = pid
+
+  def init_lights(self):
+    for i in range(0, 4):
+      self.lights[i] = Light()
 
   def clear(self):
     for key, val in self.lights.items():
@@ -37,8 +42,12 @@ class Panel:
 #      if light.state == 1: light.state = 0
 
   def __repr__(self):
-    for key, light in self.items():
-      print(light,)
+    s = "Panel " + str(self.pid) + " "
+    for i, light in self.lights.items():
+      s += str(light.state)
+      #s+= light.__repr__()
+    #s += str(self.lights)
+    return s
 
   def set_pat(self, pat):
     """ set light state according to a graphical representation
@@ -50,9 +59,7 @@ class Panel:
       if char=='-':
         self.lights[i].state = 0
 
-  def init_lights(self):
-    """ calc light row+col positions relative to their panels,
-        depending on orientation and if reverse
-    """
-    for i in range(15):
-      self.lights[i] = Light()
+  # NOT SURE About that
+#  def init_lights(self):
+#    for i in range(15):
+#      self.lights[i] = Light()

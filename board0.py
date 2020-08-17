@@ -1,5 +1,6 @@
-
+import curses
 from RaspiDisplay import RaspiDisplay
+import sys
 
 
 class PatternControllerDisplay:
@@ -15,19 +16,18 @@ class PatternControllerDisplay:
     self.pattern.next_state()
     self.board.enlighten()
 
-  def next_state(self, event):
-    self.pattern.next_state()
-    self.change_board()
-
-  def change_board(self):
-    self.board.enlighten()
-    #self.pattern.state_cur.__repr__()
 
 
 if __name__ == "__main__":
+  if sys.version_info.major < 3:
+    print("use python 3.x")
+    sys.exit()
   pcd = PatternControllerDisplay()
   pcd.init()
-  pcd.board.set_pattern('SingleDarkspotCycling')
+  #pcd.board.set_pattern('CyclingPanels')
+  pcd.board.set_pattern('AllOnOff')
+  #pcd.board.set_pattern('SingleDarkspotCycling')
   pcd.board.pattern.initial_state()
-  #pcd.test_pattern()
-  pcd.board.run()
+  pcd.board.test_pattern()
+  #pcd.board.run()
+  #pcd.board.test()

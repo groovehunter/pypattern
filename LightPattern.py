@@ -16,13 +16,15 @@ class LightPattern(object):
 ### maybe remove this
 # or raise NotImplementedEexception
   def next_state(self):
+    raise NotImplementedError
+    """
     if self.count == self.states_count:
       self.count = 0
 
     self.count += 1
     print("next: state %i" %self.count)
     exec('self.state_'+str(self.count)+'()')
-
+    """
 
   def set_all_panels(self, pat):
     for i, panel in self.board.panels.items():

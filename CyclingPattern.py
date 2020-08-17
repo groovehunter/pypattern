@@ -98,3 +98,13 @@ class Middle_Edge_Cycling(LightPattern):
     self.set_all_panels('o--o')
   def state_2(self):
     self.state_0()
+
+class AllOnOff(LightPattern):
+  states_count = 2
+  def state_0(self):
+    self.set_all_panels('oooo')
+  def state_1(self):
+    self.set_all_panels('----')
+  def state_2(self):
+    self.state_0()
+

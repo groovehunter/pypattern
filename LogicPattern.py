@@ -29,8 +29,8 @@ class LogicPattern(LightPattern):
 
 # Pattern subclasses
 
-class AroundPattern(LogicPattern):
-  pass
+#class AroundPattern(LogicPattern):
+#  pass
 
 class PairedLightsCycling(LogicPattern):
   states_count = 16
