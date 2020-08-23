@@ -19,7 +19,7 @@ class PatternControllerDisplay(DisplayBase):
   """ make pattern of pattern controller visible """
 
   def __init__(self):
-    Base.__init__(self)
+#    Base.__init__(self)
     self.root = tk.Tk()
     #self.board = GameBoard(self.root)
 #    self.board = StackedPanelsSquare(self.root)

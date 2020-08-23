@@ -28,15 +28,14 @@ class DisplayBase:
     OPTIONS.remove('NextStatePattern')
     OPTIONS.remove('LogicPattern')
 #    OPTIONS.remove('CyclingPattern')
-    print(OPTIONS)
+    #print(OPTIONS)
     self.total_patlist = OPTIONS
 
   def set_pattern(self, pat_name):
-    print("setting pattern ", pat_name)
+    #print("setting pattern ", pat_name)
     constructor = globals()[pat_name]
     self.pattern = constructor(self)
 
   def set_random_pat(self):
     rand = random.choice(self.total_patlist)
     self.set_pattern(rand)
-
