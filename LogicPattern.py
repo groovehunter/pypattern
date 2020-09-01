@@ -21,9 +21,9 @@ class LogicPattern(LightPattern):
     self.count = 0
 
   def next_state(self):
-    print('next PLC: ', self.count)
+    #print('next PLC: ', self.count)
     if self.count > self.states_count-1:
-      print("reset counter")
+      #print("reset counter")
       self.count = 0
     pass
 
