@@ -1,15 +1,11 @@
+from Light import Light
 
-
-
-class Light:
-  def __init__(self):
-    self.state = 1
-  def viceversa(self):
-    if self.state == 0: self.state = 1
-    if self.state == 1: self.state = 0
-  def __repr__(self):
-    return "%i" %(self.state)
-
+panel_map = {
+    1: [1,2,3,4],
+    2: [5,6,7,8],
+    3: [9,10,11,12],
+    4: [13,14,15,16],
+}
 
 
 class Panel:
@@ -17,17 +13,23 @@ class Panel:
   def __init__(self, pid):
     self.lights = {}
     self.pid = pid
+    print(self.pid)
 
   def init_lights(self):
+    panel_pins = panel_map[self.pid]
+    print(panel_pins)
     for i in range(0, 4):
-      self.lights[i] = Light()
+      pin_nr = panel_pins[i]
+      self.lights[i] = Light(pin_nr)
+
 
   def clear(self):
-    for key, val in self.lights.items():
-      val.state = 0
+    for key, light in self.lights.items():
+      light.state = 0
+
   def full(self):
-    for key, val in self.lights.items():
-      val.state = 1
+    for key, light in self.lights.items():
+      light.state = 1
 
   def set_middle(self):
     self.lights[0].state = 0
@@ -38,28 +40,20 @@ class Panel:
   def viceversa(self):
     for key, light in self.lights.items():
       light.viceversa()
-#      if light.state == 0: light.state = 1
-#      if light.state == 1: light.state = 0
 
   def __repr__(self):
     s = "Panel " + str(self.pid) + " "
     for i, light in self.lights.items():
       s += str(light.state)
-      #s+= light.__repr__()
-    #s += str(self.lights)
     return s
 
   def set_pat(self, pat):
     """ set light state according to a graphical representation
         i.e. 'oooo' and '--oo'
     """
+    print(self.lights)
     for i, char in enumerate(pat):
       if char=='o':
         self.lights[i].state = 1
       if char=='-':
         self.lights[i].state = 0
-
-  # NOT SURE About that
-#  def init_lights(self):
-#    for i in range(15):
-#      self.lights[i] = Light()

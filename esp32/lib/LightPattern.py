@@ -1,5 +1,5 @@
 from time import sleep
-from Panel import Panel
+from Panel0 import Panel
 
 
 class LightPattern(object):

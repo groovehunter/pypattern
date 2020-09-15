@@ -1,28 +1,15 @@
-
-class Light:
-  """ has a row+col position """
-  def __init__(self, position=None):
-    self.position = position
-    self.state = 1
-  def viceversa(self):
-    if self.state == 0: self.state = 1
-    if self.state == 1: self.state = 0
-  def __repr__(self):
-    (x, y) = self.position
-    return "Light (%i, %i): %i" %(x, y, self.state)
+from Light import Light
 
 
 class Panel:
 
-  def __init__(self, orientation=None, rev=False):
-    """ orientation:
-        (H)orizontal l2r / or reverse
-        (V)ertical t2b / or reverse
-    """
-    self.orientation = orientation
-    self.reverse = rev
+  def __init__(self, pid):
     self.lights = {}
-    #self.state = 1
+    self.pid = pid
+
+  def init_lights(self):
+    for i in range(0, 4):
+      self.lights[i] = Light()
 
   def clear(self):
     for key, val in self.lights.items():
@@ -44,8 +31,12 @@ class Panel:
 #      if light.state == 1: light.state = 0
 
   def __repr__(self):
-    for key, light in self.items():
-      print(light,)
+    s = "Panel " + str(self.pid) + " "
+    for i, light in self.lights.items():
+      s += str(light.state)
+      #s+= light.__repr__()
+    #s += str(self.lights)
+    return s
 
   def set_pat(self, pat):
     """ set light state according to a graphical representation
@@ -57,21 +48,13 @@ class Panel:
       if char=='-':
         self.lights[i].state = 0
 
-  def init_lights(self):
-    """ calc light row+col positions relative to their panels,
-        depending on orientation and if reverse
-    """
-    (row, col) = self.offset
-    add = 1
-    if self.reverse:
-      add = -1
-    if self.orientation == 'H':
-      self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row, col + add))
-      self.lights[2] = Light((row, col + 2*add))
-      self.lights[3] = Light((row, col + 3*add))
-    if self.orientation == 'V':
-      self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row + add, col))
-      self.lights[2] = Light((row + 2*add, col))
-      self.lights[3] = Light((row + 3*add, col))
+  # NOT SURE About that
+#  def init_lights(self):
+#    for i in range(15):
+#      self.lights[i] = Light()
+
+
+class OrientedPanel(Panel):
+  def __init__(self, pid, orientation):
+    Panel.__init__(self, pid)
+    self.orientation = orientation
