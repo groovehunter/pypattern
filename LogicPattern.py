@@ -5,8 +5,8 @@ class LogicPattern(LightPattern):
   """ pattern superclass for pattern running
       by setting next state changes
   """
-  def __init__(self, board):
-    self.board = board
+
+  def subclass_init(self):
     self.lights = {}
     c = 0
     # init light array with auto increment index
@@ -28,9 +28,6 @@ class LogicPattern(LightPattern):
     pass
 
 # Pattern subclasses
-
-#class AroundPattern(LogicPattern):
-#  pass
 
 class PairedLightsCycling(LogicPattern):
   states_count = 16

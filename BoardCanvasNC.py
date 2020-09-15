@@ -1,5 +1,5 @@
 import curses
-from Panel0 import Panel
+from Panel import Panel
 
 
 class GameBoard:

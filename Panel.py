@@ -1,14 +1,16 @@
 from Light import Light
 
+PSIZE = 4
 
 class Panel:
 
-  def __init__(self, pid):
+  def __init__(self, pid, size=PSIZE):
     self.lights = {}
     self.pid = pid
+    self.size = size
 
   def init_lights(self):
-    for i in range(0, 4):
+    for i in range(0, self.size):
       self.lights[i] = Light(i)
 
   def clear(self):

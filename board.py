@@ -4,11 +4,11 @@ from time import sleep
 import inspect
 #from PatternController import PatternController
 from LogicPattern import *
-from CyclingPattern import *
+from ExplicitStatesPattern import *
 from NextStatePattern import *
-import LogicPattern
-import CyclingPattern
-import NextStatePattern
+#import LogicPattern
+#import ExplizitStatesPattern
+#import NextStatePattern
 from BoardCanvas import GameBoard
 from SquareFramePanels import SquareFramePanels
 from StackedPanelsSquare import StackedPanelsSquare
@@ -36,15 +36,14 @@ class PatternControllerDisplay(DisplayBase):
       constructor = globals()[pat_name]
       self.pattern = constructor(self.board)
       self.pattern.initial_state()
-    OPTIONS = ['Choose Pattern !'] + self.get_pattern_classes(CyclingPattern)
-    OPTIONS += self.get_pattern_classes(LogicPattern)
-    OPTIONS += self.get_pattern_classes(NextStatePattern)
+
+    self.total_pattern_list()
     variable = tk.StringVar(self.root)
-    variable.set(OPTIONS[0]) # default value
+    variable.set("CHOOSE PATTERN") # default value
     l1 = tk.Label(text="Pattern", fg="black", bg="white")
     l1.pack()
 
-    w = tk.OptionMenu(self.root, variable, *OPTIONS)
+    w = tk.OptionMenu(self.root, variable, *self.total_patlist)
     w.pack()
 
     button = tk.Button(self.root, text="OK", command=set_pattern)

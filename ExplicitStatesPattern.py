@@ -3,7 +3,25 @@ from LightPattern import LightPattern
     # notwendig? Ist ja wie ein programm, transitions quasi
     # also die ganze struktur, die panels durchlaufen
 
-class SingleLightCycling(LightPattern):
+class ExplicitStatesPattern(LightPattern):
+  states_count = 0
+
+  def subclass_init(self):
+    self.initial_state()
+
+  def initial_state(self):
+    self.state_0()
+
+  def next_state(self):
+    if self.count == self.states_count:
+      self.count = 0
+
+    self.count += 1
+    print("next: state %i" %self.count)
+    exec('self.state_'+str(self.count)+'()')
+
+
+class SingleLightCycling(ExplicitStatesPattern):
   states_count = 16
   def state_0(self):
     self.board.panels['t'].set_pat('o---')
@@ -44,7 +62,7 @@ class SingleLightCycling(LightPattern):
   def state_16(self):
     self.state_0()
 
-class CyclingPanels(LightPattern):
+class CyclingPanels(ExplicitStatesPattern):
   states_count = 4
   def state_0(self):
     self.board.panels['t'].full()
@@ -61,7 +79,7 @@ class CyclingPanels(LightPattern):
   def state_4(self):
     self.state_0()
 
-class WindmillPattern(LightPattern):
+class WindmillPattern(ExplicitStatesPattern):
   states_count = 4
   def state_0(self):
     self.set_all_panels('o---')
@@ -74,7 +92,7 @@ class WindmillPattern(LightPattern):
   def state_4(self):
     self.state_0()
 
-class PanelsHorizontalVertical(LightPattern):
+class PanelsHorizontalVertical(ExplicitStatesPattern):
   states_count = 2
   def state_0(self):
     self.board.panels['t'].set_pat('oooo')
@@ -90,7 +108,7 @@ class PanelsHorizontalVertical(LightPattern):
     self.state_0()
 
 
-class Middle_Edge_Cycling(LightPattern):
+class Middle_Edge_Cycling(ExplicitStatesPattern):
   states_count = 2
   def state_0(self):
     self.set_all_panels('-oo-')
@@ -99,7 +117,7 @@ class Middle_Edge_Cycling(LightPattern):
   def state_2(self):
     self.state_0()
 
-class AllOnOff(LightPattern):
+class AllOnOff(ExplicitStatesPattern):
   states_count = 2
   def state_0(self):
     self.set_all_panels('oooo')
@@ -107,4 +125,3 @@ class AllOnOff(LightPattern):
     self.set_all_panels('----')
   def state_2(self):
     self.state_0()
-

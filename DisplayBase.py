@@ -1,9 +1,9 @@
 import inspect
 from LogicPattern import *
-from CyclingPattern import *
+from ExplicitStatesPattern import *
 from NextStatePattern import *
 import LogicPattern
-import CyclingPattern
+import ExplicitStatesPattern
 import NextStatePattern
 
 import random
@@ -19,14 +19,16 @@ class DisplayBase:
     return pattern_list
 
   # argument, which pattern styles can be used; TODO
+  # rename to get_total.... # TODO:
   def total_pattern_list(self):
       # exlclude cycling for raspi run method
     OPTIONS = []
-#    OPTIONS += self.get_pattern_classes(CyclingPattern)
+    OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
     OPTIONS += self.get_pattern_classes(NextStatePattern)
     OPTIONS.remove('NextStatePattern')
     OPTIONS.remove('LogicPattern')
+    OPTIONS.remove('ExplicitStatesPattern')
 #    OPTIONS.remove('CyclingPattern')
     #print(OPTIONS)
     self.total_patlist = OPTIONS
