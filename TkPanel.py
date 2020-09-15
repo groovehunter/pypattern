@@ -1,9 +1,9 @@
-from Light import Light
-from Panel0 import Panel
+from Light import LocatedLight
+from Panel import Panel
 
 class TkPanel(Panel):
 
-  def __init__(self, orientation=None, rev=False):
+  def __init__(self, pid, orientation=None, rev=False):
     """ orientation:
         (H)orizontal l2r / or reverse
         (V)ertical t2b / or reverse
@@ -29,12 +29,12 @@ class TkPanel(Panel):
     if self.reverse:
       add = -1
     if self.orientation == 'H':
-      self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row, col + add))
-      self.lights[2] = Light((row, col + 2*add))
-      self.lights[3] = Light((row, col + 3*add))
+      self.lights[0] = LocatedLight((row, col))
+      self.lights[1] = LocatedLight((row, col + add))
+      self.lights[2] = LocatedLight((row, col + 2*add))
+      self.lights[3] = LocatedLight((row, col + 3*add))
     if self.orientation == 'V':
-      self.lights[0] = Light((row, col))
-      self.lights[1] = Light((row + add, col))
-      self.lights[2] = Light((row + 2*add, col))
-      self.lights[3] = Light((row + 3*add, col))
+      self.lights[0] = LocatedLight((row, col))
+      self.lights[1] = LocatedLight((row + add, col))
+      self.lights[2] = LocatedLight((row + 2*add, col))
+      self.lights[3] = LocatedLight((row + 3*add, col))

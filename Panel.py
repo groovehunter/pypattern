@@ -9,7 +9,7 @@ class Panel:
 
   def init_lights(self):
     for i in range(0, 4):
-      self.lights[i] = Light()
+      self.lights[i] = Light(i)
 
   def clear(self):
     for key, val in self.lights.items():
@@ -47,14 +47,3 @@ class Panel:
         self.lights[i].state = 1
       if char=='-':
         self.lights[i].state = 0
-
-  # NOT SURE About that
-#  def init_lights(self):
-#    for i in range(15):
-#      self.lights[i] = Light()
-
-
-class OrientedPanel(Panel):
-  def __init__(self, pid, orientation):
-    Panel.__init__(self, pid)
-    self.orientation = orientation

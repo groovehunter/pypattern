@@ -1,5 +1,5 @@
 from BoardCanvas import GameBoard
-from Panel import OrientedPanel
+from TkPanel import TkPanel
 
 
 class SquareFramePanels(GameBoard):
@@ -8,10 +8,10 @@ class SquareFramePanels(GameBoard):
 
   def init_panels(self):
     self.panels = {
-      't' : OrientedPanel(1, orientation='H'),
-      'r' : OrientedPanel(2, orientation='V'),
-      'b' : OrientedPanel(3, orientation='H', rev=True),
-      'l' : OrientedPanel(4, orientation='V', rev=True),
+      't' : TkPanel(1, orientation='H'),
+      'r' : TkPanel(2, orientation='V'),
+      'b' : TkPanel(3, orientation='H', rev=True),
+      'l' : TkPanel(4, orientation='V', rev=True),
     }
     # offset is  row, col
     self.panels['t'].offset = (0, 1)
