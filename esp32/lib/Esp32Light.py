@@ -1,3 +1,5 @@
+from conf import pinmap
+from Light import Light
 
 import sys
 if sys.platform == 'linux':

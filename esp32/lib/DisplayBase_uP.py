@@ -1,10 +1,10 @@
 
 from LogicPattern import *
-from CyclingPattern import *
+from ExplicitStatesPattern import *
 from NextStatePattern import *
-import LogicPattern
-import CyclingPattern
-import NextStatePattern
+#import LogicPattern
+#import ExplicitStatesPattern
+#import NextStatePattern
 
 import random
 

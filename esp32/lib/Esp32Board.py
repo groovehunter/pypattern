@@ -1,6 +1,6 @@
 from time import sleep
-from Panel0 import Panel
-from Light import Light
+from Panel import Panel
+from Esp32Light import Esp32Light as Light
 from DisplayBase_uP import DisplayBase
 from ucollections import OrderedDict
 
