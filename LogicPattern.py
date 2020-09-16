@@ -21,9 +21,10 @@ class LogicPattern(LightPattern):
     self.count = 0
 
   def next_state(self):
-    #print('next PLC: ', self.count)
+    self.count += 1
+    print('next PLC: ', self.count)
     if self.count > self.states_count-1:
-      #print("reset counter")
+      print("reset counter")
       self.count = 0
     pass
 
@@ -40,7 +41,6 @@ class PairedLightsCycling(LogicPattern):
     self.lights[self.count].state = 0
     self.lights[self.count+1].state = 1
     self.lights[self.count+2].state = 1
-    self.count += 1
 
 class SingleDarkspotCycling(LogicPattern):
   states_count = 16
@@ -51,4 +51,13 @@ class SingleDarkspotCycling(LogicPattern):
     super().next_state()
     self.lights[self.count].state = 1
     self.lights[self.count+1].state = 0
-    self.count += 1
+
+class SingleLightCyclingLP(LogicPattern):
+  states_count = 16
+  def initial_state(self):
+    self.set_panels_to_pat('trbl', '----')
+
+  def next_state(self):
+    super().next_state()
+    self.lights[self.count].state = 0
+    self.lights[self.count+1].state = 1

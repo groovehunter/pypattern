@@ -14,8 +14,6 @@ class LightPattern(object):
   def subclass_init(self):
     raise NotImplementedError
 
-### maybe remove this
-# or raise NotImplementedEexception
   def next_state(self):
     raise NotImplementedError
 

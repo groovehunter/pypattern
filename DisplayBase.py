@@ -21,7 +21,6 @@ class DisplayBase:
   # argument, which pattern styles can be used; TODO
   # rename to get_total.... # TODO:
   def total_pattern_list(self):
-      # exlclude cycling for raspi run method
     OPTIONS = []
     OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
@@ -29,8 +28,6 @@ class DisplayBase:
     OPTIONS.remove('NextStatePattern')
     OPTIONS.remove('LogicPattern')
     OPTIONS.remove('ExplicitStatesPattern')
-#    OPTIONS.remove('CyclingPattern')
-    #print(OPTIONS)
     self.total_patlist = OPTIONS
 
   def set_pattern(self, pat_name):
