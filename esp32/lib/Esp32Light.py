@@ -14,35 +14,8 @@ else:
   import uos
 
 
-pinmap = {
-1: 2,
-2: 4,
-3: 5,
-4: 18,
-5: 19,
-6: 21,
-7: 22,
-8: 23,
 
-9: 13,
-10: 12,
-11: 14,
-12: 27,
-13: 26,
-14: 25,
-15: 33,
-16: 32,
-}
-
-
-class Light:
+class Esp32Light(Light):
   def __init__(self, lid):
-    self.lid = lid
+    Light.__init__(self, lid)
     self.pin = Pin(pinmap[lid], Pin.OUT)
-    self.state = False
-
-  def viceversa(self):
-    self.state = not self.state
-
-  def __repr__(self):
-    return "%i" %(self.state)
