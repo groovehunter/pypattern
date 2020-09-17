@@ -9,9 +9,9 @@ from NextStatePattern import *
 #import LogicPattern
 #import ExplizitStatesPattern
 #import NextStatePattern
-from BoardCanvas import GameBoard
-from SquareFramePanels import SquareFramePanels
-from StackedPanelsSquare import StackedPanelsSquare
+from tk.BoardCanvas import GameBoard
+from tk.SquareFramePanels import SquareFramePanels
+from tk.StackedPanelsSquare import StackedPanelsSquare
 from DisplayBase import DisplayBase
 
 

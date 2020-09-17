@@ -1,5 +1,5 @@
-from BoardCanvas import GameBoard
-from TkPanel import TkPanel
+from tk.BoardCanvas import GameBoard
+from tk.TkPanel import TkPanel
 
 
 class SquareFramePanels(GameBoard):

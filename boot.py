@@ -1,7 +1,9 @@
 
 ESSID = 'WLAN-MJ7YSQ'
 PASS  = '46804770364629155360'
-import upip
+
+
+#import upip
 
 def connect():
     import network
@@ -19,5 +21,5 @@ def installpip():
   upip.install('micropython-pkg_resources')
 
 
-#connect()
+connect()
 #installpip()

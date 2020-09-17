@@ -1,4 +1,4 @@
-from conf import pinmap
+from esp32_conf import pinmap
 from Light import Light
 
 import sys

@@ -1,4 +1,4 @@
-from BoardCanvas import GameBoard
+from tk.BoardCanvas import GameBoard
 from Panel import Panel
 
 class StackedPanelsSquare(GameBoard):
