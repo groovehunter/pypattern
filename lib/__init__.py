@@ -1,0 +1,1 @@
+#from LogicPattern import LogicPattern
