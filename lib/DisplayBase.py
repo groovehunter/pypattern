@@ -1,10 +1,12 @@
 import inspect
 from LogicPattern import *
+from PanelPattern import *
 from ExplicitStatesPattern import *
 from NextStatePattern import *
 import LogicPattern
 import ExplicitStatesPattern
 import NextStatePattern
+import PanelPattern
 
 import random
 
@@ -15,7 +17,8 @@ class DisplayBase:
     for name, obj in inspect.getmembers(module):
       if inspect.isclass(obj):
         pattern_list.append(obj.__name__)
-    pattern_list.remove('LightPattern')
+    if 'LightPattern' in pattern_list:
+        pattern_list.remove('LightPattern')
     return pattern_list
 
   # argument, which pattern styles can be used; TODO
@@ -23,9 +26,11 @@ class DisplayBase:
   def total_pattern_list(self):
     OPTIONS = []
     OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
+    OPTIONS += self.get_pattern_classes(PanelPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
     OPTIONS += self.get_pattern_classes(NextStatePattern)
     OPTIONS.remove('NextStatePattern')
+    OPTIONS.remove('PanelPattern')
     OPTIONS.remove('LogicPattern')
     OPTIONS.remove('ExplicitStatesPattern')
     self.total_patlist = OPTIONS

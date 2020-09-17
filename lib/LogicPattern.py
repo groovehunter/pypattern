@@ -4,6 +4,7 @@ from LightPattern import LightPattern
 class LogicPattern(LightPattern):
   """ pattern superclass for pattern running
       by setting next state changes
+      TODO change name LogicPattern to sth useful
   """
 
   def subclass_init(self):
@@ -26,7 +27,6 @@ class LogicPattern(LightPattern):
     if self.count > self.states_count-1:
       print("reset counter")
       self.count = 0
-    pass
 
 # Pattern subclasses
 

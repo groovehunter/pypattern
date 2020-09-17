@@ -1,12 +1,22 @@
 
+import sys
+from os import getcwd, pardir
+from os.path import join
+sys.path.append(join(getcwd(), pardir))
+print(sys.path)
+
+
 import tkinter as tk
 from time import sleep
 import inspect
 #from PatternController import PatternController
 from LogicPattern import *
 from ExplicitStatesPattern import *
-from NextStatePattern import *
-#import LogicPattern
+from PanelPattern import *
+#from NextStatePattern import *
+from LogicPattern import LogicPattern
+
+import PanelPattern
 #import ExplizitStatesPattern
 #import NextStatePattern
 from tk.BoardCanvas import GameBoard
