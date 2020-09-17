@@ -4,7 +4,7 @@ from os import getcwd, pardir
 from os.path import join
 sys.path.append(join(getcwd(), pardir))
 print(sys.path)
-
+import time
 
 import tkinter as tk
 import inspect
@@ -36,6 +36,12 @@ class PatternControllerDisplay(DisplayBase):
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
     self.board.ctrl=self
     self.gui_setup()
+    self.update_clock()
+
+  def update_clock(self):
+    now = time.strftime("%H:%M:%S")
+    self.label_clock.configure(text=now)
+    self.root.after(1000, self.update_clock)
 
 
   def gui_setup(self):
@@ -50,18 +56,22 @@ class PatternControllerDisplay(DisplayBase):
     variable = tk.StringVar(self.root)
     variable.set("CHOOSE PATTERN") # default value
     l1 = tk.Label(text="Pattern", fg="black", bg="white")
-    l1.pack()
+    l1.pack(padx=5, pady=10, side=tk.LEFT)
 
     w = tk.OptionMenu(self.root, variable, *self.total_patlist)
-    w.pack()
+    w.pack(padx=5, pady=10, side=tk.LEFT)
 
     button = tk.Button(self.root, text="OK", command=set_pattern)
-    button.pack()
+    button.pack(fill=tk.X)
     button = tk.Button(self.root, text="RUN", command=self.repeater)
-    button.pack()
+    button.pack(fill=tk.X, side=tk.RIGHT)
+
+    self.label_clock = tk.Label(text="", font=('Helvetica', 16), fg='red')
+    self.label_clock.pack()
+    self.root.after(1000, self.update_clock)
 
   def init(self):
-    self.msecs = 500
+    self.msecs = 300
     self.board.init_keys()
     self.board.init()
 
@@ -71,7 +81,7 @@ class PatternControllerDisplay(DisplayBase):
   def repeater(self):
     self.pattern.next_state()
     self.board.enlighten()
-    self.board.after(self.msecs, self.repeater)    # reschedule handler
+    self.root.after(self.msecs, self.repeater)    # reschedule handler
 
   def run(self):
     self.root.mainloop()
