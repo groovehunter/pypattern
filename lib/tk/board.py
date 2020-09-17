@@ -7,7 +7,6 @@ print(sys.path)
 
 
 import tkinter as tk
-from time import sleep
 import inspect
 #from PatternController import PatternController
 from LogicPattern import *

@@ -1,3 +1,5 @@
+from LightPattern import LightPattern
+
 
 class PanelPattern(LightPattern):
   """ pattern with complete panel changes """
