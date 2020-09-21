@@ -3,6 +3,7 @@ from time import sleep
 import sys, os
 if sys.platform == 'linux':
   sys.path.append(os.getcwd()+'/lib')
+  sys.path.append(os.getcwd()+'/esp32')
 
 from Esp32Board import Esp32Board
 

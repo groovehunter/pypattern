@@ -1,4 +1,4 @@
-from Light import Light
+from lib.Light import Light
 
 PSIZE = 4
 

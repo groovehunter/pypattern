@@ -1,4 +1,4 @@
-from LightPattern import LightPattern
+from lib.LightPattern import LightPattern
     # vom bisherigen state zum diesem, was sind fuer aenderungen
     # notwendig? Ist ja wie ein programm, transitions quasi
     # also die ganze struktur, die panels durchlaufen

@@ -1,4 +1,4 @@
-from Panel import Panel
+from lib.Panel import Panel
 
 
 class LightPattern(object):

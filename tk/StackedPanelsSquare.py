@@ -1,5 +1,5 @@
 from tk.BoardCanvas import GameBoard
-from Panel import Panel
+from lib.Panel import Panel
 
 class StackedPanelsSquare(GameBoard):
     def __init__(self, parent):

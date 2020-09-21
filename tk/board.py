@@ -1,27 +1,28 @@
 
 import sys
 from os import getcwd, pardir
-from os.path import join
-sys.path.append(join(getcwd(), pardir))
+from os.path import join, dirname, abspath
+parent = dirname(dirname(abspath(__file__)))
+### entspricht root of project
+# will it make sense
+sys.path.append(parent)
 print(sys.path)
+
+
 import time
 
 import tkinter as tk
 import inspect
 #from PatternController import PatternController
-from LogicPattern import *
-from ExplicitStatesPattern import *
-from PanelPattern import *
-#from NextStatePattern import *
-from LogicPattern import LogicPattern
+from lib.LogicPattern import *
+from lib.ExplicitStatesPattern import *
+from lib.PanelPattern import *
+from lib.NextStatePattern import *
 
-import PanelPattern
-#import ExplizitStatesPattern
-#import NextStatePattern
 from tk.BoardCanvas import GameBoard
 from tk.SquareFramePanels import SquareFramePanels
 from tk.StackedPanelsSquare import StackedPanelsSquare
-from DisplayBase import DisplayBase
+from lib.DisplayBase import DisplayBase
 
 
 class PatternControllerDisplay(DisplayBase):

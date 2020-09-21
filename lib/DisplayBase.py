@@ -1,8 +1,12 @@
+import sys
+from os.path import join
+from settings import ROOT_DIR
+sys.path.append(join(ROOT_DIR, 'lib'))
 import inspect
 from LogicPattern import *
 from PanelPattern import *
-from ExplicitStatesPattern import *
-from NextStatePattern import *
+#from ExplicitStatesPattern import *
+#from NextStatePattern import *
 import LogicPattern
 import ExplicitStatesPattern
 import NextStatePattern
@@ -16,6 +20,7 @@ class DisplayBase:
     pattern_list = []
     for name, obj in inspect.getmembers(module):
       if inspect.isclass(obj):
+        #print(name, obj)
         pattern_list.append(obj.__name__)
     if 'LightPattern' in pattern_list:
         pattern_list.remove('LightPattern')

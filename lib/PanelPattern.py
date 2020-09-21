@@ -1,4 +1,4 @@
-from LightPattern import LightPattern
+from lib.LightPattern import LightPattern
 
 
 class PanelPattern(LightPattern):

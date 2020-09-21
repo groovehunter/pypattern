@@ -1,5 +1,5 @@
-from Light import LocatedLight
-from Panel import Panel
+from lib.Light import LocatedLight
+from lib.Panel import Panel
 
 class TkPanel(Panel):
 
