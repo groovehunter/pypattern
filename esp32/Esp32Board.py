@@ -3,6 +3,7 @@ from Panel import Panel
 from Esp32Light import Esp32Light as Light
 from DisplayBase_uP import DisplayBase
 from ucollections import OrderedDict
+import uasyncio as asyncio
 
 class Esp32Board(DisplayBase):
     def __init__(self):
@@ -10,14 +11,14 @@ class Esp32Board(DisplayBase):
         led = {}
         for i in range(1, 17):
           led[i] = Light(i)
-          #sprint(led[i])
         self.led = led
-        #print("OUTgoing pins: ", end='')
-        print(sorted(led))
+        print("init led array: %s", sorted(led))
 
     def init(self):
         self.init_panels()
         self.init_panel_lights()
+        # neu
+        self.total_pattern_list()
 
     def init_panels(self):
         self.panels = OrderedDict(
@@ -53,24 +54,23 @@ class Esp32Board(DisplayBase):
             for n in range(1, 16, 2):
                 print(n)
                 led[n].pin.off()
-            sleep(sl)
+            await asyncio.sleep(sl)
             print(".", end='')
         print
 
-    def switch(self, i):
+    def switch_all(self, i):
         led[i].value(not led[i].value())
 
     def test_pattern(self):
         while True:
+          print("test_pattern: next state")
           self.pattern.next_state()
           self.enlighten()
-          sleep(3)
+          await asyncio.sleep(1)
 
 
     def enlighten(self):
-        print("pattern: ", self.pattern.__class__)
         for i, panel in self.panels.items():
-          print(panel)
           for i, light in panel.lights.items():
             led_nr = (panel.pid-1) * 4 + i +1
             val = self.pattern.lights[led_nr].state

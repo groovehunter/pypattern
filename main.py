@@ -1,30 +1,54 @@
+### entry point - only for ESP32 platforms
 
-from time import sleep
+import esp
+esp.osdebug(None)
+
+import gc
+gc.collect()
+#from time import sleep
 import sys, os
-if sys.platform == 'linux':
-  sys.path.append(os.getcwd()+'/lib')
-  sys.path.append(os.getcwd()+'/esp32')
 
-from Esp32Board import Esp32Board
+syspath = ['esp32', 'www', 'http', 'lib']
+if sys.platform == 'esp32':
+  for p in syspath:
+      slashed_p = '/'+p
+      abs_path = os.getcwd() + p
+      #print(abs_path)
+      if abs_path not in sys.path:
+          sys.path.append(abs_path)
 
-class PDC:
-    def __init__(self):
-        print("init PDC")
-        self.board = Esp32Board()
-        #print(self.board.led)
+#print(sys.path)
+
+#from Esp32Board import Esp32Board
+from web import http_server
+#from web.website import web_page
+import uasyncio #as asyncio
+from pdc import PdcSingleton as PDC
 
 pdc = PDC()
+pdc.init()
+pdc.board.init()
+pat = 'SingleDarkspotCycling'
+success = pdc.board.set_pattern(pat)
 
-while True:
-  print("running test")
-  #print(pdc.board.led)
-  pdc.board.init()
-#  pdc.board.test()
-  pdc.board.set_pattern('PairedLightsCycling')
-  pdc.board.pattern.initial_state()
-  pdc.board.test_pattern()
-  #pdc.board.all_on()
-#  print("next")
-  sleep(5)
-"""
-"""
+
+async def run_pdc():
+    print("STARTING run_pdc")
+    #pdc.board.test_pattern()
+    while True:
+        pdc.board.pattern.next_state()
+        pdc.board.enlighten()
+        await uasyncio.sleep_ms(1200)
+        #if pdc.board.pattern.
+        if pdc.board.pattern.uptime > 5:
+            print('=== NEW PATTERN ====================')
+            pdc.board.set_random_pat()
+            pdc.board.pattern.reset_uptime()
+
+loop = uasyncio.get_event_loop()
+factory = uasyncio.start_server(http_server, '0.0.0.0', 80)
+server = loop.run_until_complete(factory)
+
+loop.create_task(run_pdc())
+loop.run_forever()
+
