@@ -72,7 +72,7 @@ class PatternControllerDisplay(DisplayBase):
     self.root.after(1000, self.update_clock)
 
   def init(self):
-    self.msecs = 300
+    self.msecs = 2000
     self.board.init_keys()
     self.board.init()
 
