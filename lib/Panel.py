@@ -49,3 +49,11 @@ class Panel:
         self.lights[i].state = 1
       if char=='-':
         self.lights[i].state = 0
+
+  def is_full(self):
+    assume = True
+    for key, light in self.lights.items():
+      print(light.state)
+      if not light.state:
+        return False
+    return assume

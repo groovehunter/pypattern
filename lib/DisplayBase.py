@@ -5,8 +5,8 @@ sys.path.append(join(ROOT_DIR, 'lib'))
 import inspect
 from LogicPattern import *
 from PanelPattern import *
-#from ExplicitStatesPattern import *
-#from NextStatePattern import *
+from ExplicitStatesPattern import *
+from NextStatePattern import *
 import LogicPattern
 import ExplicitStatesPattern
 import NextStatePattern
@@ -39,6 +39,8 @@ class DisplayBase:
     OPTIONS.remove('LogicPattern')
     OPTIONS.remove('ExplicitStatesPattern')
     self.total_patlist = OPTIONS
+    for p in self.total_patlist:
+      print("'",p,"', ", sep='')
 
   def set_pattern(self, pat_name):
     #print("setting pattern ", pat_name)

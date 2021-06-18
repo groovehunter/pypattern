@@ -8,6 +8,9 @@ class LogicPattern(LightPattern):
   """
 
   def subclass_init(self):
+    """ initiate array of Lights,
+        version 1 were children of panels
+    """
     self.lights = {}
     c = 0
     # init light array with auto increment index
@@ -22,6 +25,7 @@ class LogicPattern(LightPattern):
     self.count = 0
 
   def next_state(self):
+    """ switching to next state by rising the leds index """
     self.count += 1
     print('next PLC: ', self.count)
     if self.count > self.states_count-1:

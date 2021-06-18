@@ -11,9 +11,20 @@ import random
 class DisplayBase:
 
   pattern_list = [
-    'WindmillPattern',
-    'CyclingPanels',
-    'PairedLightsCycling',
+'AllOnOff', 
+'CyclingPanels',
+'Middle_Edge_Cycling',
+'PanelsHorizontalVertical',
+'SingleLightCycling',
+'WindmillPattern',
+'AddedPanels',
+'DarkPanelRotationPanelPattern',
+'RotationPanelPattern',
+'SwitchingPanels',
+'PairedLightsCycling',
+'SingleDarkspotCycling',
+'SingleLightCyclingLP',
+'AllOnOffPattern',
   ]
 
   # argument, which pattern styles can be used; TODO
