@@ -68,3 +68,4 @@ class LightningCrossQuadrants(GameBoardGeneric, GenericGeometry):
       if orientation == 'v':
         self.led[i].position = (row + num*add, col)
       i += 1
+

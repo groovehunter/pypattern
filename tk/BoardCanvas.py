@@ -1,7 +1,7 @@
 import tkinter as tk
 
 class GameBoard(tk.Frame):
-    def __init__(self, parent, rows=6, columns=6, size=100, color1="white", color2="grey"):
+    def __init__(self, parent, rows=6, columns=6, size=60, color1="white", color2="grey"):
         '''size is the size of a square, in pixels'''
 
         self.rows = rows
@@ -63,6 +63,7 @@ class GameBoard(tk.Frame):
             panel.init_lights()
 
     def enlighten(self):
+        #print("BCG 1 - enlighten in BoardCanvas")
         for i, panel in self.panels.items():
             for i, light in panel.lights.items():
                 self.set_square_color_atpos(light.position, light.state)
@@ -78,6 +79,7 @@ class GameBoard(tk.Frame):
             outline=col_outline, fill=color, tags="square")
 
     def set_square_color_atpos(self, pos, state):
+        #print("setting state %s at pos %s", state, pos)
         color = "grey"
         if state == 1:
             color = "yellow"

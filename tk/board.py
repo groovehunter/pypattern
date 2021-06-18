@@ -21,7 +21,9 @@ from lib.NextStatePattern import *
 
 from tk.BoardCanvas import GameBoard
 from tk.SquareFramePanels import SquareFramePanels
+#from tk.SquareFramePanels0 import SquareFramePanels
 from tk.StackedPanelsSquare import StackedPanelsSquare
+from tk.LightningCrossQuadrants import LightningCrossQuadrants
 from lib.DisplayBase import DisplayBase
 
 
@@ -34,6 +36,7 @@ class PatternControllerDisplay(DisplayBase):
     #self.board = GameBoard(self.root)
 #    self.board = StackedPanelsSquare(self.root)
     self.board = SquareFramePanels(self.root)
+#    self.board = LightningCrossQuadrants(self.root)
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
     self.board.ctrl=self
     self.gui_setup()
@@ -52,6 +55,8 @@ class PatternControllerDisplay(DisplayBase):
       constructor = globals()[pat_name]
       self.pattern = constructor(self.board)
       self.pattern.initial_state()
+      # new # XXX:
+      self.board.pattern = self.pattern
 
     self.total_pattern_list()
     variable = tk.StringVar(self.root)
@@ -81,7 +86,8 @@ class PatternControllerDisplay(DisplayBase):
 
   def repeater(self):
     self.pattern.next_state()
-    self.board.enlighten()
+    self.board.enlighten()  # meta for flatarray and normal
+#    self.board.enlighten_flatarray()
     self.root.after(self.msecs, self.repeater)    # reschedule handler
 
   def run(self):

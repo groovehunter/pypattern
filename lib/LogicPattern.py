@@ -1,4 +1,5 @@
 from lib.LightPattern import LightPattern
+from lib.Light import Light
 
 
 class LogicPattern(LightPattern):
@@ -19,6 +20,14 @@ class LogicPattern(LightPattern):
         self.lights[c] = light
         c += 1
 
+    """
+    # tests without panels:
+    for p in range(0, 4):
+      for l in range(0, 4):
+        self.lights[c] = Light(c)
+        c += 1
+    """
+
     self.lights[16] = self.lights[0]
     self.lights[17] = self.lights[1]
     self.lights[18] = self.lights[2]
@@ -37,8 +46,9 @@ class LogicPattern(LightPattern):
 class PairedLightsCycling(LogicPattern):
   states_count = 16
   def initial_state(self):
-    self.board.panels['t'].set_pat('oo--')
-    self.set_panels_to_pat('rbl', '----')
+#    self.board.panels['t'].set_pat('oo--')
+#    self.set_panels_to_pat('rbl', '----')
+    pass
 
   def next_state(self):
     super().next_state()
@@ -49,7 +59,8 @@ class PairedLightsCycling(LogicPattern):
 class SingleDarkspotCycling(LogicPattern):
   states_count = 16
   def initial_state(self):
-    self.set_panels_to_pat('trbl', 'oooo')
+#    self.set_panels_to_pat('trbl', 'oooo')
+    pass
 
   def next_state(self):
     super().next_state()
@@ -59,7 +70,8 @@ class SingleDarkspotCycling(LogicPattern):
 class SingleLightCyclingLP(LogicPattern):
   states_count = 16
   def initial_state(self):
-    self.set_panels_to_pat('trbl', '----')
+    #self.set_panels_to_pat('trbl', '----')
+    pass
 
   def next_state(self):
     super().next_state()

@@ -96,3 +96,4 @@ class GameBoardGeneric(tk.Frame):
         y2 = y1 + self.size
         self.canvas.create_rectangle(x1, y1, x2, y2,
             outline=col_outline, fill=color, tags="square")
+

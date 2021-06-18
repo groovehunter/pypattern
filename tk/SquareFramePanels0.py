@@ -1,27 +1,56 @@
-from tk.BoardCanvas import GameBoard
-from tk.TkPanel import TkPanel
+from tk.BoardCanvasGeneric import GameBoardGeneric
+from tk.TkPanel0 import TkPanel
+from lib.GenericGeometry import GenericGeometry
+from lib.Light import LocatedLight
+import yaml
+import os
 
+class SquareFramePanels(GameBoardGeneric, GenericGeometry):
+  """ geometry is here 4 bars/panels in a square """
+  num_areas = 4
+  num_groups_in_area = 1
+  num_lights_in_group = 4
+  area_names = ['t', 'r', 'b', 'l']
 
-class SquareFramePanels(GameBoard):
 
   def __init__(self, parent):
-    GameBoard.__init__(self, parent)
+    GameBoardGeneric.__init__(self, parent, rows=6, columns=6)
+    #self.init_areas()
+    self.init_leds()
 
   def enlighten(self):
-    super().enlighten()
+    super().enlighten_flatarray()
     
-  def init_panels(self):
-    self.panels = {
-      't' : TkPanel(1, orientation='H'),
-      'r' : TkPanel(2, orientation='V'),
-      'b' : TkPanel(3, orientation='H', rev=True),
-      'l' : TkPanel(4, orientation='V', rev=True),
-    }
-    # offset is  row, col
-    self.panels['t'].offset = (0, 1)
-    self.panels['r'].offset = (1, 5)
-    self.panels['b'].offset = (5, 4)
-    self.panels['l'].offset = (4, 0)
+  def init_leds(self):
+    """ init flat array of hardware lights """
+    led = {}
+    for i in range(1, 17):
+      led[i] = LocatedLight(i)
+    self.led = led
+
+  def set_groups_in_areas(self):
+    for name in self.area_names:
+      #self
+      pass
+
+  def init_panels_yaml(self):
+#    print(os.path.dirname((__file__)))
+    cfg_file = os.path.dirname(__file__) + '/panels.yaml'
+    cfg = open(cfg_file, 'r')
+    panels = yaml.load(cfg) #, Loader=yaml.SafeLoader())
+    i = 1
+    for panel in panels:
+        for num in range(0, 4):
+#          self.get_coord_of_light_nr(lid, offset[pid], orientation, reverse)
+          (row, col) = panel['offset']
+          add = 1
+          if panel['reverse']:
+            add = -1
+          if panel['orientation'] == 'H':
+            self.led[i].position = (row, col + num*add)
+          if panel['orientation'] == 'V':
+            self.led[i].position = (row + num*add, col)
+          i += 1
 
   def mark_panels(self):
     """ draw a black border around the panel """

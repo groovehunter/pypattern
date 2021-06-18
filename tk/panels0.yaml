@@ -1,0 +1,58 @@
+# UR
+- name: UR_vu
+  offset: [2, 9]
+  orientation: V
+
+- name: UR_vl
+  offset: [5, 9]
+  orientation: V
+
+- name: UR_hl
+  offset: [7, 10]
+
+- name: UR_hr
+  offset: [7, 13]
+
+# LR
+- name: LR_hr
+  offset: [9, 13]
+
+- name: LR_hl
+  offset: [9, 10]
+
+- name: LR_vu
+  offset: [10, 9]
+  orientation: V
+
+- name: LR_vl
+  offset: [13, 9]
+  orientation: V
+
+
+- name: LL_vl
+  offset: [13, 7]
+  orientation: V
+
+- name: LL_vu
+  offset: [10, 7]
+  orientation: V
+
+- name: LL_hr
+  offset: [9, 6]
+
+- name: LL_hl
+  offset: [9, 3]
+
+
+- name: UL_hl
+  offset: [7, 3]
+
+- name: UL_hr
+  offset: [7, 6]
+  orientation: V
+
+- name: UL_vl
+  offset: [6, 7]
+
+- name: UL_vu
+  offset: [2, 7]
