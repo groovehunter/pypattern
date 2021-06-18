@@ -1,7 +1,7 @@
 import tkinter as tk
 
-class GameBoard(tk.Frame):
-    def __init__(self, parent, rows=6, columns=6, size=60, color1="white", color2="grey"):
+class GameBoardGeneric(tk.Frame):
+    def __init__(self, parent, rows=15, columns=15, size=30, color1="white", color2="grey"):
         '''size is the size of a square, in pixels'''
 
         self.rows = rows
@@ -28,10 +28,7 @@ class GameBoard(tk.Frame):
     def refresh2(self, event):
         self.set_sizes(event)
         self.create_grid()
-#        self.init_panels()
-#        self.init_panel_lights()
-#        self.enlighten()
-        self.mark_panels()
+#        self.mark_panels()
 
     def set_sizes(self, event):
         xsize = int((event.width-1) / self.columns)
@@ -41,9 +38,7 @@ class GameBoard(tk.Frame):
     def init(self):
         self.create_grid()
         self.init_panels()
-        self.init_panel_lights()
-#        self.enlighten()
-#        self.mark_panels()
+#        self.init_panel_lights()
 
     def create_grid(self):
         col_outline = "grey"
@@ -62,11 +57,18 @@ class GameBoard(tk.Frame):
         for i, panel in self.panels.items():
             panel.init_lights()
 
+    def enlighten_flatarray(self):
+      for i, led in self.led.items():
+#        print("enlighten %s", i)
+        self.led[i].state = self.pattern.lights[i].state
+        self.set_square_color_atpos(self.led[i].position, self.led[i].state)
+
     def enlighten(self):
-        #print("BCG 1 - enlighten in BoardCanvas")
-        for i, panel in self.panels.items():
-            for i, light in panel.lights.items():
-                self.set_square_color_atpos(light.position, light.state)
+      #print("BCG 2 - enlighten in BoardCanvasGeneric")
+      for i, panel in self.panels.items():
+        for i, light in panel.lights.items():
+          #self.led.state = light.state
+          self.set_square_color_atpos(light.position, light.state)
 
     def set_square_color(self, event):
         color = "yellow"
@@ -79,7 +81,6 @@ class GameBoard(tk.Frame):
             outline=col_outline, fill=color, tags="square")
 
     def set_square_color_atpos(self, pos, state):
-        #print("setting state %s at pos %s", state, pos)
         color = "grey"
         if state == 1:
             color = "yellow"

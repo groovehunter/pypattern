@@ -1,0 +1,20 @@
+
+- name: t
+  offset: [0, 1]
+  orientation: H
+  reverse: False
+
+- name: r
+  offset: [1, 5]
+  orientation: V
+  reverse: False
+
+- name: b
+  offset: [5, 4]
+  orientation: H
+  reverse: True
+
+- name: l
+  offset: [4, 0]
+  orientation: V
+  reverse: True
