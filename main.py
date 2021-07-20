@@ -38,7 +38,7 @@ async def run_pdc():
     while True:
         pdc.board.pattern.next_state()
         pdc.board.enlighten()
-        await uasyncio.sleep_ms(1200)
+        await uasyncio.sleep_ms(pdc.velocity*100)
         #if pdc.board.pattern.
         if pdc.board.pattern.uptime > 5:
             print('=== NEW PATTERN ====================')
@@ -51,4 +51,3 @@ server = loop.run_until_complete(factory)
 
 loop.create_task(run_pdc())
 loop.run_forever()
-

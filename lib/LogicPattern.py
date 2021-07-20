@@ -10,33 +10,13 @@ class LogicPattern(LightPattern):
 
   def subclass_init(self):
     """ initiate array of Lights,
-        version 1 were children of panels
-    """
-    self.lights = {}
-    c = 0
-    # init light array with auto increment index
-    for p, panel in self.board.panels.items():
-      for l, light in panel.lights.items():
-        self.lights[c] = light
-        c += 1
-
-    """
-    # tests without panels:
-    for p in range(0, 4):
-      for l in range(0, 4):
-        self.lights[c] = Light(c)
-        c += 1
-    """
-
-    self.lights[16] = self.lights[0]
-    self.lights[17] = self.lights[1]
-    self.lights[18] = self.lights[2]
-    self.count = 0
+        version 1 were children of panels """
+    self.init_light_array()
 
   def next_state(self):
     """ switching to next state by rising the leds index """
     self.count += 1
-    print('next PLC: ', self.count)
+#    print('next PLC: ', self.count)
     if self.count > self.states_count-1:
       print("reset counter")
       self.count = 0

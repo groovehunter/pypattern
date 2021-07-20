@@ -5,21 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:,">
     <style>
- {
-  background-color: #A0A0F0;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+body {
+  background-color: #c0c0d0;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
 }
 </style>
 <body>
 <h3><a href="/">Pattern Controller</a></h3>
+<a href="/velo/1">Set Speed 1</a>
+<a href="/velo/5">Set Speed 5</a>
+<a href="/velo/10">Set Speed 10</a>
+<a href="/velo/50">Set Speed 50</a>
+<form action="/set_velo/" method="GET">
+  <select name="velo">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+  </select>
+  <input type="submit" name="yeah" value="Send">
+</form>
 <ul>
 <li><a href="/pat/WindmillPattern">WindmillPattern</a></li>
 <li><a href="/pat/PairedLightsCycling">PairedLightsCycling</a></li>
 <li><a href="/pat/SingleDarkspotCycling">SingleDarkspotCycling</a></li>
 <li><a href="/pat/SingleLightCycling">SingleLightCycling</a></li>
 <li><a href="/pat/SingleLightCyclingLP">SingleLightCyclingLP</a></li>
-<li><a href="/pat/"></a></li>
+<li><a href="/pat/AllOnOff">AllOnOff</a></li>
+<li><a href="/pat/CyclingPanels">CyclingPanels</a></li>
+<li><a href="/pat/Middle_Edge_Cycling">Middle_Edge_Cycling</a></li>
+<li><a href="/pat/PanelsHorizontalVertical">PanelsHorizontalVertical</a></li>
+<li><a href="/pat/DarkPanelRotationPanelPattern">DarkPanelRotationPanelPattern</a></li>
+<li><a href="/pat/RotationPanelPattern">RotationPanelPattern</a></li>
 <li><a href="/pat/"></a></li>
 <li><a href="/pat/"></a></li>
 </ul>

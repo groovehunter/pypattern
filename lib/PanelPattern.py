@@ -6,9 +6,11 @@ class PanelPattern(LightPattern):
   states_count = 4
 
   def subclass_init(self):
+    self.init_light_array()
+
     self.panels = {}
     for loc_index, panel in self.board.panels.items():
-      print("subclass_init: panel.pids: ", panel.pid)
+      #print("subclass_init: panel.pids: ", panel.pid)
       self.panels[panel.pid] = panel
       self.panels[panel.pid].clear()
     self.panels[5] = self.panels[1]
@@ -25,7 +27,7 @@ class PanelPattern(LightPattern):
 
 
 ### Subclasses
-
+# XXX rename to RotatingPanel
 class RotationPanelPattern(PanelPattern):
   states_count = 4
   def next_state(self):
@@ -38,6 +40,7 @@ class RotationPanelPattern(PanelPattern):
     self.panels[self.count].full()
     #self.panels[self.count+1].clear()
 
+# XXX rename to RotatingDarkPanel
 class DarkPanelRotationPanelPattern(PanelPattern):
   states_count = 4
   def initial_state(self):
@@ -63,8 +66,5 @@ class AddedPanels(PanelPattern):
   def next_state(self):
     super().next_state()
     self.panels[self.count].full()
-    if self.panels[self.count].is_full():
-      self.panels[self.count].clear()
-
-
-      
+#    if self.panels[self.count].is_full():
+#        self.panels[self.count].clear()

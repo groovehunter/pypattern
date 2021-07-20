@@ -8,7 +8,6 @@ class PdcSingleton(object):
 
   def init(self):
     print("init PDC")
+    self.velocity = 5
     if not hasattr(self, 'board'):
         self.board = Esp32Board()
-        
-        

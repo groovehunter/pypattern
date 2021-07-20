@@ -10,7 +10,7 @@ class NextStatePattern(LightPattern):
   def next_state(self):
     #super().next_state()
     self.count += 1
-    print('next PLC: ', self.count)
+    print('NSP - next PLC: ', self.count)
     if self.count > self.states_count-1:
       print("reset counter")
       self.count = 0

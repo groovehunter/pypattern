@@ -2,6 +2,7 @@
 from LogicPattern import *
 from ExplicitStatesPattern import *
 from NextStatePattern import *
+from PanelPattern import *
 #import LogicPattern
 #import ExplicitStatesPattern
 #import NextStatePattern

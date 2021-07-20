@@ -56,12 +56,21 @@ async def set_pattern(pat):
     suc = pdc.board.set_pattern(pat_name)
     return suc
 
+async def set_velo(item):
+  velo = int(item.decode())
+  if not velo:  velo= 5
+  print(velo)
+  pdc = PDC()
+  pdc.velocity = velo
+  return True
+
 routes = {
     b'/': route('/www/page.htm'),
     b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
     }
 rpat = {
     r'/pat/(.*)': set_pattern,
+    r'/velo/(.*)': set_velo,
     }
 
 async def parse_route(route, writer):
@@ -91,7 +100,7 @@ async def http_server(reader, writer):
     print("route: {}".format(route.decode('utf-8')))
 
     suc = await parse_route(route, writer)
-    
+
     if not suc:
         writer.write(b'HTTP/1.0 404 Not Found\r\n')
         writer.write(b'\r\n')

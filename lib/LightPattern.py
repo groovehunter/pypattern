@@ -9,12 +9,35 @@ class LightPattern(object):
     self.count = 1
     self.board = board
     self.subclass_init()
+    self.uptime = 0
 
   def subclass_init(self):
     raise NotImplementedError
 
   def next_state(self):
     raise NotImplementedError
+
+  def init_light_array(self):
+    """
+    # tests without panels:
+    for p in range(0, 4):
+      for l in range(0, 4):
+        self.lights[c] = Light(c)
+        c += 1
+    """
+
+    self.lights = {}
+    c = 0
+    # init light array with auto increment index
+    for p, panel in self.board.panels.items():
+      for l, light in panel.lights.items():
+        self.lights[c] = light
+        c += 1
+    self.lights[16] = self.lights[0]
+    self.lights[17] = self.lights[1]
+    self.lights[18] = self.lights[2]
+    self.count = 0
+
 
   def set_all_panels(self, pat):
     for i, panel in self.board.panels.items():
