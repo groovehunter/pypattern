@@ -10,7 +10,7 @@ class Panel:
     self.size = size
 
   def init_lights(self):
-    for i in range(0, self.size):
+    for i in range(1, self.size+1):
       self.lights[i] = Light(i)
 
   def clear(self):
@@ -21,10 +21,10 @@ class Panel:
       val.state = 1
 
   def set_middle(self):
-    self.lights[0].state = 0
-    self.lights[1].state = 1
+    self.lights[1].state = 0
     self.lights[2].state = 1
-    self.lights[3].state = 0
+    self.lights[3].state = 1
+    self.lights[4].state = 0
 
   def viceversa(self):
     for key, light in self.lights.items():
@@ -44,11 +44,11 @@ class Panel:
     """ set light state according to a graphical representation
         i.e. 'oooo' and '--oo'
     """
-    for i, char in enumerate(pat):
+    for i, char in enumerate(pat):  # i starts from 0
       if char=='o':
-        self.lights[i].state = 1
+        self.lights[i+1].state = 1
       if char=='-':
-        self.lights[i].state = 0
+        self.lights[i+1].state = 0
 
   def is_full(self):
     assume = True

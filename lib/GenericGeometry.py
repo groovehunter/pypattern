@@ -1,6 +1,7 @@
 
 from lib.LightGroup import LightGroup
 from lib.Area import Area
+from lib.Light import LocatedLight, CoordLight
 
 
 class GenericGeometry:
@@ -25,3 +26,11 @@ class GenericGeometry:
     for ia in range(1, self.num_areas):
       for ig in range(1, self.num_groups_in_area):
         self.areas[ia].groups[ig] = LightGroup(ig)
+
+  def init_leds(self):
+    """ init flat array of hardware lights """
+    led = {}
+    for i in range(1, self.num_lights_total+1):
+#      led[i] = LocatedLight(i)
+      led[i] = CoordLight(i)
+    self.led = led

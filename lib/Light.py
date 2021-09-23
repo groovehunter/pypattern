@@ -18,4 +18,18 @@ class LocatedLight(Light):
     self.position = position
   def __repr__(self):
     (x, y) = self.position
-    return "Light (%i, %i): %i" %(x, y, self.state)
+    return "Light located row/col (%i, %i): %i" %(x, y, self.state)
+
+
+class CoordLight(Light):
+    """ has coordinates position """
+    def __init__(self, lid, position=None):
+      Light.__init__(self, lid)
+      self.position = position
+    def __repr__(self):
+      if self.position:
+        (x, y) = self.position
+        total = "Light (%i, %i): %i" %(x, y, self.state)
+      else:
+        total = "Light coord. not set, state is %i" %(self.state)
+      return total

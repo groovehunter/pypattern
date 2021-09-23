@@ -6,10 +6,12 @@ class SquareFramePanels(GameBoard):
 
   def __init__(self, parent):
     GameBoard.__init__(self, parent)
+    self.num_panels = 4
+    self.num_lights_total = 16
 
   def enlighten(self):
     super().enlighten()
-    
+
   def init_panels(self):
     self.panels = {
       't' : TkPanel(1, orientation='H'),

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 
 import sys
 from os import getcwd, pardir
@@ -77,7 +78,7 @@ class PatternControllerDisplay(DisplayBase):
     self.root.after(1000, self.update_clock)
 
   def init(self):
-    self.msecs = 2000
+    self.msecs = 500
     self.board.init_keys()
     self.board.init()
 

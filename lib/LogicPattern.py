@@ -12,19 +12,21 @@ class LogicPattern(LightPattern):
     """ initiate array of Lights,
         version 1 were children of panels """
     self.init_light_array()
+    #self.init_light_array_2()
 
   def next_state(self):
     """ switching to next state by rising the leds index """
     self.count += 1
 #    print('next PLC: ', self.count)
+    self.states_count = self.board.num_lights_total
     if self.count > self.states_count-1:
       print("reset counter")
-      self.count = 0
+      self.count = 1
 
 # Pattern subclasses
 
 class PairedLightsCycling(LogicPattern):
-  states_count = 16
+
   def initial_state(self):
 #    self.board.panels['t'].set_pat('oo--')
 #    self.set_panels_to_pat('rbl', '----')

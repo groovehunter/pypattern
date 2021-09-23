@@ -1,7 +1,7 @@
 from tk.BoardCanvasGeneric import GameBoardGeneric
 from tk.TkPanel0 import TkPanel
 from lib.GenericGeometry import GenericGeometry
-from lib.Light import LocatedLight
+#from lib.Light import LocatedLight
 import yaml
 import os
 
@@ -12,21 +12,15 @@ class SquareFramePanels(GameBoardGeneric, GenericGeometry):
   num_lights_in_group = 4
   area_names = ['t', 'r', 'b', 'l']
 
-
   def __init__(self, parent):
     GameBoardGeneric.__init__(self, parent, rows=6, columns=6)
     #self.init_areas()
     self.init_leds()
+    self.num_panels = 4
+    self.num_lights_total = 16
 
   def enlighten(self):
     super().enlighten_flatarray()
-    
-  def init_leds(self):
-    """ init flat array of hardware lights """
-    led = {}
-    for i in range(1, 17):
-      led[i] = LocatedLight(i)
-    self.led = led
 
   def set_groups_in_areas(self):
     for name in self.area_names:
@@ -40,7 +34,7 @@ class SquareFramePanels(GameBoardGeneric, GenericGeometry):
     panels = yaml.load(cfg) #, Loader=yaml.SafeLoader())
     i = 1
     for panel in panels:
-        for num in range(0, 4):
+        for num in range(1, 5):
 #          self.get_coord_of_light_nr(lid, offset[pid], orientation, reverse)
           (row, col) = panel['offset']
           add = 1
