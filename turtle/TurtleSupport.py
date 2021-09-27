@@ -7,6 +7,7 @@ class TurtleSupport:
     self.screen = turtle.getscreen()
     turtle.tracer(0,0)
     self.screen.bgcolor("black")
+    self.color = "blue"
 
   def update_board(self):
     turtle.ht()
@@ -16,36 +17,8 @@ class TurtleSupport:
     pos = self.led[i].position
     self.t.pu()
     self.t.setpos(pos)
-    color = "blue"
+    color = self.color
     if self.led[i].state:
       color = "yellow"
     self.t.pd()
     self.t.dot(30, color)
-
-  def calc_prepare_coord(self):
-    t = self.t
-    sz = self.size
-    n = 1 # start as lights with 1
-    dots = {}
-    t.penup()
-    t.goto(sz, 0)
-
-    t.pd()
-    t.setheading(240)
-    for i in range(6):
-      t.fd(sz*0.3)
-
-      dots[n] = t.pos()
-      n += 1
-
-      t.fd(sz*0.4)
-
-      dots[n] = t.pos()
-      n += 1
-
-      t.fd(sz*0.3)
-
-      t.rt(60)
-
-    #t.pd()
-    return dots

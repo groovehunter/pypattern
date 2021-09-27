@@ -1,15 +1,21 @@
 from time import sleep
 from Panel import Panel
+from GenericGeometry import GenericGeometry
 from Esp32Light import Esp32Light
 from DisplayBase_uP import DisplayBase
 from ucollections import OrderedDict
 import uasyncio as asyncio
 
-class Esp32Board(DisplayBase):
+class Esp32Board(DisplayBase, GenericGeometry):
+    area_names = ['t', 'ru', 'rl', 'b', 'll', 'lu']
     def __init__(self):
+        self.num_panels = 6
+        self.num_lights_total = 12
+        self.num_lights_in_group = 2
+
         print("init board")
         led = {}
-        for i in range(1, 17):
+        for i in range(1, self.num_lights_total+1):
           led[i] = Esp32Light(i)
         self.led = led
         print("init led array: %s", sorted(led))
@@ -74,7 +80,7 @@ class Esp32Board(DisplayBase):
           #print(panel.pid)
           #print(panel)
           for i, light in panel.lights.items():
-            led_nr = ((panel.pid-1) * 4) + (i +1)
+            led_nr = ((panel.pid-1) * self.num_lights_in_group) + (i +1)
             #val = self.pattern.lights[led_nr].state
 #            print(i, led_nr, val, self.led[led_nr].pin)
             self.led[led_nr].pin.value(light.state)

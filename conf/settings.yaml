@@ -1,0 +1,23 @@
+global:
+  columns: 6
+  rows: 6
+  size: 200
+  color1: blue
+
+hexagon:
+  area_names: [t, ru, rl, b, ll, lu]
+  num_lights_total: 12
+  num_areas: 6
+  num_panels: 6
+  num_lights_in_group: 2
+  klass: HexagonBoard
+
+square:
+  area_names: [t, r, b, l]
+  num_lights_total: 16
+  num_areas: 4
+  num_panels: 4
+  num_lights_in_group: 4
+  klass: SquareBoard
+
+

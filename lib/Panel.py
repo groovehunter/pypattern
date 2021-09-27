@@ -1,4 +1,4 @@
-from lib.Light import Light
+from lib.Light import Light, CoordLight
 
 PSIZE = 4
 
@@ -57,3 +57,9 @@ class Panel:
       if not light.state:
         return False
     return assume
+
+
+class PanelCoordLights(Panel):
+  def init_lights(self):
+    for i in range(1, self.size+1):
+      self.lights[i] = CoordLight(i)

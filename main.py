@@ -17,7 +17,7 @@ if sys.platform == 'esp32':
       if abs_path not in sys.path:
           sys.path.append(abs_path)
 
-#print(sys.path)
+print(sys.path)
 
 #from Esp32Board import Esp32Board
 from web import http_server
@@ -28,7 +28,7 @@ from pdc import PdcSingleton as PDC
 pdc = PDC()
 pdc.init()
 pdc.board.init()
-pat = 'SingleDarkspotCycling'
+pat = 'PairedLightsCycling'
 success = pdc.board.set_pattern(pat)
 
 

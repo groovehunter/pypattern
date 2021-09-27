@@ -17,17 +17,17 @@ from lib.LogicPattern import *
 from lib.ExplicitStatesPattern import *
 from lib.PanelPattern import *
 from lib.NextStatePattern import *
+import yaml
 
 from lib.DisplayBase import DisplayBase
-from CoordBasedBoard import HexagonBoard
+from CoordBasedBoard import HexagonBoard, SquareBoard
 
 
 class PatternControllerDisplay(DisplayBase):
   """ make pattern of pattern controller visible """
 
-  def __init__(self):
-    self.board = HexagonBoard()
-    self.board.ctrl=self
+  def __init__(self, boardname=None):
+    self.boardname = boardname
 
   def set_pattern(self):
 #    pat_name = 'PairedLightsCycling'
@@ -39,9 +39,26 @@ class PatternControllerDisplay(DisplayBase):
 
 
   def init(self):
+    cfgfile = open(parent + '/conf/settings.yaml')
+    cfg = yaml.load(cfgfile)
+    print(cfgfile)
+#    print(cfgfile)
+    self.boardcfg = cfg[self.boardname]
+    constructor = globals()[self.boardcfg['klass']]
+    self.board = constructor()
+    self.board.ctrl=self
+    self.board.cfg = cfg['global']
+
+    self.configure()
     self.msecs = 2000
     self.board.init()
 
+  def configure(self):
+    for attr, val in self.boardcfg.items():
+      setattr(self.board, attr, val)
+    print(self.board.num_lights_total)
+    for attr, val in self.board.cfg.items():
+      setattr(self.board, attr, val)
 
   def change_board(self):
     self.board.enlighten()
@@ -56,12 +73,11 @@ class PatternControllerDisplay(DisplayBase):
 
 
 if __name__ == "__main__":
-  pcd = PatternControllerDisplay()
+  boardname = 'square'
+  if len(sys.argv) > 1:
+    boardname = sys.argv[1]
 
-#  t = turtle.getturtle()
-  #screen = turtle.getscreen()
-  # WARNINGG urtle.tracer(0,0)
-#  turtle.update()
+  pcd = PatternControllerDisplay(boardname=boardname)
   pcd.init()
   pcd.set_pattern()
   pcd.run()

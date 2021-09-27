@@ -3,14 +3,7 @@ from Light import Light
 
 import sys
 if sys.platform == 'linux':
-  class Pin:
-    OUT = None
-    """ dummy pin class for posix """
-    def __init__(self, pid, mode):
-      pass
-    def on(self): pass
-    def off(self): pass
-    def value(self, val): pass
+  from esp32.Pin import DummyPin as Pin
 else:
   from machine import Pin
   import uos
