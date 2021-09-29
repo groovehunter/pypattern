@@ -1,4 +1,7 @@
 import turtle
+from BoardBase import GenericBoard
+from DisplayBase import DisplayBase
+
 
 class TurtleSupport:
   """ display klass for support of turtle lib """
@@ -22,3 +25,7 @@ class TurtleSupport:
       color = "yellow"
     self.t.pd()
     self.t.dot(30, color)
+
+
+class TurtleBoard(GenericBoard, TurtleSupport, DisplayBase):
+  pass

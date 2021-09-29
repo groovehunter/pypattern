@@ -11,9 +11,12 @@ else:
 
 class GenericGeometry:
   """ a spatial hierarchy """
-  num_areas = 0
-  num_groups_in_area = 0
-  num_lights_in_group = 1
+#  num_lights_total = 0
+#  num_areas = 0
+#  num_panels = 0
+#  num_groups_in_area = 0
+#  num_lights_in_group = 1
+#  area_names = []
 
   def get_subarea(self):
     pass
@@ -26,7 +29,7 @@ class GenericGeometry:
       pid += 1
       print(panels[pname])
     self.panels = OrderedDict(panels)
-
+    print(self.panels)
 #    for i,led in self.led.items():
 #      pid = int(i / 2)
 #      self.panels[pid].lights[li] = Light(li)
@@ -51,13 +54,14 @@ class GenericGeometry:
       panel.init_lights()
 
   def init_leds(self):
-    """ init flat array of hardware lights """
+    """ init flat array of hardware lights, overwrite in hardware """
+    # template for subclasses
     led = {}
     for i in range(1, self.num_lights_total+1):
+      # USE HERE suitable Light klass
 #      led[i] = LocatedLight(i)
       led[i] = CoordLight(i)
     self.led = led
-    print(led)
 
 
   def enlighten_flatarray(self):
@@ -67,8 +71,12 @@ class GenericGeometry:
       # in display superclass
       self.enlight_led(i)
 
-    # in display superclass
+    # in display superclass resp board subclass
     self.update_board()
 
   def enlighten(self):
     self.enlighten_flatarray()
+
+  def all_on(self):
+    for i, panel in self.panels.items():
+      panel.full()

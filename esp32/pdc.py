@@ -1,4 +1,5 @@
 from Esp32Board import Esp32Board
+#from BoardBase import GenericBoard
 
 class PdcSingleton(object):
   def __new__(cls):
@@ -10,4 +11,5 @@ class PdcSingleton(object):
     print("init PDC")
     self.velocity = 5
     if not hasattr(self, 'board'):
+        #self.board = GenericBoard()
         self.board = Esp32Board()

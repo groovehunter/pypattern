@@ -8,7 +8,7 @@ gc.collect()
 #from time import sleep
 import sys, os
 
-syspath = ['esp32', 'www', 'http', 'lib']
+syspath = ['esp32', 'www', 'http', 'lib', 'conf']
 if sys.platform == 'esp32':
   for p in syspath:
       slashed_p = '/'+p
@@ -27,6 +27,8 @@ from pdc import PdcSingleton as PDC
 
 pdc = PDC()
 pdc.init()
+pdc.board.boardname = 'square'
+pdc.board.load_py_conf()
 pdc.board.init()
 pat = 'PairedLightsCycling'
 success = pdc.board.set_pattern(pat)

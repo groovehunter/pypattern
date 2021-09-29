@@ -31,5 +31,5 @@ class CoordLight(Light):
         (x, y) = self.position
         total = "Light (%i, %i): %i" %(x, y, self.state)
       else:
-        total = "Light coord. not set, state is %i" %(self.state)
+        total = "coord n/a: %i" %(self.state)
       return total

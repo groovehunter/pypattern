@@ -1,8 +1,9 @@
 #import turtle
 from lib.GenericGeometry import GenericGeometry
+from lib.BoardBase import BoardBase
 from lib.Panel import Panel
 from lib.Light import Light, CoordLight
-from TurtleSupport import TurtleSupport
+from TurtleSupport import TurtleSupport, TurtleBoard
 from time import sleep
 import logging
 
@@ -12,25 +13,28 @@ class CoordSupport:
   """ a board with coordinates for lights and hardware """
   pass
 
-class CoordTurtleBoard(TurtleSupport, CoordSupport):
+class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
   """ coordinates (x,y) support, painting with turtle """
   def __init__(self):
     TurtleSupport.__init__(self)
 
-  def init(self):
-    self.coords = self.calc_prepare_coord()
-    self.panels = {}
-    logger.debug(self.coords)
+  def subclass_init(self):
+    print("subklass_init")
+    formklassname = self.boardname.capitalize() + 'Board'
+    constructor = globals()[formklassname]
+    self.formklass = constructor()
+    self.formklass.size = self.cfg['size']
+    self.coords = self.formklass.calc_prepare_coord()
+    print(self.coords)
+
     self.init_leds()
     n = 1
-    for i in self.led:
-      self.led[i].position = self.coords[n]
+
+    for i, led in self.led.items():
+      led.position = self.coords[n]
+
       n += 1
-#    print(self.led)
-    self.init_areas()
-    self.init_groups()
-    self.init_panels()
-    self.init_panel_lights()
+    print(self.led)
     #self.create_grid()
 
   def create_grid(self):
@@ -68,7 +72,6 @@ class SquareBoard(CoordTurtleBoard, GenericGeometry):
     t.setheading(270)
 
     for i in range(4):
-
       for y in range(4):
         dots[n] = t.pos()
         n += 1
@@ -77,17 +80,11 @@ class SquareBoard(CoordTurtleBoard, GenericGeometry):
 
       t.rt(90)
       t.fd(sz)
-
-    print(dots)
     return dots
 
 
 class HexagonBoard(CoordTurtleBoard, GenericGeometry):
   """ a board based on coord./turtle """
-  color1 = "blue"
-  rows = 6
-  columns = 6
-  size = 200
 
   def calc_prepare_coord(self):
     t = self.t
@@ -115,4 +112,25 @@ class HexagonBoard(CoordTurtleBoard, GenericGeometry):
       t.rt(60)
 
     #t.pd()
+    return dots
+
+class TriangleBoard(CoordTurtleBoard, GenericGeometry):
+  def calc_prepare_coord(self):
+    size = self.size / 4
+    dots = {}
+    n = 1
+    t = self.t
+    t.goto(0, 2*size)
+    t.setheading(300)
+    for pnr in range(self.num_panels+1):
+      t.dot(10, self.color1)
+      t.fd(size)
+      for lnr in range(self.num_lights_in_group):
+        dots[n] = t.pos()
+        n += 1
+        t.fd(size)
+
+      t.rt(120)
+
+    t.fd(size)
     return dots

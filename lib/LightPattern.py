@@ -10,7 +10,7 @@ class LightPattern(object):
     self.lights = {}
     self.states = []
     self.count = 1
-    self.subclass_init()
+#    self.subclass_init()   # board.led not ready
     self.uptime = 0
 
   def subclass_init(self):
@@ -36,15 +36,19 @@ class LightPattern(object):
     self.lights = {}
     c = 1
     # init light array with auto increment index ## MOVE TO BOARD!
+    print('init_light_array')
+    print(self.board.panels)
     for p, panel in self.board.panels.items():
       for l, light in panel.lights.items():
         self.lights[c] = light
         c += 1
     n = self.board.num_lights_total
     # make endless chain -
+    print(self.lights)
     self.lights[n+1] = self.lights[1]
     self.lights[n+2] = self.lights[2]
     self.count = 0
+    print(self.lights)
 
 
   def set_all_panels(self, pat):
