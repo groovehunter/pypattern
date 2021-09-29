@@ -35,7 +35,8 @@ class Panel:
   def __repr__(self):
     s = "Panel " + str(self.pid) + " "
     for i, light in self.lights.items():
-      s += str(light.state)
+      s += str(int(light.state))
+      s += ' '
       #s+= light.__repr__()
     #s += str(self.lights)
     return s

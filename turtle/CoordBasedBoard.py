@@ -24,6 +24,8 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     constructor = globals()[formklassname]
     self.formklass = constructor()
     self.formklass.size = self.cfg['size']
+    self.formklass.num_panels = self.num_panels
+    self.formklass.num_lights_in_group = self.num_lights_in_group
     self.coords = self.formklass.calc_prepare_coord()
     print(self.coords)
 
@@ -34,7 +36,8 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
       led.position = self.coords[n]
 
       n += 1
-    print(self.led)
+    print("CTB - subclass_init")
+    #print(self.led)
     #self.create_grid()
 
   def create_grid(self):
@@ -59,8 +62,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
           t.fd(size)
           t.rt(90)
 
-class SquareBoard(CoordTurtleBoard, GenericGeometry):
-
+class SquareBoard(TurtleSupport):
   def calc_prepare_coord(self):
     t = self.t
     sz = self.size / 4
@@ -82,9 +84,42 @@ class SquareBoard(CoordTurtleBoard, GenericGeometry):
       t.fd(sz)
     return dots
 
+class OctagonBoard(TurtleSupport):
+  def calc_prepare_coord(self):
+    print("Octagon")
+    t = self.t
+    sz = self.size
+    n = 1 # start as lights with 1
+    dots = {}
+    t.penup()
+    t.goto(sz, 0)
+    t.pd()
+    t.setheading(240)
+    for i in range(8):
 
-class HexagonBoard(CoordTurtleBoard, GenericGeometry):
+      t.fd(sz*0.3)
+      dots[n] = t.pos()
+      n += 1
+      t.fd(sz*0.4)
+      dots[n] = t.pos()
+      n += 1
+      t.fd(sz*0.3)
+
+      t.rt(60)
+
+    #t.pd()
+    print(n)
+    return dots
+
+class HexagonBoard(TurtleSupport):
   """ a board based on coord./turtle """
+  def calc_prepare_coord(self):
+    t = self.t
+    sz = self.size
+    n = 1 # start as lights with 1
+    dots = {}
+    t.penup()
+    t.goto(sz, 0)
 
   def calc_prepare_coord(self):
     t = self.t
@@ -114,7 +149,7 @@ class HexagonBoard(CoordTurtleBoard, GenericGeometry):
     #t.pd()
     return dots
 
-class TriangleBoard(CoordTurtleBoard, GenericGeometry):
+class TriangleBoard(TurtleSupport):
   def calc_prepare_coord(self):
     size = self.size / 4
     dots = {}

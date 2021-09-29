@@ -27,7 +27,7 @@ class GenericGeometry:
     for pname in self.area_names:
       panels[pname] = PanelCoordLights(pid, size=self.num_lights_in_group)
       pid += 1
-      print(panels[pname])
+      #print(panels[pname])
     self.panels = OrderedDict(panels)
     print(self.panels)
 #    for i,led in self.led.items():
@@ -67,6 +67,7 @@ class GenericGeometry:
   def enlighten_flatarray(self):
     #print(self.pattern.lights)
     for i, led in self.led.items():
+      #print(self.pattern.lights[i].state)
       self.led[i].state = self.pattern.lights[i].state
       # in display superclass
       self.enlight_led(i)

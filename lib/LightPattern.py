@@ -19,6 +19,22 @@ class LightPattern(object):
   def next_state(self):
     raise NotImplementedError
 
+  def init_panels_array(self):
+    print("init_panels_array")
+    print(self.board.panels)
+    n = self.board.num_panels
+    c = 1
+    for i, panel in self.board.panels.items():
+      self.panels[c] = panel
+      c += 1
+    #for c in range(1, n+1):
+    #  print(c)
+    #  self.panels[c] = self.board.panels[c]
+    # make endless chain -
+    self.panels[n+1] = self.panels[1]
+    self.panels[n+2] = self.panels[2]
+    #print(self.lights)
+
   def init_light_array_2(self):
     """ simple copy reference to flat light array of board """
     n = self.board.num_lights_total

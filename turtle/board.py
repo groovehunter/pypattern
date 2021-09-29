@@ -21,7 +21,7 @@ import yaml
 
 from lib.DisplayBase import DisplayBase
 from CoordBasedBoard import * # HexagonBoard, SquareBoard
-from lib.BoardBase import GenericBoard
+from lib.GenericBoard import GenericBoard
 from TurtleSupport import TurtleBoard
 
 class PatternControllerDisplay(DisplayBase):
@@ -32,12 +32,14 @@ class PatternControllerDisplay(DisplayBase):
     pass
 
   def set_pattern(self):
-    pat_name = 'PairedLightsCycling'
-#    pat_name =  'RotationPanelPattern'
+#    pat_name = 'PairedLightsCycling'
+    pat_name =  'RotationPanelPattern'
     constructor = globals()[pat_name]
     self.board.pattern = constructor(self.board)
     self.board.pattern.initial_state()
-    self.board.pattern.init_light_array()
+    #self.board.pattern.init_light_array()
+    self.board.pattern.subclass_init()
+
 
   def set_board(self):
 #    self.board = GenericBoard()
@@ -51,7 +53,9 @@ class PatternControllerDisplay(DisplayBase):
     self.msecs = 2000
 
   def change_board(self):
+    #print("change_board")
     self.board.enlighten()
+    self.board.update_board()
     #self.pattern.state_cur.__repr__()
 
   def run(self):

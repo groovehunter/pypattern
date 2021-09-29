@@ -3,9 +3,12 @@ from lib.LightPattern import LightPattern
 
 class PanelPattern(LightPattern):
   """ pattern with complete panel changes """
+  panels = {}
+  
+  def subclass_init(self):  # XXX TODO unused
+    #self.init_light_array()
+    self.init_panels_array()
 
-  def subclass_init(self):
-    self.init_light_array()
     n = self.board.num_panels
     print(self.states_count)
     self.panels = {}

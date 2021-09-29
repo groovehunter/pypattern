@@ -10,16 +10,25 @@ else:
   CONFIG_PATH = ROOT_DIR + '/configuration.conf'
 
 
-boardname = 'hexagon'
+boardname = 'square'
 
 global_conf = {
-  'boardname': 'hexagon',
-  'size': 100,
+  'boardname': boardname,
+  'size': 150,
 }
 
 
 board_conf = {
-  'hexagon':
+  'octagon':
+    {
+      'num_lights_total': 16,
+      'num_areas': 8,
+      'num_panels': 8,
+      'num_lights_in_group': 2,
+      'area_names': ['rtu', 'rtl', 'rbu', 'rbl', 'lbl', 'lbu', 'ltl', 'ltu']
+    },
+
+   'hexagon':
     {
       'num_lights_total': 12,
       'num_areas': 6,
@@ -27,6 +36,7 @@ board_conf = {
       'num_lights_in_group': 2,
       'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
     },
+
     'triangle':
     {
       'num_lights_total': 12,
@@ -35,6 +45,7 @@ board_conf = {
       'num_lights_in_group': 4,
       'area_names': ['r', 'b', 'l']
     },
+
     'square':
     {
       'num_lights_total': 16,

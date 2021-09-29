@@ -46,17 +46,3 @@ class BoardBase:
 
   def subclass_init(self):
     raise NotImplementedError
-
-
-class GenericBoard(BoardBase, GenericGeometry, DisplayBase):
-  pass
-
-  def subclass_init(self):
-    pass
-
-  def enlight_led(self, i):
-    pass
-    #raise NotImplementedError
-
-  def update_board(self):
-    pass
