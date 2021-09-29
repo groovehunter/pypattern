@@ -30,9 +30,6 @@ class GenericGeometry:
       #print(panels[pname])
     self.panels = OrderedDict(panels)
     print(self.panels)
-#    for i,led in self.led.items():
-#      pid = int(i / 2)
-#      self.panels[pid].lights[li] = Light(li)
 
   def init_areas(self):
     areas = {}
@@ -67,16 +64,28 @@ class GenericGeometry:
   def enlighten_flatarray(self):
     #print(self.pattern.lights)
     for i, led in self.led.items():
-      #print(self.pattern.lights[i].state)
+      print(self.pattern.lights[i].state)
+
       self.led[i].state = self.pattern.lights[i].state
       # in display superclass
       self.enlight_led(i)
-
     # in display superclass resp board subclass
     self.update_board()
 
+  def enlighten_panel(self):
+    for i, panel in self.panels.items():
+      c = (panel.pid-1)*self.num_lights_in_group + 1
+      #print(panel.pid, c)
+      for i, light in panel.lights.items():
+        self.led[c].state = light.state
+        self.enlight_led(c)
+        c += 1
+    self.update_board()
+
   def enlighten(self):
-    self.enlighten_flatarray()
+    # if self.pattern.klass == 'PanelPattern' etc...
+#    self.enlighten_flatarray()
+    self.enlighten_panel()
 
   def all_on(self):
     for i, panel in self.panels.items():

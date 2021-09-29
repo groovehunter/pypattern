@@ -7,10 +7,12 @@ from LogicPattern import *
 from PanelPattern import *
 from ExplicitStatesPattern import *
 from NextStatePattern import *
+from SynchronousPanelsPattern import *
 import LogicPattern
 import ExplicitStatesPattern
 import NextStatePattern
 import PanelPattern
+import SynchronousPanelsPattern
 
 import random
 

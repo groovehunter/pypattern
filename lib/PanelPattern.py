@@ -4,11 +4,14 @@ from lib.LightPattern import LightPattern
 class PanelPattern(LightPattern):
   """ pattern with complete panel changes """
   panels = {}
-  
+
   def subclass_init(self):  # XXX TODO unused
     #self.init_light_array()
     self.init_panels_array()
+    self.init_pattern_panels()
+    # XXX self.states_count = self.board.num_panels
 
+  def init_pattern_panels(self):
     n = self.board.num_panels
     print(self.states_count)
     self.panels = {}
@@ -18,6 +21,7 @@ class PanelPattern(LightPattern):
       self.panels[panel.pid].clear()
     self.panels[n+1] = self.panels[1]
     self.panels[n+2] = self.panels[2]
+    self.panels[n+3] = self.panels[3]
 
   def initial_state(self):
     pass
@@ -63,6 +67,7 @@ class SwitchingPanels(PanelPattern):
     self.panels[self.count+2].full()
     self.panels[self.count+1].clear()
     self.panels[self.count+3].clear()
+
 
 class AddedPanels(PanelPattern):
   states_count = 4

@@ -17,6 +17,7 @@ from lib.LogicPattern import *
 from lib.ExplicitStatesPattern import *
 from lib.PanelPattern import *
 from lib.NextStatePattern import *
+from lib.SynchronousPanelsPattern import *
 import yaml
 
 from lib.DisplayBase import DisplayBase
@@ -32,8 +33,14 @@ class PatternControllerDisplay(DisplayBase):
     pass
 
   def set_pattern(self):
-#    pat_name = 'PairedLightsCycling'
-    pat_name =  'RotationPanelPattern'
+    pat_name = 'PairedLightsCycling'
+#    pat_name =  'RotationPanelPattern'
+#    pat_name = 'DarkPanelRotationPanelPattern'
+#    pat_name = 'SwitchingPanels'
+#    pat_name = 'SingleLightCycling'
+    pat_name = 'Windmill'
+#    for i, s in sorted(globals().items()):
+#      print(i, s)
     constructor = globals()[pat_name]
     self.board.pattern = constructor(self.board)
     self.board.pattern.initial_state()

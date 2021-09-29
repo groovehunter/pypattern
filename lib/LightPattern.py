@@ -6,7 +6,7 @@ class LightPattern(object):
   def __init__(self, board):
     #self.states_count = states_count
     self.board = board
-    self.states_count = self.board.num_panels
+#    self.states_count = self.board.num_panels
     self.lights = {}
     self.states = []
     self.count = 1

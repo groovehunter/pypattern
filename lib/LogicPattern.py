@@ -13,12 +13,12 @@ class LogicPattern(LightPattern):
         version 1 were children of panels """
     self.init_light_array()
     #self.init_light_array_2()
+    self.states_count = self.board.num_lights_total
 
   def next_state(self):
     """ switching to next state by rising the leds index """
     self.count += 1
 #    print('next PLC: ', self.count)
-    self.states_count = self.board.num_lights_total
     if self.count > self.states_count-1:
       print("reset counter")
       self.count = 1

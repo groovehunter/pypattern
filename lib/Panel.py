@@ -45,6 +45,7 @@ class Panel:
     """ set light state according to a graphical representation
         i.e. 'oooo' and '--oo'
     """
+    # XXX check for correcnt lenght here?
     for i, char in enumerate(pat):  # i starts from 0
       if char=='o':
         self.lights[i+1].state = 1
