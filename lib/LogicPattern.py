@@ -7,7 +7,7 @@ class LogicPattern(LightPattern):
       by setting next state changes
       TODO change name LogicPattern to sth useful
   """
-
+  type = 'LogicPattern'
   def subclass_init(self):
     """ initiate array of Lights,
         version 1 were children of panels """
@@ -18,9 +18,8 @@ class LogicPattern(LightPattern):
   def next_state(self):
     """ switching to next state by rising the leds index """
     self.count += 1
-#    print('next PLC: ', self.count)
     if self.count > self.states_count-1:
-      print("reset counter")
+      #print("reset counter")
       self.count = 1
 
 # Pattern subclasses
@@ -28,8 +27,6 @@ class LogicPattern(LightPattern):
 class PairedLightsCycling(LogicPattern):
 
   def initial_state(self):
-#    self.board.panels['t'].set_pat('oo--')
-#    self.set_panels_to_pat('rbl', '----')
     pass
 
   def next_state(self):
@@ -39,9 +36,7 @@ class PairedLightsCycling(LogicPattern):
     self.lights[self.count+2].state = 1
 
 class SingleDarkspotCycling(LogicPattern):
-  states_count = 16
   def initial_state(self):
-#    self.set_panels_to_pat('trbl', 'oooo')
     pass
 
   def next_state(self):
@@ -50,9 +45,7 @@ class SingleDarkspotCycling(LogicPattern):
     self.lights[self.count+1].state = 0
 
 class SingleLightCyclingLP(LogicPattern):
-  states_count = 16
   def initial_state(self):
-    #self.set_panels_to_pat('trbl', '----')
     pass
 
   def next_state(self):

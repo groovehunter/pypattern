@@ -4,16 +4,18 @@ from lib.LightPattern import LightPattern
 class PanelPattern(LightPattern):
   """ pattern with complete panel changes """
   panels = {}
+  type = 'PanelPattern'
 
-  def subclass_init(self):  # XXX TODO unused
+  def subclass_init(self):
+    """ special inits for PanelPattern, a flat array and the panels """
     #self.init_light_array()
+    self.states_count = self.board.num_panels
     self.init_panels_array()
     self.init_pattern_panels()
-    # XXX self.states_count = self.board.num_panels
 
   def init_pattern_panels(self):
+    """ like the boards panels, set also the panels of the pattern """
     n = self.board.num_panels
-    print(self.states_count)
     self.panels = {}
     for loc_index, panel in self.board.panels.items():
       #print("subclass_init: panel.pids: ", panel.pid)
@@ -27,11 +29,11 @@ class PanelPattern(LightPattern):
     pass
 
   def next_state(self):
+    """ step to next state for all PanelPatterns """
     self.count += 1
     if self.count > self.states_count:
       print("resetting count to panel 1")
       self.count = 1
-    print('next_state - self.count: ', self.count)
 
 
 ### Subclasses

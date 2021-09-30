@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+# CLI start script for turtle model of pypattern
 
 import sys
 from os import getcwd, pardir
@@ -7,7 +7,7 @@ from os.path import join, dirname, abspath
 parent = dirname(dirname(abspath(__file__)))
 sys.path.append(parent)
 #print(sys.path)
-from settings import boardname
+from settings import boardname, global_conf
 
 import time
 import turtle
@@ -21,9 +21,9 @@ from lib.SynchronousPanelsPattern import *
 import yaml
 
 from lib.DisplayBase import DisplayBase
-from CoordBasedBoard import * # HexagonBoard, SquareBoard
+from CoordBasedBoard import *
 from lib.GenericBoard import GenericBoard
-from TurtleSupport import TurtleBoard
+#from TurtleSupport import TurtleBoard
 
 class PatternControllerDisplay(DisplayBase):
   """ make pattern of pattern controller visible """
@@ -35,16 +35,17 @@ class PatternControllerDisplay(DisplayBase):
   def set_pattern(self):
     pat_name = 'PairedLightsCycling'
 #    pat_name =  'RotationPanelPattern'
-#    pat_name = 'DarkPanelRotationPanelPattern'
+    pat_name = 'DarkPanelRotationPanelPattern'
 #    pat_name = 'SwitchingPanels'
 #    pat_name = 'SingleLightCycling'
-    pat_name = 'Windmill'
+#    pat_name = 'Windmill'
 #    for i, s in sorted(globals().items()):
 #      print(i, s)
     constructor = globals()[pat_name]
     self.board.pattern = constructor(self.board)
     self.board.pattern.initial_state()
     #self.board.pattern.init_light_array()
+    #print("board - set_pattern - before pattern.subclass_init")
     self.board.pattern.subclass_init()
 
 
@@ -56,9 +57,12 @@ class PatternControllerDisplay(DisplayBase):
     self.board.load_py_conf()
     #self.board.boardname = self.board.cfg['boardname']
 
+  # remove XXX ?
   def init(self):
     self.msecs = 2000
+    self.speed = global_conf['speed']
 
+  # XXX remove?
   def change_board(self):
     #print("change_board")
     self.board.enlighten()
@@ -69,7 +73,7 @@ class PatternControllerDisplay(DisplayBase):
     while True:
       self.board.pattern.next_state()
       self.change_board()
-      time.sleep(0.5)
+      time.sleep(self.speed/100)
 
   def loop_boards(self):
     pass
@@ -81,6 +85,8 @@ if __name__ == "__main__":
   pcd.init()
   pcd.set_board()
   pcd.board.init()
+
   pcd.set_pattern()
   pcd.run()
+
   time.sleep(30)

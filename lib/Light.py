@@ -12,7 +12,7 @@ class Light:
 
 
 class LocatedLight(Light):
-  """ has a row+col position """
+  """ A Light that has a row+col position """
   def __init__(self, lid, position=None):
     Light.__init__(self, lid)
     self.position = position
@@ -22,7 +22,7 @@ class LocatedLight(Light):
 
 
 class CoordLight(Light):
-    """ has coordinates position """
+    """ A Light that has coordinates position """
     def __init__(self, lid, position=None):
       Light.__init__(self, lid)
       self.position = position
@@ -31,5 +31,5 @@ class CoordLight(Light):
         (x, y) = self.position
         total = "Light (%i, %i): %i" %(x, y, self.state)
       else:
-        total = "coord n/a: %i" %(self.state)
+        total = "Light (coord n/a): %i" %(self.state)
       return total

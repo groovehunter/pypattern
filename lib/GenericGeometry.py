@@ -11,82 +11,67 @@ else:
 
 class GenericGeometry:
   """ a spatial hierarchy """
-#  num_lights_total = 0
-#  num_areas = 0
-#  num_panels = 0
-#  num_groups_in_area = 0
-#  num_lights_in_group = 1
-#  area_names = []
-
-  def get_subarea(self):
-    pass
 
   def init_panels(self):
+    """ init a OrderedDict of Panels """
     pid = 1
     panels = {}
     for pname in self.area_names:
       panels[pname] = PanelCoordLights(pid, size=self.num_lights_in_group)
       pid += 1
-      #print(panels[pname])
     self.panels = OrderedDict(panels)
-    print(self.panels)
 
   def init_areas(self):
+    """ init a dict of Areas (like Panels) - UNUSED """
     areas = {}
     for i in range(1, self.num_areas):
       areas[i] = Area()
       areas[i].aid = i
       areas[i].name = self.area_names[i]
     self.areas = areas
-    print(self.areas)
 
   def init_groups(self):
+    """ initiate ares in groups """
     for ia in range(1, self.num_areas):
       for ig in range(1, self.num_groups_in_area):
         self.areas[ia].groups[ig] = LightGroup(ig)
 
-
   def init_panel_lights(self):
+    """ for all panels, call the method to initiate the lights """
     for pname, panel in self.panels.items():
       panel.init_lights()
 
   def init_leds(self):
     """ init flat array of hardware lights, overwrite in hardware """
-    # template for subclasses
-    led = {}
-    for i in range(1, self.num_lights_total+1):
-      # USE HERE suitable Light klass
-#      led[i] = LocatedLight(i)
-      led[i] = CoordLight(i)
-    self.led = led
-
+    raise NotImplementedError
 
   def enlighten_flatarray(self):
+    """ go through all lights of the board and set the state """
     #print(self.pattern.lights)
     for i, led in self.led.items():
-      print(self.pattern.lights[i].state)
-
       self.led[i].state = self.pattern.lights[i].state
       # in display superclass
       self.enlight_led(i)
-    # in display superclass resp board subclass
-    self.update_board()
 
   def enlighten_panel(self):
+    """ loop all panels and their lights to set the state """
     for i, panel in self.panels.items():
       c = (panel.pid-1)*self.num_lights_in_group + 1
-      #print(panel.pid, c)
+      #print(panel.lights)
       for i, light in panel.lights.items():
         self.led[c].state = light.state
         self.enlight_led(c)
         c += 1
-    self.update_board()
 
   def enlighten(self):
-    # if self.pattern.klass == 'PanelPattern' etc...
-#    self.enlighten_flatarray()
-    self.enlighten_panel()
+    """ branch different methods according to pattern klass """
+    if self.pattern.type == 'PanelPattern': # etc...
+      self.enlighten_flatarray()
+    if self.pattern.type == 'LogicPattern':
+      self.enlighten_panel()
+    self.update_board()
 
   def all_on(self):
+    """ set all panels to full lights """
     for i, panel in self.panels.items():
       panel.full()

@@ -17,8 +17,9 @@ import SynchronousPanelsPattern
 import random
 
 class DisplayBase:
-
+  """ base stuff for a board: setting the pattern, """
   def get_pattern_classes(self, module):
+    """ inspect the file with all the klasses """
     pattern_list = []
     for name, obj in inspect.getmembers(module):
       if inspect.isclass(obj):
@@ -35,16 +36,19 @@ class DisplayBase:
     OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
     OPTIONS += self.get_pattern_classes(PanelPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
+    OPTIONS += self.get_pattern_classes(SynchronousPanelsPattern)
     OPTIONS += self.get_pattern_classes(NextStatePattern)
     OPTIONS.remove('NextStatePattern')
     OPTIONS.remove('PanelPattern')
     OPTIONS.remove('LogicPattern')
+    OPTIONS.remove('SynchronousPanelsPattern')
     OPTIONS.remove('ExplicitStatesPattern')
     self.total_patlist = OPTIONS
     for p in self.total_patlist:
       print("'",p,"', ", sep='')
 
   def set_pattern(self, pat_name):
+    """ XXX move, unify with turtle.board """
     #print("setting pattern ", pat_name)
     constructor = globals()[pat_name]
     self.pattern = constructor(self)

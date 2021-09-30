@@ -2,11 +2,10 @@ from lib.Panel import Panel
 
 
 class LightPattern(object):
+  """ Base class for light pattern, basic init methods """
 
   def __init__(self, board):
-    #self.states_count = states_count
     self.board = board
-#    self.states_count = self.board.num_panels
     self.lights = {}
     self.states = []
     self.count = 1
@@ -20,35 +19,27 @@ class LightPattern(object):
     raise NotImplementedError
 
   def init_panels_array(self):
-    print("init_panels_array")
-    print(self.board.panels)
+    """ method to init another array of panels as attribute of the pattern """
     n = self.board.num_panels
     c = 1
     for i, panel in self.board.panels.items():
       self.panels[c] = panel
       c += 1
-    #for c in range(1, n+1):
-    #  print(c)
-    #  self.panels[c] = self.board.panels[c]
     # make endless chain -
     self.panels[n+1] = self.panels[1]
     self.panels[n+2] = self.panels[2]
-    #print(self.lights)
 
   def init_light_array_2(self):
     """ simple copy reference to flat light array of board """
     n = self.board.num_lights_total
     for c in range(1, n+1):
-      #print(c)
       self.lights[c] = self.board.led[c]
     # make endless chain -
-#    self.lights[n] = self.lights[0]
     self.lights[n+1] = self.lights[1]
     self.lights[n+2] = self.lights[2]
-    #print(self.lights)
 
   def init_light_array(self):
-    """ looping the panels """
+    """ looping the panels, and init like that a flat array of lights """
     self.lights = {}
     c = 1
     # init light array with auto increment index ## MOVE TO BOARD!
@@ -68,10 +59,12 @@ class LightPattern(object):
 
 
   def set_all_panels(self, pat):
+    """ legacy method, to set all panels to visual pattern seq """
     for i, panel in self.board.panels.items():
         panel.set_pat(pat)
 
   def set_panels_to_pat(self, panel_indexes, pat):
+    """ legacy method to set a pattern to given list of panels """
     for i in panel_indexes:
       self.board.panels[i].set_pat(pat)
 

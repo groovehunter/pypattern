@@ -30,7 +30,8 @@ pdc.init()
 pdc.board.boardname = 'square'
 pdc.board.load_py_conf()
 pdc.board.init()
-pat = 'PairedLightsCycling'
+#pat = 'PairedLightsCycling'
+pat = 'DarkPanelRotationPanelPattern'
 success = pdc.board.set_pattern(pat)
 
 

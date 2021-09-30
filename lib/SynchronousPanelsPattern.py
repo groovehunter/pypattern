@@ -2,18 +2,19 @@ from lib.LightPattern import LightPattern
 
 
 class SynchronousPanelsPattern(LightPattern):
+  """ pattern where all panels show the same at a time """
+  
+  type = 'SynchronousPanelsPattern'
 
   def next_state(self):
     self.count += 1
     if self.count > self.states_count:
-      print("resetting count to panel 1")
+      #print("resetting count to panel 1")
       self.count = 1
-    print('next_state - self.count: ', self.count)
+    #print('next_state - self.count: ', self.count)
 
   def subclass_init(self):
     self.states_count = self.board.num_lights_in_group
-    pass
-
 
 
 class Windmill(SynchronousPanelsPattern):

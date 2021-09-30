@@ -14,7 +14,8 @@ boardname = 'square'
 
 global_conf = {
   'boardname': boardname,
-  'size': 150,
+  'size': 300,
+  'speed': 500,
 }
 
 

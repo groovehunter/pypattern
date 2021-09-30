@@ -14,3 +14,9 @@ class Esp32Light(Light):
   def __init__(self, lid):
     Light.__init__(self, lid)
     self.pin = Pin(pinmap[lid], Pin.OUT)
+  """
+  def set_on(self):
+    self.pin.value(1)
+  def set_off(self):
+    self.pin.value(0)
+  """
