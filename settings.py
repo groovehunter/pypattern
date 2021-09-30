@@ -10,12 +10,15 @@ else:
   CONFIG_PATH = ROOT_DIR + '/configuration.conf'
 
 
-boardname = 'square'
+boardname = 'triangle'
+#boardname = 'square'
+#boardname = 'hexagon'
+#boardname = 'octagon'
 
 global_conf = {
   'boardname': boardname,
   'size': 300,
-  'speed': 500,
+  'speed': 50,
 }
 
 

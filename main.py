@@ -42,7 +42,6 @@ async def run_pdc():
         pdc.board.pattern.next_state()
         pdc.board.enlighten()
         await uasyncio.sleep_ms(pdc.velocity*100)
-        #if pdc.board.pattern.
         if pdc.board.pattern.uptime > 5:
             print('=== NEW PATTERN ====================')
             pdc.board.set_random_pat()

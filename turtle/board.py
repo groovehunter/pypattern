@@ -29,7 +29,6 @@ class PatternControllerDisplay(DisplayBase):
   """ make pattern of pattern controller visible """
 
   def __init__(self):
-#    self.boardname = boardname
     pass
 
   def set_pattern(self):
@@ -67,7 +66,6 @@ class PatternControllerDisplay(DisplayBase):
     #print("change_board")
     self.board.enlighten()
     self.board.update_board()
-    #self.pattern.state_cur.__repr__()
 
   def run(self):
     while True:

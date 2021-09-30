@@ -30,15 +30,20 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     print(self.coords)
 
     self.init_leds()
-    n = 1
 
+    n = 1
     for i, led in self.led.items():
       led.position = self.coords[n]
-
       n += 1
-    print("CTB - subclass_init")
-    #print(self.led)
+
     #self.create_grid()
+
+  def init_leds(self):
+    """ init flat array of hardware lights """
+    led = {}
+    for i in range(1, self.num_lights_total+1):
+      led[i] = CoordLight(i)
+    self.led = led
 
   def create_grid(self):
     col_outline = "grey"

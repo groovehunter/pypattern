@@ -13,4 +13,5 @@ class GenericBoard(BoardBase, GenericGeometry, DisplayBase):
     #pass
     raise NotImplementedError
 
-  
+#  def init_leds(self):
+#    pass

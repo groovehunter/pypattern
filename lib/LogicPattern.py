@@ -8,6 +8,7 @@ class LogicPattern(LightPattern):
       TODO change name LogicPattern to sth useful
   """
   type = 'LogicPattern'
+  
   def subclass_init(self):
     """ initiate array of Lights,
         version 1 were children of panels """

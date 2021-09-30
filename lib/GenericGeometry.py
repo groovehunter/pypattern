@@ -12,6 +12,10 @@ else:
 class GenericGeometry:
   """ a spatial hierarchy """
 
+  def init_leds(self):
+    """ overwrite in subclass, use adequate display Light klass """
+    raise NotImplementedError
+
   def init_panels(self):
     """ init a OrderedDict of Panels """
     pid = 1
@@ -65,10 +69,11 @@ class GenericGeometry:
 
   def enlighten(self):
     """ branch different methods according to pattern klass """
+    #print(self.pattern.type)
     if self.pattern.type == 'PanelPattern': # etc...
-      self.enlighten_flatarray()
-    if self.pattern.type == 'LogicPattern':
       self.enlighten_panel()
+    if self.pattern.type == 'LogicPattern':
+      self.enlighten_flatarray()
     self.update_board()
 
   def all_on(self):
