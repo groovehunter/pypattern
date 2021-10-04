@@ -27,12 +27,14 @@ from pdc import PdcSingleton as PDC
 
 pdc = PDC()
 pdc.init()
-pdc.board.boardname = 'square'
+pdc.board.boardname = 'triangle3x3'
 pdc.board.load_py_conf()
 pdc.board.init()
 #pat = 'PairedLightsCycling'
-pat = 'DarkPanelRotationPanelPattern'
+pat = 'SingleLightCyclingLP'
+#pat = 'DarkPanelRotationPanelPattern'
 success = pdc.board.set_pattern(pat)
+pdc.board.pattern.subclass_init()
 
 
 async def run_pdc():
@@ -41,7 +43,7 @@ async def run_pdc():
     while True:
         pdc.board.pattern.next_state()
         pdc.board.enlighten()
-        await uasyncio.sleep_ms(pdc.velocity*100)
+        await uasyncio.sleep_ms(pdc.velocity*400)
         if pdc.board.pattern.uptime > 5:
             print('=== NEW PATTERN ====================')
             pdc.board.set_random_pat()

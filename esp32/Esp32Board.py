@@ -15,7 +15,7 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
   def enlight_led(self, i):
     """ accessing the hardware pins """
     self.led[i].pin.value(self.led[i].state)
-
+    print(self.led[i].pin, self.led[i].state)
 
   def update_board(self):
     pass

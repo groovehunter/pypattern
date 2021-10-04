@@ -10,10 +10,11 @@ else:
   CONFIG_PATH = ROOT_DIR + '/configuration.conf'
 
 
-boardname = 'triangle'
+boardname = 'triangle3x3'
 #boardname = 'square'
 #boardname = 'hexagon'
 #boardname = 'octagon'
+
 
 global_conf = {
   'boardname': boardname,
@@ -47,6 +48,15 @@ board_conf = {
       'num_areas': 3,
       'num_panels': 3,
       'num_lights_in_group': 4,
+      'area_names': ['r', 'b', 'l']
+    },
+
+    'triangle3x3':
+    {
+      'num_lights_total': 9,
+      'num_areas': 3,
+      'num_panels': 3,
+      'num_lights_in_group': 3,
       'area_names': ['r', 'b', 'l']
     },
 

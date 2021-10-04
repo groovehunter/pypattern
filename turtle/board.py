@@ -32,9 +32,10 @@ class PatternControllerDisplay(DisplayBase):
     pass
 
   def set_pattern(self):
-    pat_name = 'PairedLightsCycling'
+    pat_name = 'SingleLightCyclingLP'
+#    pat_name = 'PairedLightsCycling'
 #    pat_name =  'RotationPanelPattern'
-    pat_name = 'DarkPanelRotationPanelPattern'
+#    pat_name = 'DarkPanelRotationPanelPattern'
 #    pat_name = 'SwitchingPanels'
 #    pat_name = 'SingleLightCycling'
 #    pat_name = 'Windmill'

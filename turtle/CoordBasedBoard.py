@@ -174,3 +174,24 @@ class TriangleBoard(TurtleSupport):
 
     t.fd(size)
     return dots
+
+class Triangle3x3Board(TurtleSupport):
+  def calc_prepare_coord(self):
+    size = self.size / 3
+    dots = {}
+    n = 1
+    t = self.t
+    t.goto(0, 2*size)
+    t.setheading(300)
+    for pnr in range(self.num_panels+1):
+      t.dot(10, self.color1)
+      t.fd(size)
+      for lnr in range(self.num_lights_in_group):
+        dots[n] = t.pos()
+        n += 1
+        t.fd(size)
+
+      t.rt(120)
+
+    t.fd(size)
+    return dots
