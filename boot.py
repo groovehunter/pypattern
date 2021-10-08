@@ -1,7 +1,4 @@
-
-ESSID = 'WLAN-MJ7YSQ'
-PASS  = '46804770364629155360'
-
+from wifikey import ESSID, PASS
 
 #import upip
 

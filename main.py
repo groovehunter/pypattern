@@ -8,7 +8,7 @@ gc.collect()
 #from time import sleep
 import sys, os
 
-syspath = ['esp32', 'www', 'http', 'lib', 'conf']
+syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
 if sys.platform == 'esp32':
   for p in syspath:
       slashed_p = '/'+p
@@ -32,7 +32,9 @@ pdc.board.load_py_conf()
 pdc.board.init()
 #pat = 'PairedLightsCycling'
 pat = 'SingleLightCyclingLP'
+pat = 'SingleDarkspotCycling'
 #pat = 'DarkPanelRotationPanelPattern'
+pat = 'RotationPanelPattern'
 success = pdc.board.set_pattern(pat)
 pdc.board.pattern.subclass_init()
 
@@ -43,7 +45,7 @@ async def run_pdc():
     while True:
         pdc.board.pattern.next_state()
         pdc.board.enlighten()
-        await uasyncio.sleep_ms(pdc.velocity*400)
+        await uasyncio.sleep_ms(pdc.velocity*500)
         if pdc.board.pattern.uptime > 5:
             print('=== NEW PATTERN ====================')
             pdc.board.set_random_pat()

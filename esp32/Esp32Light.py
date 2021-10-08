@@ -13,7 +13,11 @@ else:
 class Esp32Light(Light):
   def __init__(self, lid):
     Light.__init__(self, lid)
-    self.pin = Pin(pinmap[lid], Pin.OUT)
+    try:
+        self.pin = Pin(pinmap[lid], Pin.OUT)
+    except ValueError:
+        print("INPUT pin!", pinmap[lid])
+        raise ValueError
   """
   def set_on(self):
     self.pin.value(1)
