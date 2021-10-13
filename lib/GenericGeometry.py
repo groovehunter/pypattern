@@ -70,10 +70,16 @@ class GenericGeometry:
   def enlighten(self):
     """ branch different methods according to pattern klass """
     #print(self.pattern.type)
-    if self.pattern.type == 'PanelPattern': # etc...
+    enligthen_by_panel = [
+      'PanelPattern',
+      'SynchronousPanelsPattern',
+      'FixedStateNumberPattern',
+    ]
+    if self.pattern.type in enligthen_by_panel: # etc...
       self.enlighten_panel()
     if self.pattern.type == 'LogicPattern':
       self.enlighten_flatarray()
+
     self.update_board()
 
   def all_on(self):

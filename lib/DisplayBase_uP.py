@@ -3,6 +3,9 @@ from LogicPattern import *
 from ExplicitStatesPattern import *
 from NextStatePattern import *
 from PanelPattern import *
+from FixedStateNumberPattern import *
+from SynchronousPanelsPattern import *
+
 #import LogicPattern
 #import ExplicitStatesPattern
 #import NextStatePattern

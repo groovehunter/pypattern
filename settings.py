@@ -10,16 +10,17 @@ else:
   CONFIG_PATH = ROOT_DIR + '/configuration.conf'
 
 
-boardname = 'triangle3x3'
-#boardname = 'square'
-#boardname = 'hexagon'
+#boardname = 'triangle_3x3'
+boardname = 'square'
+#boardname = 'square_4x8'
+boardname = 'hexagon'
 #boardname = 'octagon'
 
 
 global_conf = {
   'boardname': boardname,
-  'size': 300,
-  'speed': 50,
+  'size': 200,
+  'speed': 10,
 }
 
 
@@ -51,7 +52,7 @@ board_conf = {
       'area_names': ['r', 'b', 'l']
     },
 
-    'triangle3x3':
+    'triangle_3x3':
     {
       'num_lights_total': 9,
       'num_areas': 3,
@@ -66,6 +67,14 @@ board_conf = {
       'num_areas': 4,
       'num_panels': 4,
       'num_lights_in_group': 4,
+      'area_names': ['t', 'r', 'b', 'l']
+    },
+    'square_4x8':
+    {
+      'num_lights_total': 32,
+      'num_areas': 4,
+      'num_panels': 4,
+      'num_lights_in_group': 8,
       'area_names': ['t', 'r', 'b', 'l']
     },
 }

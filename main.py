@@ -1,11 +1,9 @@
 ### entry point - only for ESP32 platforms
-
 import esp
 esp.osdebug(None)
-
+from lib.Track import Track
 import gc
 gc.collect()
-#from time import sleep
 import sys, os
 
 syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
@@ -13,43 +11,37 @@ if sys.platform == 'esp32':
   for p in syspath:
       slashed_p = '/'+p
       abs_path = os.getcwd() + p
-      #print(abs_path)
       if abs_path not in sys.path:
           sys.path.append(abs_path)
 
-print(sys.path)
+#print(sys.path)
 
-#from Esp32Board import Esp32Board
 from web import http_server
-#from web.website import web_page
 import uasyncio #as asyncio
 from pdc import PdcSingleton as PDC
 
 pdc = PDC()
 pdc.init()
-pdc.board.boardname = 'triangle3x3'
+pdc.board.boardname = 'hexagon'
 pdc.board.load_py_conf()
 pdc.board.init()
-#pat = 'PairedLightsCycling'
-pat = 'SingleLightCyclingLP'
-pat = 'SingleDarkspotCycling'
-#pat = 'DarkPanelRotationPanelPattern'
-pat = 'RotationPanelPattern'
-success = pdc.board.set_pattern(pat)
-pdc.board.pattern.subclass_init()
-
+pdc.board.track = Track()
 
 async def run_pdc():
     print("STARTING run_pdc")
-    #pdc.board.test_pattern()
     while True:
+      #self.timer += 1
+      pat_name = pdc.board.track.next_pattern()
+      pdc.board.set_pattern(pat_name)
+      pdc.board.pattern.subclass_init()
+      repeats = pdc.board.track.get_current_repeats()
+      num_steps = pdc.board.pattern.states_count * repeats
+      print("num_steps: ", num_steps)
+      for i in range(num_steps):
         pdc.board.pattern.next_state()
-        pdc.board.enlighten()
+        pdc.change_board()
         await uasyncio.sleep_ms(pdc.velocity*500)
-        if pdc.board.pattern.uptime > 5:
-            print('=== NEW PATTERN ====================')
-            pdc.board.set_random_pat()
-            pdc.board.pattern.reset_uptime()
+
 
 loop = uasyncio.get_event_loop()
 factory = uasyncio.start_server(http_server, '0.0.0.0', 80)

@@ -1,6 +1,7 @@
 import gc
 import re
 import os
+import sys
 from pdc import PdcSingleton as PDC
 
 url_pat = re.compile(
@@ -64,6 +65,12 @@ async def set_velo(item):
   pdc.velocity = velo
   return True
 
+async def stop():
+  loop = uasyncio.get_event_loop()
+  loop.close()
+  sys.exit()
+  return True
+
 routes = {
     b'/': route('/www/page.htm'),
     b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
@@ -71,6 +78,7 @@ routes = {
 rpat = {
     r'/pat/(.*)': set_pattern,
     r'/velo/(.*)': set_velo,
+    r'/stop/': stop,
     }
 
 async def parse_route(route, writer):

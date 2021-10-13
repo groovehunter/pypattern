@@ -1,1 +1,1 @@
-esp32_conf_triangle3x3.py
+esp32_conf_hexagon.py

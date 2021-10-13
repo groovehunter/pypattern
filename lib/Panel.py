@@ -20,12 +20,6 @@ class Panel:
     for key, val in self.lights.items():
       val.state = 1
 
-  def set_middle(self):
-    self.lights[1].state = 0
-    self.lights[2].state = 1
-    self.lights[3].state = 1
-    self.lights[4].state = 0
-
   def viceversa(self):
     for key, light in self.lights.items():
       light.viceversa()
@@ -60,6 +54,10 @@ class Panel:
         return False
     return assume
 
+  def set_all_lights(self, val):
+    for i, light in self.lights.items():
+      light.state = val
+    #print(self.lights)
 
 class PanelCoordLights(Panel):
   def init_lights(self):

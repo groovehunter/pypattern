@@ -14,12 +14,14 @@ class LightPattern(object):
 
   def subclass_init(self):
     raise NotImplementedError
-
+  def initial_state(self):
+    raise NotImplementedError
   def next_state(self):
     raise NotImplementedError
 
   def init_panels_array(self):
     """ method to init another array of panels as attribute of the pattern """
+    self.panels = {}
     n = self.board.num_panels
     c = 1
     for i, panel in self.board.panels.items():
@@ -28,6 +30,18 @@ class LightPattern(object):
     # make endless chain -
     self.panels[n+1] = self.panels[1]
     self.panels[n+2] = self.panels[2]
+
+  def init_pattern_panels(self):
+    """ like the boards panels, set also the panels of the pattern """
+    n = self.board.num_panels
+    #self.panels = {}
+    for loc_index, panel in self.board.panels.items():
+      #print("subclass_init: panel.pids: ", panel.pid)
+      self.panels[panel.pid] = panel
+      self.panels[panel.pid].clear()
+    self.panels[n+1] = self.panels[1]
+    self.panels[n+2] = self.panels[2]
+    self.panels[n+3] = self.panels[3]
 
   def init_light_array_2(self):
     """ simple copy reference to flat light array of board """
@@ -44,18 +58,17 @@ class LightPattern(object):
     c = 1
     # init light array with auto increment index ## MOVE TO BOARD!
     print('init_light_array')
-    print(self.board.panels)
+    #print(self.board.panels)
     for p, panel in self.board.panels.items():
       for l, light in panel.lights.items():
         self.lights[c] = light
         c += 1
     n = self.board.num_lights_total
     # make endless chain -
-    print(self.lights)
     self.lights[n+1] = self.lights[1]
     self.lights[n+2] = self.lights[2]
     self.count = 0
-    print(self.lights)
+    #print(self.lights)
 
 
   def set_all_panels(self, pat):

@@ -1,7 +1,7 @@
 #import yaml
 from settings import board_conf, global_conf, ROOT_DIR
-from GenericGeometry import GenericGeometry
-from DisplayBase_uP import DisplayBase
+#from GenericGeometry import GenericGeometry
+#from DisplayBase_uP import DisplayBase
 
 class BoardBase:
   """ common board stuff,
@@ -27,7 +27,7 @@ class BoardBase:
     print(self.boardcfg)
     for attr, val in self.boardcfg.items():
       setattr(self, attr, val)
-    print(self.num_lights_total)
+    print("num_lights_total: ", self.num_lights_total)
 
     for attr, val in self.cfg.items():
       print(attr, val)

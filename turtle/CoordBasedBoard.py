@@ -20,14 +20,18 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
 
   def subclass_init(self):
     print("subklass_init")
-    formklassname = self.boardname.capitalize() + 'Board'
+    if '_' in self.boardname:
+      tmp = self.boardname.split('_')[0]
+    else:
+      tmp = self.boardname
+    formklassname = tmp.capitalize() + 'Board'
     constructor = globals()[formklassname]
     self.formklass = constructor()
     self.formklass.size = self.cfg['size']
     self.formklass.num_panels = self.num_panels
     self.formklass.num_lights_in_group = self.num_lights_in_group
     self.coords = self.formklass.calc_prepare_coord()
-    print(self.coords)
+    #print(self.coords)
 
     self.init_leds()
 
@@ -70,7 +74,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
 class SquareBoard(TurtleSupport):
   def calc_prepare_coord(self):
     t = self.t
-    sz = self.size / 4
+    sz = self.size / self.num_lights_in_group
     n = 1 # start as lights with 1
     dots = {}
     t.penup()
@@ -79,11 +83,11 @@ class SquareBoard(TurtleSupport):
     t.setheading(270)
 
     for i in range(4):
-      for y in range(4):
+      for y in range(self.num_lights_in_group):
         dots[n] = t.pos()
         n += 1
         t.fd(sz)
-        t.dot(10, self.color)
+        t.dot(sz/4, self.color)
 
       t.rt(90)
       t.fd(sz)
@@ -138,19 +142,13 @@ class HexagonBoard(TurtleSupport):
     t.setheading(240)
     for i in range(6):
       t.fd(sz*0.3)
-
       dots[n] = t.pos()
       n += 1
-
       t.fd(sz*0.4)
-
       dots[n] = t.pos()
       n += 1
-
       t.fd(sz*0.3)
-
       t.rt(60)
-
     #t.pd()
     return dots
 

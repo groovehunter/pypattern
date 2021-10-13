@@ -5,11 +5,11 @@ sys.path.append(join(ROOT_DIR, 'lib'))
 import inspect
 from LogicPattern import *
 from PanelPattern import *
-from ExplicitStatesPattern import *
+#from ExplicitStatesPattern import *
 from NextStatePattern import *
 from SynchronousPanelsPattern import *
 import LogicPattern
-import ExplicitStatesPattern
+#import ExplicitStatesPattern
 import NextStatePattern
 import PanelPattern
 import SynchronousPanelsPattern
@@ -33,7 +33,7 @@ class DisplayBase:
   # rename to get_total.... # TODO:
   def total_pattern_list(self):
     OPTIONS = []
-    OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
+    #OPTIONS += self.get_pattern_classes(ExplicitStatesPattern)
     OPTIONS += self.get_pattern_classes(PanelPattern)
     OPTIONS += self.get_pattern_classes(LogicPattern)
     OPTIONS += self.get_pattern_classes(SynchronousPanelsPattern)
@@ -42,7 +42,7 @@ class DisplayBase:
     OPTIONS.remove('PanelPattern')
     OPTIONS.remove('LogicPattern')
     OPTIONS.remove('SynchronousPanelsPattern')
-    OPTIONS.remove('ExplicitStatesPattern')
+    #OPTIONS.remove('ExplicitStatesPattern')
     self.total_patlist = OPTIONS
     for p in self.total_patlist:
       print("'",p,"', ", sep='')
