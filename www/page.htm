@@ -6,19 +6,30 @@
     <link rel="icon" href="data:,">
     <style>
 body {
-  background-color: #c0c0d0;
+  background-color: #101040;
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
 </style>
 <body>
 <h3><a href="/">Pattern Controller</a></h3>
+<h3>Start / Stop</h3>
 <p><a href="/stop">Stop execution</a></b></p>
 
+<h3>Geschwindigkeit</h3>
 <a href="/velo/1">Set Speed 1</a>
 <a href="/velo/5">Set Speed 5</a>
 <a href="/velo/10">Set Speed 10</a>
 <a href="/velo/50">Set Speed 50</a>
+
+<h3>BPM</h3>
+<a href="/bpm/120">120</a>
+<a href="/bpm/128">128</a>
+<a href="/bpm/134">134</a>
+<a href="/bpm/140">140</a>
+<a href="/bpm/160">160</a>
+<a href="/bpm/180">180</a>
+
 <form action="/set_velo/" method="GET">
   <select name="velo">
     <option value="1">1</option>
@@ -36,7 +47,12 @@ body {
   </select>
   <input type="submit" name="yeah" value="Send">
 </form>
-<ul>
+
+
+<h3>Tracks</h3>
+
+
+<h3>Pattern </h3>
 <li><a href="/pat/WindmillPattern">WindmillPattern</a></li>
 <li><a href="/pat/PairedLightsCycling">PairedLightsCycling</a></li>
 <li><a href="/pat/SingleDarkspotCycling">SingleDarkspotCycling</a></li>
@@ -51,5 +67,6 @@ body {
 <li><a href="/pat/"></a></li>
 <li><a href="/pat/"></a></li>
 </ul>
+
 </body>
 </html>

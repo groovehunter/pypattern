@@ -5,10 +5,7 @@ from NextStatePattern import *
 from PanelPattern import *
 from FixedStateNumberPattern import *
 from SynchronousPanelsPattern import *
-
-#import LogicPattern
-#import ExplicitStatesPattern
-#import NextStatePattern
+from ComboPattern import *
 
 import random
 
@@ -43,7 +40,7 @@ class DisplayBase:
     constructor = globals()[pat_name]
     self.pattern = constructor(self)
     self.pattern.subclass_init()
-    self.pattern.init_light_array() # 09-29 test
+#    self.pattern.init_light_array() # 09-29 test
 
   def set_random_pat(self):
     rand = random.choice(self.total_patlist)

@@ -1,10 +1,13 @@
 
-
+# is this supposed to be an abstract light for pattern class
+# OR is this a hardware LED item??
+# OR BOTH possible?!!
 class Light:
   """ generic object, represent one Light Element """
   def __init__(self, lid):
     self.lid = lid
-    self.state = False
+    self.state = 0
+
   def viceversa(self):
     self.state = not self.state
   def __repr__(self):

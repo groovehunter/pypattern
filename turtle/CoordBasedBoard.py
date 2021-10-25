@@ -19,7 +19,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     TurtleSupport.__init__(self)
 
   def subclass_init(self):
-    print("subklass_init")
+    print("CoordTurtleBoard - subklass_init")
     if '_' in self.boardname:
       tmp = self.boardname.split('_')[0]
     else:
@@ -31,7 +31,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     self.formklass.num_panels = self.num_panels
     self.formklass.num_lights_in_group = self.num_lights_in_group
     self.coords = self.formklass.calc_prepare_coord()
-    #print(self.coords)
+    print(self.coords)
 
     self.init_leds()
 
@@ -48,6 +48,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     for i in range(1, self.num_lights_total+1):
       led[i] = CoordLight(i)
     self.led = led
+    print(self.led)
 
   def create_grid(self):
     col_outline = "grey"

@@ -9,6 +9,7 @@ if sys.platform == 'esp32':
 else:
   from collections import OrderedDict
 
+
 class GenericGeometry:
   """ a spatial hierarchy """
 
@@ -21,9 +22,11 @@ class GenericGeometry:
     pid = 1
     panels = {}
     for pname in self.area_names:
-      panels[pname] = PanelCoordLights(pid, size=self.num_lights_in_group)
+      #panels[pname] = PanelCoordLights(pid, size=self.num_lights_in_group)
+      panels[pid] = PanelCoordLights(pid, size=self.num_lights_in_group)
       pid += 1
     self.panels = OrderedDict(panels)
+    print(self.panels)
 
   def init_areas(self):
     """ init a dict of Areas (like Panels) - UNUSED """
@@ -45,10 +48,6 @@ class GenericGeometry:
     for pname, panel in self.panels.items():
       panel.init_lights()
 
-  def init_leds(self):
-    """ init flat array of hardware lights, overwrite in hardware """
-    raise NotImplementedError
-
   def enlighten_flatarray(self):
     """ go through all lights of the board and set the state """
     #print(self.pattern.lights)
@@ -59,6 +58,7 @@ class GenericGeometry:
 
   def enlighten_panel(self):
     """ loop all panels and their lights to set the state """
+    # why not loop over self.pattern.panels.items() ?
     for i, panel in self.panels.items():
       c = (panel.pid-1)*self.num_lights_in_group + 1
       #print(panel.lights)
@@ -66,6 +66,15 @@ class GenericGeometry:
         self.led[c].state = light.state
         self.enlight_led(c)
         c += 1
+    #self.show_lightning_leds()
+
+  def show_lightning_leds(self):
+    """ debugging output, which leds have ON value """
+    white = []
+    for i, led in self.led.items():
+      if led.pin.value() == 1:
+        white.append(led)
+    print(white)
 
   def enlighten(self):
     """ branch different methods according to pattern klass """
@@ -74,6 +83,7 @@ class GenericGeometry:
       'PanelPattern',
       'SynchronousPanelsPattern',
       'FixedStateNumberPattern',
+      'ComboPattern',
     ]
     if self.pattern.type in enligthen_by_panel: # etc...
       self.enlighten_panel()
@@ -81,8 +91,3 @@ class GenericGeometry:
       self.enlighten_flatarray()
 
     self.update_board()
-
-  def all_on(self):
-    """ set all panels to full lights """
-    for i, panel in self.panels.items():
-      panel.full()

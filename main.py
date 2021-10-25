@@ -39,8 +39,8 @@ async def run_pdc():
       print("num_steps: ", num_steps)
       for i in range(num_steps):
         pdc.board.pattern.next_state()
-        pdc.change_board()
-        await uasyncio.sleep_ms(pdc.velocity*500)
+        pdc.board.change_board()
+        await uasyncio.sleep_ms(pdc.sleep_ms)
 
 
 loop = uasyncio.get_event_loop()

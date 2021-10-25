@@ -18,9 +18,15 @@ class Esp32Light(Light):
     except ValueError:
         print("INPUT pin!", pinmap[lid])
         raise ValueError
+    print("initiated esp32 light on pin: ", lid, pinmap[lid] )
+
+  def __repr__(self):
+    s = "Led %i --> %s" %(self.lid, self.pin)
+    return s
   """
   def set_on(self):
     self.pin.value(1)
   def set_off(self):
     self.pin.value(0)
   """
+  

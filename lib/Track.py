@@ -20,7 +20,17 @@ pat_map = {
 'WM' : 'Windmill',
 'MES': 'MiddleEdgeSynchronousPattern',
 'AOO': 'AllOnOffPattern',
+'FFP': 'FiftyFiftyPattern',
+'OPS': 'OppositePanelsSwitching',
+'COPS': 'CyclingOppositePanelsSwitching',
+'OPB': 'OppositePanelsBlinking',
+'COPB':'CyclingOppositePanelsBlinking',
+
 }
+
+
+
+
 
 # rename to TrackSupport
 class Track:

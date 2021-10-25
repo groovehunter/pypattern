@@ -20,7 +20,7 @@ boardname = 'hexagon'
 global_conf = {
   'boardname': boardname,
   'size': 200,
-  'speed': 10,
+  'speed': 100,
 }
 
 

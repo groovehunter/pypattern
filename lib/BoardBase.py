@@ -1,7 +1,5 @@
 #import yaml
 from settings import board_conf, global_conf, ROOT_DIR
-#from GenericGeometry import GenericGeometry
-#from DisplayBase_uP import DisplayBase
 
 class BoardBase:
   """ common board stuff,

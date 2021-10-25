@@ -7,10 +7,7 @@ class LightPattern(object):
   def __init__(self, board):
     self.board = board
     self.lights = {}
-    self.states = []
     self.count = 1
-#    self.subclass_init()   # board.led not ready
-    self.uptime = 0
 
   def subclass_init(self):
     raise NotImplementedError
@@ -32,7 +29,9 @@ class LightPattern(object):
     self.panels[n+2] = self.panels[2]
 
   def init_pattern_panels(self):
-    """ like the boards panels, set also the panels of the pattern """
+    """ like the boards panels, set also the panels of the pattern
+        but indexed with pid number instead of an unused abbr
+    """
     n = self.board.num_panels
     #self.panels = {}
     for loc_index, panel in self.board.panels.items():

@@ -19,7 +19,7 @@ class TurtleSupport:
     turtle.update()
 
 
-class TurtleBoard(GenericBoard, TurtleSupport, DisplayBase):
+class TurtleBoard(GenericBoard, TurtleSupport):
 
   def enlight_led(self, i):
     #print("TS - enlight", i)
@@ -27,6 +27,7 @@ class TurtleBoard(GenericBoard, TurtleSupport, DisplayBase):
     self.t.pu()
     self.t.setpos(pos)
     color = self.color
+    #print(self.led[i])
     if self.led[i].state:
       #print("STATE")
       color = "yellow"
