@@ -39,9 +39,37 @@ class GenericGeometry:
 
   def init_groups(self):
     """ initiate ares in groups """
-    for ia in range(1, self.num_areas):
-      for ig in range(1, self.num_groups_in_area):
-        self.areas[ia].groups[ig] = LightGroup(ig)
+    # gruppentypen: Zwei - ausreichend für vieles?
+    # groupA groupB
+    # init groups in a row
+    nlig = self.num_lights_in_group
+
+    self.groupsA = OrderedDict()
+    self.groupsB = OrderedDict()
+    for i in range(1, self.num_areas+1):
+      self.groupsA[i] = LightGroup(i)
+      self.groupsB[i] = LightGroup(i)
+      print("init LG A+B # ", i)
+
+    lid = 1 # index flat light array
+    for i in range(1, self.num_areas+1):
+      for l in range(nlig):
+        flat_indexA = i * nlig + l
+        flat_indexB = i * nlig + l + int(nlig/2)
+        print("i, l: ", i, l)
+        if flat_indexA > self.num_lights_total:
+          flat_indexA = flat_indexA - self.num_lights_total
+        if flat_indexB > self.num_lights_total:
+          flat_indexB = flat_indexB - self.num_lights_total
+        print("flat_index" , flat_indexA, flat_indexB)
+        self.groupsA[i].lights[l] = self.led[flat_indexA]
+        self.groupsB[i].lights[l] = self.led[flat_indexB]
+
+    for i, group in self.groupsA.items():
+      pass
+    print(self.groupsA)
+    print(self.groupsB)
+
 
   def init_panel_lights(self):
     """ for all panels, call the method to initiate the lights """

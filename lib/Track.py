@@ -41,9 +41,11 @@ class Track:
     self.init()
 
   def init(self):
+    self.track_requested = False
     self.load_tracks()
-    track = self.tracks[0]
-    self.parse(track)
+    self.tid = 0
+    self.set_track(0)
+    self.parse(self.track)
 
   def load_tracks(self):
     self.tracks = {}
@@ -61,6 +63,11 @@ class Track:
       #self.init()
       self.pats = self.track_pats.copy()
       print("TRACK resetted", self.pats)
+    if self.track_requested:
+      print("starting NEW track: ", self.tid)
+      self.parse(self.track)
+      self.track_requested = False
+      
     pat_item = self.pats.popitem()
     pat_abbr = pat_item[0]
     repeats = pat_item[1]
@@ -84,3 +91,9 @@ class Track:
   def get_current_repeats(self):
     print(self.pats)
     return int(self.cur_repeats)
+
+  def set_track(self, tid):
+    self.tid = tid
+    self.track = self.tracks[self.tid]
+    self.track_requested = True
+    return True

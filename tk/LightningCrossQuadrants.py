@@ -1,4 +1,3 @@
-from lib.LightGroup import LightGroup
 from lib.Light import LocatedLight
 from lib.GenericGeometry import GenericGeometry
 
@@ -68,4 +67,3 @@ class LightningCrossQuadrants(GameBoardGeneric, GenericGeometry):
       if orientation == 'v':
         self.led[i].position = (row + num*add, col)
       i += 1
-

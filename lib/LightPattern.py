@@ -70,6 +70,7 @@ class LightPattern(object):
     #print(self.lights)
 
 
+### legacy o--o hardcoded patterns
   def set_all_panels(self, pat):
     """ legacy method, to set all panels to visual pattern seq """
     for i, panel in self.board.panels.items():

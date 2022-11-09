@@ -4,9 +4,9 @@
 *.swo
 
 docs/*
-matrix/*
 
-wifikey.py
+wifikey*
 *_bak.py
 
 utemplate/*
+env.py

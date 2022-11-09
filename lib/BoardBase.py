@@ -31,6 +31,8 @@ class BoardBase:
       print(attr, val)
       setattr(self, attr, val)
 
+
+
   def init(self):
     """ the main init protocol """
     print("BoardBase - init start")
@@ -40,6 +42,7 @@ class BoardBase:
     self.init_panel_lights()
 
     self.init_leds()
+    self.init_groups()
     self.subclass_init()
 
   def subclass_init(self):

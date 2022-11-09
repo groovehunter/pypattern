@@ -31,9 +31,9 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     self.formklass.num_panels = self.num_panels
     self.formklass.num_lights_in_group = self.num_lights_in_group
     self.coords = self.formklass.calc_prepare_coord()
-    print(self.coords)
+    #print(self.coords)
 
-    self.init_leds()
+    #self.init_leds() # schon in BoardBase main init
 
     n = 1
     for i, led in self.led.items():
@@ -71,6 +71,51 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
         for i in range(4):
           t.fd(size)
           t.rt(90)
+
+class Square4x2Board(TurtleSupport):
+  def calc_prepare_coord(self):
+    t = self.t
+    sz = self.size / 4
+    n = 1 # start as lights with 1
+    dots = {}
+    t.penup()
+    t.goto(sz, 0)
+    t.pd()
+    t.setheading(270)
+
+    for i in range(4):
+      for y in range(self.num_lights_in_group):
+        dots[n] = t.pos()
+        n += 1
+        t.fd(sz)
+        t.dot(sz/16, self.color)
+
+      t.rt(90)
+      t.fd(sz)
+    return dots
+
+class Square4x1Board(TurtleSupport):
+  def calc_prepare_coord(self):
+    t = self.t
+    sz = self.size / 2
+    n = 1 # start as lights with 1
+    dots = {}
+    t.penup()
+    t.goto(sz, 0)
+    t.pd()
+    t.setheading(270)
+
+    for i in range(4):
+      for y in range(self.num_lights_in_group):
+        dots[n] = t.pos()
+        n += 1
+        t.fd(sz)
+        t.dot(sz/16, self.color)
+
+      t.rt(90)
+      t.fd(sz)
+    return dots
+
 
 class SquareBoard(TurtleSupport):
   def calc_prepare_coord(self):
