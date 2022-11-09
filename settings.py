@@ -1,17 +1,22 @@
 ## main settings file
 import sys
-if not sys.platform == 'esp32':
-  import os
-  ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-  CONFIG_PATH = os.path.join(ROOT_DIR, 'configuration.conf')
-else:
+try:
+  is_micropython = sys.implementation[0]=='micropython'
+except:
+  is_micropython = False
+
+if sys.platform=='esp32' or is_micropython:
   import uos as os
   ROOT_DIR = '/'
   CONFIG_PATH = ROOT_DIR + '/configuration.conf'
+if sys.platform=='linux':
+  import os
+  ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+  CONFIG_PATH = os.path.join(ROOT_DIR, 'configuration.conf')
 
 
-#boardname = 'triangle_3x3'
-boardname = 'square'
+boardname = 'triangle_3x3'
+#boardname = 'square_4x2'
 #boardname = 'square_4x8'
 boardname = 'hexagon'
 #boardname = 'octagon'
@@ -19,8 +24,8 @@ boardname = 'hexagon'
 
 global_conf = {
   'boardname': boardname,
-  'size': 200,
-  'speed': 100,
+  'size': 300,
+  'speed': 500,
 }
 
 
@@ -59,6 +64,23 @@ board_conf = {
       'num_panels': 3,
       'num_lights_in_group': 3,
       'area_names': ['r', 'b', 'l']
+    },
+
+    'square4x1':
+    {
+      'num_lights_total': 4,
+      'num_areas': 4,
+      'num_panels': 4,
+      'num_lights_in_group': 1,
+      'area_names': ['t', 'r', 'b', 'l']
+    },
+    'square4x2':
+    {
+      'num_lights_total': 8,
+      'num_areas': 4,
+      'num_panels': 4,
+      'num_lights_in_group': 2,
+      'area_names': ['t', 'r', 'b', 'l']
     },
 
     'square':

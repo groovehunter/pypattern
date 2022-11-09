@@ -1,28 +1,44 @@
 ### entry point - only for ESP32 platforms
-import esp
-esp.osdebug(None)
+import sys, os
+from settings import boardname
+#print(__file__)
+
+mp = False
+if sys.platform=='esp32': #or sys.implementation[0]=='micropython':
+  mp = True
+
+cwd = ''
+if sys.platform=='esp32':
+  import esp
+  esp.osdebug(None)
+  cwd = os.getcwd()
+  import uasyncio as asyncio
+else:
+  print("WARNING: NO esp32 environment !")
+  from env import HOME
+  cwd = HOME
+  sys.exit()
+
 from lib.Track import Track
 import gc
 gc.collect()
-import sys, os
 
 syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
-if sys.platform == 'esp32':
+if mp:
   for p in syspath:
-      slashed_p = '/'+p
-      abs_path = os.getcwd() + p
-      if abs_path not in sys.path:
-          sys.path.append(abs_path)
+    slashed_p = '/'+p
+    abs_path = cwd + slashed_p 
+    if abs_path not in sys.path:
+      sys.path.append(abs_path)
 
-#print(sys.path)
+print(sys.path)
 
 from web import http_server
-import uasyncio #as asyncio
 from pdc import PdcSingleton as PDC
 
 pdc = PDC()
 pdc.init()
-pdc.board.boardname = 'hexagon'
+pdc.board.boardname = boardname
 pdc.board.load_py_conf()
 pdc.board.init()
 pdc.board.track = Track()
@@ -40,11 +56,11 @@ async def run_pdc():
       for i in range(num_steps):
         pdc.board.pattern.next_state()
         pdc.board.change_board()
-        await uasyncio.sleep_ms(pdc.sleep_ms)
+        await asyncio.sleep_ms(pdc.sleep_ms)
 
 
-loop = uasyncio.get_event_loop()
-factory = uasyncio.start_server(http_server, '0.0.0.0', 80)
+loop = asyncio.get_event_loop()
+factory = asyncio.start_server(http_server, '0.0.0.0', 80)
 server = loop.run_until_complete(factory)
 
 loop.create_task(run_pdc())

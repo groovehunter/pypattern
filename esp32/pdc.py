@@ -22,8 +22,8 @@ class PdcSingleton(object):
   def init(self):
     print("init PDC")
     self.velocity = 5
-    self.sleep_ms = 100
-    
+    self.sleep_ms = 300
+
     if not hasattr(self, 'board'):
         #self.board = GenericBoard()
         self.board = Esp32Board()

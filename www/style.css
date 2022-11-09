@@ -1,0 +1,13 @@
+
+body {
+  background-color: #101040;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #e0e0e0;
+}
+a {
+	color: #a0e0e0;
+}
+li {
+	display: block;
+}

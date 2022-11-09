@@ -1,5 +1,6 @@
 from esp32_conf import pinmap
 from Light import Light
+from settings import boardname
 
 import sys
 if sys.platform == 'linux':
@@ -13,12 +14,13 @@ else:
 class Esp32Light(Light):
   def __init__(self, lid):
     Light.__init__(self, lid)
+    pin_nr = pinmap[boardname][lid]
     try:
-        self.pin = Pin(pinmap[lid], Pin.OUT)
+        self.pin = Pin(pin_nr, Pin.OUT)
     except ValueError:
-        print("INPUT pin!", pinmap[lid])
+        print("INPUT pin!", pin_nr)
         raise ValueError
-    print("initiated esp32 light on pin: ", lid, pinmap[lid] )
+    print("initiated esp32 light on pin: ", lid, pin_nr)
 
   def __repr__(self):
     s = "Led %i --> %s" %(self.lid, self.pin)

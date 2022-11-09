@@ -54,13 +54,18 @@ async def config(cfg):
     suc = pdc.config(wifi)
     return suc
 
+async def set_track(val):
+  pdc = PDC()
+  val = int(val.decode())
+  suc = pdc.board.track.set_track(val)
+  return suc
+
 async def set_pattern(pat):
-    pdc = PDC()
-    #pdc.init()
-    pat_name = pat.decode()
-    print("SETTING: ", pat_name)
-    suc = pdc.board.set_pattern(pat_name)
-    return suc
+  pdc = PDC()
+  pat_name = pat.decode()
+  print("SETTING: ", pat_name)
+  suc = pdc.board.set_pattern(pat_name)
+  return suc
 
 def set_attr(attr_name, value, default=None):
   if not value:  value = default
@@ -110,11 +115,13 @@ async def stop():
 routes = {
     b'/': route('/www/page.htm'),
     b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
+    b'/css/style.css': route('/www/style.css'),
 }
 rpat = {
     r'/pat/(.*)': set_pattern,
     r'/velo/(.*)': set_velo,
     r'/bpm/(.*)': set_bpm,
+    r'/track/(.*)': set_track,
     r'/stop/': stop,
     r'/config/': config,
 }
@@ -135,6 +142,7 @@ async def http_server(reader, writer):
     req = await reader.readline()
     #print(req)
     method, uri, proto = req.split(b" ")
+    print("method, uri, proto", method, uri, proto)
     m = re.match(url_pat, uri)
     route = m.group(5)
     l = None

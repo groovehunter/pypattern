@@ -3,24 +3,22 @@
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:,">
-    <style>
-body {
-  background-color: #101040;
-  font-family: Verdana, Arial, Helvetica, sans-serif;
-  font-size: 14px;
-}
-</style>
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all">
+    <link href="file:///home/flow/git-uber/pypattern/www/style.css" rel="stylesheet" type="text/css" media="all">
+  </head>
 <body>
 <h3><a href="/">Pattern Controller</a></h3>
 <h3>Start / Stop</h3>
 <p><a href="/stop">Stop execution</a></b></p>
 
-<h3>Geschwindigkeit</h3>
-<a href="/velo/1">Set Speed 1</a>
-<a href="/velo/5">Set Speed 5</a>
-<a href="/velo/10">Set Speed 10</a>
-<a href="/velo/50">Set Speed 50</a>
+<h3>Tracks</h3>
+<a href="/track/1">1</a>
+<a href="/track/2">2</a>
+<a href="/track/3">3</a>
+<a href="/track/4">4</a>
+<a href="/track/5">5</a>
+<a href="/track/6">6</a>
+<a href="/track/7">7</a>
 
 <h3>BPM</h3>
 <a href="/bpm/120">120</a>
@@ -29,8 +27,12 @@ body {
 <a href="/bpm/140">140</a>
 <a href="/bpm/160">160</a>
 <a href="/bpm/180">180</a>
+<a href="/bpm/200">200</a>
+<a href="/bpm/220">220</a>
+<a href="/bpm/240">240</a>
+<a href="/bpm/260">260</a>
 
-<form action="/set_velo/" method="GET">
+<form action="/set_bpm/" method="GET">
   <select name="velo">
     <option value="1">1</option>
     <option value="2">2</option>
