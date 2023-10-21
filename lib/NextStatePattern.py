@@ -14,7 +14,9 @@ class NextStatePattern(LightPattern):
     if self.count > self.states_count-1:
       print("reset counter")
       self.count = 0
-    
+
+  def subclass_init(self):
+    pass
 
 
 

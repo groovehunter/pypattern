@@ -15,6 +15,8 @@ import PanelPattern
 import SynchronousPanelsPattern
 
 import random
+import logging
+logger = logging.getLogger()
 
 class DisplayBase:
   """ base stuff for a board: setting the pattern, """
@@ -52,6 +54,9 @@ class DisplayBase:
     #print("setting pattern ", pat_name)
     constructor = globals()[pat_name]
     self.pattern = constructor(self)
+    ### test_22-11
+    self.pattern.subclass_init()
+    logger.debug('set_pattern')
 
   def set_random_pat(self):
     rand = random.choice(self.total_patlist)

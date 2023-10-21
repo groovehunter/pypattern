@@ -1,5 +1,8 @@
-#import yaml
+import yaml
 from settings import board_conf, global_conf, ROOT_DIR
+import logging
+
+logger = logging.getLogger()
 
 class BoardBase:
   """ common board stuff,
@@ -15,20 +18,21 @@ class BoardBase:
   def load_yaml_conf(self):
     cfgfile = open(ROOT_DIR+ '/conf/settings.yaml')
     cfg = yaml.load(cfgfile)
-    print(cfgfile)
+    logger.debug(cfgfile)
     self.boardcfg = cfg[self.boardname]
     self.cfg = cfg['global']
 
     self.configure()
 
   def configure(self):
-    print(self.boardcfg)
+    logger.debug('boardcfg', self.boardcfg)
     for attr, val in self.boardcfg.items():
       setattr(self, attr, val)
-    print("num_lights_total: ", self.num_lights_total)
+    logger.debug("num_lights_total: ", self.num_lights_total)
 
     for attr, val in self.cfg.items():
-      print(attr, val)
+      logger.debug('attr', attr)
+      logger.debug('val', val)
       setattr(self, attr, val)
 
 

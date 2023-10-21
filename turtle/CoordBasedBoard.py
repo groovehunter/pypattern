@@ -7,7 +7,7 @@ from TurtleSupport import TurtleSupport, TurtleBoard
 from time import sleep
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 class CoordSupport:
   """ a board with coordinates for lights and hardware """
@@ -19,7 +19,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     TurtleSupport.__init__(self)
 
   def subclass_init(self):
-    print("CoordTurtleBoard - subklass_init")
+    logger.debug("CoordTurtleBoard - subklass_init")
     if '_' in self.boardname:
       tmp = self.boardname.split('_')[0]
     else:
@@ -27,7 +27,10 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     formklassname = tmp.capitalize() + 'Board'
     constructor = globals()[formklassname]
     self.formklass = constructor()
-    self.formklass.size = self.cfg['size']
+    self.formklass.size = 100 #self.cfg['size']
+    self.screen.setup(width=self.size*1.2, height=self.size*1.2,
+      startx=-1, starty=-1)
+
     self.formklass.num_panels = self.num_panels
     self.formklass.num_lights_in_group = self.num_lights_in_group
     self.coords = self.formklass.calc_prepare_coord()
@@ -48,7 +51,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     for i in range(1, self.num_lights_total+1):
       led[i] = CoordLight(i)
     self.led = led
-    print(self.led)
+    logger.debug(self.led)
 
   def create_grid(self):
     col_outline = "grey"
@@ -56,7 +59,7 @@ class CoordTurtleBoard(BoardBase, TurtleBoard, CoordSupport):
     t = self.t
     t.ht()
 #    size = self.boardcfg['size']
-    size = self.size
+    size = 100 #self.size
     for row in range(self.rows):
       for col in range(self.columns):
         x1 = (col * self.size)
@@ -141,7 +144,7 @@ class SquareBoard(TurtleSupport):
 
 class OctagonBoard(TurtleSupport):
   def calc_prepare_coord(self):
-    print("Octagon")
+    logger.debug("Octagon")
     t = self.t
     sz = self.size
     n = 1 # start as lights with 1
@@ -163,7 +166,7 @@ class OctagonBoard(TurtleSupport):
       t.rt(60)
 
     #t.pd()
-    print(n)
+    #print(n)
     return dots
 
 class HexagonBoard(TurtleSupport):

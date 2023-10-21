@@ -1,10 +1,12 @@
 from lib.Panel import Panel
-
+import logging
+logger = logging.getLogger()
 
 class LightPattern(object):
   """ Base class for light pattern, basic init methods """
 
   def __init__(self, board):
+    logger.debug('init LightPattern')
     self.board = board
     self.lights = {}
     self.count = 1
