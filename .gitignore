@@ -2,8 +2,11 @@
 
 *.swp
 *.swo
+*.log
+log/*
 
 docs/*
+tracks/*
 
 wifikey*
 *_bak.py
