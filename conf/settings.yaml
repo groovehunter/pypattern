@@ -1,7 +1,7 @@
 global:
   columns: 6
   rows: 6
-  size: 300
+  size: 100
   color1: blue
 
 hexagon:
@@ -27,6 +27,3 @@ triangle:
   num_panels: 3
   num_lights_in_group: 4
   klass: TriangleBoard
-
-
-

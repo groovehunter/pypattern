@@ -9,8 +9,11 @@ def connect():
         print('connecting to network...')
         sta_if.active(True)
         sta_if.connect(ESSID, PASS)
-        while not sta_if.isconnected():
-            pass
+#        while not sta_if.isconnected():
+#            pass
+        for i in range(10000):
+            if sta_if.isconnected():
+                break
     print('network config:', sta_if.ifconfig())
 
 def installpip():

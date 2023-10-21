@@ -1,6 +1,7 @@
 ### entry point - only for ESP32 platforms
 import sys, os
 from settings import boardname
+import network
 #print(__file__)
 
 mp = False
@@ -27,7 +28,7 @@ syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
 if mp:
   for p in syspath:
     slashed_p = '/'+p
-    abs_path = cwd + slashed_p 
+    abs_path = cwd + slashed_p
     if abs_path not in sys.path:
       sys.path.append(abs_path)
 
@@ -39,6 +40,7 @@ from pdc import PdcSingleton as PDC
 pdc = PDC()
 pdc.init()
 pdc.board.boardname = boardname
+#pdc.boardname = boardname
 pdc.board.load_py_conf()
 pdc.board.init()
 pdc.board.track = Track()
@@ -60,7 +62,9 @@ async def run_pdc():
 
 
 loop = asyncio.get_event_loop()
-factory = asyncio.start_server(http_server, '0.0.0.0', 80)
+sta_if = network.WLAN(network.STA_IF)
+if sta_if.isconnected():
+    factory = asyncio.start_server(http_server, '0.0.0.0', 80)
 server = loop.run_until_complete(factory)
 
 loop.create_task(run_pdc())
