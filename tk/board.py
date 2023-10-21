@@ -7,8 +7,10 @@ parent = dirname(dirname(abspath(__file__)))
 ### entspricht root of project
 # will it make sense
 sys.path.append(parent)
-print(sys.path)
-
+#print(sys.path)
+import logging
+logger = logging.getLogger()
+logging.basicConfig(filename=parent+'/pypattern.log', level=logging.DEBUG)
 
 import time
 
@@ -26,9 +28,11 @@ from tk.SquareFramePanels import SquareFramePanels
 from tk.StackedPanelsSquare import StackedPanelsSquare
 from tk.LightningCrossQuadrants import LightningCrossQuadrants
 from lib.DisplayBase import DisplayBase
+from lib.BoardBase import BoardBase
+from lib.Track import Track
+from settings import boardname
 
-
-class PatternControllerDisplay(DisplayBase):
+class PatternControllerDisplay(DisplayBase, BoardBase):
   """ make pattern of pattern controller visible """
 
   def __init__(self):
@@ -40,8 +44,13 @@ class PatternControllerDisplay(DisplayBase):
 #    self.board = LightningCrossQuadrants(self.root)
     self.board.pack(side="top", fill="both", expand="true", padx=6, pady=6)
     self.board.ctrl=self
+    self.track = Track()
+    self.boardname = boardname
+    self.load_py_conf()
+
     self.gui_setup()
     self.update_clock()
+    logger.warning("=== START")
 
   def update_clock(self):
     now = time.strftime("%H:%M:%S")
@@ -58,6 +67,7 @@ class PatternControllerDisplay(DisplayBase):
       self.pattern.initial_state()
       # new # XXX:
       self.board.pattern = self.pattern
+      self.board.pattern.subclass_init()
 
     self.total_pattern_list()
     variable = tk.StringVar(self.root)
@@ -81,12 +91,25 @@ class PatternControllerDisplay(DisplayBase):
     self.msecs = 500
     self.board.init_keys()
     self.board.init()
+    ### 11-22
+    self.board.track = Track()
 
     self.pattern = PairedLightsCycling(self.board)
     self.pattern.initial_state()
+    #logger.debug(self.pattern)
 
   def repeater(self):
-    self.pattern.next_state()
+    pat_name = self.track.next_pattern()
+    self.set_pattern(pat_name)
+    #self.pattern.next_state()
+    repeats = self.track.get_current_repeats()
+    num_steps = self.pattern.states_count * repeats
+    print("num_steps: ", num_steps)
+    for i in range(num_steps):
+      self.pattern.next_state()
+      self.change_board()
+      sleep(self.sleep_ms)
+
     self.board.enlighten()  # meta for flatarray and normal
 #    self.board.enlighten_flatarray()
     self.root.after(self.msecs, self.repeater)    # reschedule handler
