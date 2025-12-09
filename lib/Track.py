@@ -100,7 +100,7 @@ class Track:
         self.speed = s1
     else:
       self.speed = speed
-    logger.debug("set speed %d", self.speed )
+    logger.debug("set speed %s", self.speed )
     logger.debug("set speed_tend %s", self.speed_tend )
     logger.debug("playing times: %d", repeats)
     self.cur_pat = pat_abbr

@@ -13,3 +13,5 @@ wifikey*
 
 utemplate/*
 env.py
+
+.idea/
