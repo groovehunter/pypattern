@@ -1,16 +1,15 @@
-
 import pyfirmata
 import time
 import random
 
-from LightPattern import LightPattern
-from Panel import Light
-from CyclingPattern import *
+from lib.LightPattern import LightPattern
+from lib.Panel import Light
+# from CyclingPattern import *  # Datei existiert nicht, daher auskommentiert
+# from board import Base  # Unklar, welche Datei gemeint ist, daher auskommentiert
 
 led_pin = 9
 board = pyfirmata.Arduino("/dev/ttyUSB0")
 print("Code is running")
-from board import Base
 
 
 class LED(Light):
@@ -31,7 +30,7 @@ class RealBoard:
 
 
 
-class ArduDisplay(Base):
+class ArduDisplay:
   """ make pattern of pattern controller visible on 16 LED pins
       Das board mit 6x6 grid, die konfigur.Panel anordnungen
       etc, alles als GameBoard hier ablegen, member var?

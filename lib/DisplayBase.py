@@ -1,18 +1,12 @@
 import sys
 from os.path import join
 from settings import ROOT_DIR
-sys.path.append(join(ROOT_DIR, 'lib'))
-import inspect
-from LogicPattern import *
-from PanelPattern import *
-#from ExplicitStatesPattern import *
-from NextStatePattern import *
-from SynchronousPanelsPattern import *
-import LogicPattern
-#import ExplicitStatesPattern
-import NextStatePattern
-import PanelPattern
-import SynchronousPanelsPattern
+from lib.LogicPattern import *
+from lib.PanelPattern import *
+#from lib.ExplicitStatesPattern import *
+from lib.NextStatePattern import *
+from lib.SynchronousPanelsPattern import *
+from lib.ComboPattern import *
 
 import random
 import logging

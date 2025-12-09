@@ -1,5 +1,5 @@
-from BoardCanvas0 import GameBoard
-from Panel0 import Panel
+from raspi.BoardCanvas0 import GameBoard
+# from Panel0 import Panel  # Panel0.py existiert nicht, daher auskommentiert
 
 
 class SquareFramePanels0(GameBoard):

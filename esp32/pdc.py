@@ -1,4 +1,4 @@
-from Esp32Board import Esp32Board
+from esp32.Esp32Board import Esp32Board
 
 
 def connect(wifi):

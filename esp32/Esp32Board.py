@@ -1,8 +1,12 @@
-from GenericGeometry import GenericGeometry
-from BoardBase import BoardBase
-from DisplayBase_uP import DisplayBase
-from Esp32Light import Esp32Light
-from ucollections import OrderedDict
+from lib.GenericGeometry import GenericGeometry
+from lib.BoardBase import BoardBase
+from lib.DisplayBase_uP import DisplayBase
+from esp32.Esp32Light import Esp32Light
+
+try:
+    from ucollections import OrderedDict  # MicroPython
+except ImportError:
+    from collections import OrderedDict   # CPython
 
 
 class Esp32Board(DisplayBase, GenericGeometry, BoardBase):

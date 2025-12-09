@@ -1,5 +1,5 @@
-from esp32_conf import pinmap
-from Light import Light
+from esp32.esp32_conf import pinmap
+from lib.Light import Light
 from settings import boardname
 
 import sys
@@ -31,4 +31,3 @@ class Esp32Light(Light):
   def set_off(self):
     self.pin.value(0)
   """
-  

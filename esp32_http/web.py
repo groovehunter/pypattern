@@ -2,7 +2,18 @@ import gc
 import re
 import os
 import sys
-from pdc import PdcSingleton as PDC
+# sys.path anpassen, damit das esp32-Modul gefunden wird
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from esp32.pdc import PdcSingleton as PDC
+
+# Kompatibilität für CPython (lokal) und MicroPython (ESP32)
+try:
+    import uasyncio as asyncio
+except ImportError:
+    import asyncio
+
+from flowpy.utils import setup_logger
+logger = setup_logger(__name__, __name__)
 
 url_pat = re.compile(
     r'^(([^:/\\?#]+):)?' +  # scheme                # NOQA
@@ -21,29 +32,46 @@ def route(file):
 
 
 async def send_file(writer, file):
-    fstat = os.stat(file)
-    fsize = fstat[6]
+    logger.debug("file: %s", file)
+    try:
+        with open(file, 'rb') as f:
+            content = f.read()
+        fsize = len(content)
+    except OSError:
+        # Fehlerausgabe bei fehlender Datei
+        writer.write(b'HTTP/1.0 404 Not Found\r\n')
+        writer.write(b'Content-Type: text/plain\r\n')
+        writer.write(b'Content-Length: 0\r\n')
+        writer.write(b'Connection: close\r\n')
+        writer.write(b'\r\n')
+        await writer.drain()
+        writer.close()
+        await writer.wait_closed()
+        return
 
-    writer.write(b'HTTP/1.0 200 OK\r\n')
-    writer.write(b'Content-Type: text/html\r\n')
-    writer.write('Content-Length: {}\r\n'.format(fsize).encode('utf-8'))
-    writer.write(b'Accept-Ranges: none\r\n')
-    writer.write(b'Transfer-Encoding: chunked\r\n')
+    # Content-Type bestimmen
+    if file.endswith('.htm') or file.endswith('.html'):
+        content_type = 'text/html'
+    elif file.endswith('.css'):
+        content_type = 'text/css'
+    elif file.endswith('.js'):
+        content_type = 'application/javascript'
+    else:
+        content_type = 'application/octet-stream'
+
+    # Header senden
+    writer.write(b'HTTP/1.1 200 OK\r\n')
+    writer.write(f'Content-Type: {content_type}\r\n'.encode('utf-8'))
+    writer.write(f'Content-Length: {fsize}\r\n'.encode('utf-8'))
+    writer.write(b'Connection: close\r\n')
     writer.write(b'\r\n')
     await writer.drain()
-    gc.collect()
-    max_chunk_size = 1024
-    with open(file, 'rb') as f:
-        for x in range(0, fsize, max_chunk_size):
-            chunk_size = min(max_chunk_size, fsize-x)
-            chunk_header = "{:x}\r\n".format(chunk_size).encode('utf-8')
-            writer.write(chunk_header)
-            writer.write(f.read(chunk_size))
-            writer.write(b'\r\n')
-            await writer.drain()
-            gc.collect()
-    writer.write(b"\r\n")
-    await writer.drain()
+    # Body senden
+    # Sende die Datei in kleinen Chunks, um Buffer-Probleme zu vermeiden
+    chunk_size = 1024
+    for i in range(0, fsize, chunk_size):
+        writer.write(content[i:i+chunk_size])
+        await writer.drain()
     writer.close()
     await writer.wait_closed()
     gc.collect()
@@ -107,43 +135,60 @@ async def set_velo(item):
 
 
 async def stop():
-  loop = uasyncio.get_event_loop()
-  loop.close()
-  sys.exit()
-  return True
+    # Kompatibel für CPython und MicroPython
+    try:
+        loop = asyncio.get_event_loop()
+        loop.close()
+    except Exception as e:
+        print('Fehler beim Stop:', e)
+    # sys.exit() entfernt, da nach loop.close() nicht mehr erreichbar
+    return True
 
+# Basisverzeichnis für statische Dateien
+STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../www'))
+
+# Inline-Handler für die wichtigsten Endpunkte
 routes = {
-    b'/': route('/www/page.htm'),
-    b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
-    b'/css/style.css': route('/www/style.css'),
+    b'/': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'page.htm')),
+    b'/static/jquery.js': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'jquery-3.5.1.min.js')),
+    b'/css/style.css': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'style.css')),
 }
 rpat = {
-    r'/pat/(.*)': set_pattern,
-    r'/velo/(.*)': set_velo,
-    r'/bpm/(.*)': set_bpm,
-    r'/track/(.*)': set_track,
-    r'/stop/': stop,
-    r'/config/': config,
+    r'/pat/(.*)': lambda arg: set_pattern(arg),
+    r'/velo/(.*)': lambda arg: set_velo(arg),
+    r'/bpm/(.*)': lambda arg: set_bpm(arg),
+    r'/track/(.*)': lambda arg: set_track(arg),
+    r'/stop/': lambda arg=None: stop(),
+    r'/config/': lambda arg: config(arg),
 }
 
 async def parse_route(route, writer):
-  if route in routes:
-    await routes[route](writer)
-  else:
-    for p in rpat:
-      m = re.match(p, route)
-      if m:
-        print("FOUND urlpattern x with arg y:", p, m.group(1))
-        await rpat[p](m.group(1))
-        await routes[b'/'](writer)
-  return True
+    if route in routes:
+        await routes[route](writer)
+        return True
+    else:
+        for p in rpat:
+            m = re.match(p, route)
+            if m:
+                print("FOUND urlpattern x with arg y:", p, m.group(1) if m.lastindex else None)
+                await rpat[p](m.group(1) if m.lastindex else None)
+                await routes[b'/'](writer)
+                return True
+        else:
+            writer.write(b'HTTP/1.0 404 Not Found\r\n')
+            writer.write(b'\r\n')
+            await writer.drain()
+            writer.close()
+            await writer.wait_closed()
+            return False
+    gc.collect()
 
 async def http_server(reader, writer):
     req = await reader.readline()
     #print(req)
     method, uri, proto = req.split(b" ")
     print("method, uri, proto", method, uri, proto)
-    m = re.match(url_pat, uri)
+    m = re.match(url_pat, uri.decode())
     route = m.group(5)
     l = None
     while True:
@@ -151,7 +196,7 @@ async def http_server(reader, writer):
         if h == b"" or h == b"\r\n":
             break
         #print(h)
-        if 'Content-Length: ' in h:
+        if b'Content-Length: ' in h:
           try:
             l = int(h[16:-2])
             print ('Content Length is : ', l)
@@ -162,7 +207,7 @@ async def http_server(reader, writer):
       postquery = reader.read(l)
       print(postquery)
 
-    print("route: {}".format(route.decode('utf-8')))
+    print("route: {}".format(route))
 
     suc = await parse_route(route, writer)
 
@@ -173,3 +218,12 @@ async def http_server(reader, writer):
         writer.close()
         await writer.wait_closed()
     gc.collect()
+
+# Am Ende des Skripts: Serverstart für beide Varianten
+if __name__ == '__main__':
+    async def main():
+        server = await asyncio.start_server(http_server, '127.0.0.1', 8080)
+        print('Server läuft auf http://127.0.0.1:8080')
+        async with server:
+            await server.serve_forever()
+    asyncio.run(main())

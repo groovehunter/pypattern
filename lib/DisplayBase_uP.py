@@ -1,11 +1,10 @@
-
-from LogicPattern import *
-from ExplicitStatesPattern import *
-from NextStatePattern import *
-from PanelPattern import *
-from FixedStateNumberPattern import *
-from SynchronousPanelsPattern import *
-from ComboPattern import *
+from lib.LogicPattern import *
+from lib.ExplicitStatesPattern import *
+from lib.NextStatePattern import *
+from lib.PanelPattern import *
+from lib.FixedStateNumberPattern import *
+from lib.SynchronousPanelsPattern import *
+from lib.ComboPattern import *
 
 import random
 

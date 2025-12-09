@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
 import curses
-from CursesDisplay import CursesDisplay
-import sys
+from curses.CursesDisplay import CursesDisplay
 from curses.textpad import Textbox, rectangle
+import sys
 import logging
 
 class PatternControllerDisplay:

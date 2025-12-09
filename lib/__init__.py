@@ -1,1 +1,2 @@
-#from LogicPattern import LogicPattern
+# package marker
+

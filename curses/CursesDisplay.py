@@ -1,9 +1,7 @@
-from BoardCanvasNC import GameBoard
+from curses.BoardCanvasNC import GameBoard
 from time import sleep
-
-import curses
 from curses.textpad import rectangle, Textbox
-from DisplayBase import DisplayBase
+from lib.DisplayBase import DisplayBase
 
 #stdscr = curses.initscr()
 
