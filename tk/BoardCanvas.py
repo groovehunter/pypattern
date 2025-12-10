@@ -1,5 +1,9 @@
 import tkinter as tk
 
+from flowpy.utils import setup_logger
+logger = setup_logger(__name__, __name__ + '.log')
+
+
 class GameBoard(tk.Frame):
     def __init__(self, parent, rows=6, columns=6, size=60, color1="white", color2="grey"):
         '''size is the size of a square, in pixels'''
@@ -63,6 +67,7 @@ class GameBoard(tk.Frame):
             panel.init_lights()
 
     def enlighten(self):
+        logger.debug("BoardCanvas - enlighten")
         #print("BCG 1 - enlighten in BoardCanvas")
         for i, panel in self.panels.items():
             for i, light in panel.lights.items():

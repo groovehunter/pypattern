@@ -7,10 +7,10 @@ class StackedPanelsSquare(GameBoard):
 
     def init_panels(self):
         self.panels = {
-          't' : Panel(orientation='H'),
-          'r' : Panel(orientation='H'),
-          'b' : Panel(orientation='H'),
-          'l' : Panel(orientation='H'),
+            't': Panel(orientation='H'),
+            'r': Panel(orientation='H'),
+            'b': Panel(orientation='H'),
+            'l': Panel(orientation='H'),
         }
         # offset is  row, col
         self.panels['t'].offset = (1, 1)
