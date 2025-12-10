@@ -12,27 +12,28 @@ logger = setup_logger('board', 'tk.board.log')
 
 import time
 import tkinter as tk
-import inspect
+#import inspect
 # from PatternController import PatternController
 from lib.LogicPattern import *
-from lib.ExplicitStatesPattern import *
-from lib.PanelPattern import *
-from lib.NextStatePattern import *
+#from lib.ExplicitStatesPattern import *
+#from lib.PanelPattern import *
+#from lib.NextStatePattern import *
 
-from tk.BoardCanvas import GameBoard
+#from tk.BoardCanvas import GameBoard
 from tk.SquareFramePanels import SquareFramePanels
 # from tk.SquareFramePanels0 import SquareFramePanels
-from tk.StackedPanelsSquare import StackedPanelsSquare
-from tk.LightningCrossQuadrants import LightningCrossQuadrants
-from lib.DisplayBase import DisplayBase
+#from tk.StackedPanelsSquare import StackedPanelsSquare
+#from tk.LightningCrossQuadrants import LightningCrossQuadrants
+from lib.DisplayBase import DisplayBase, get_pattern_class_by_name
 from lib.BoardBase import BoardBase
 from lib.Track import Track
 from settings import boardname
 
+
 class PatternControllerDisplay(DisplayBase, BoardBase):
     """ make pattern of pattern controller visible """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.root = tk.Tk()
         # self.board = GameBoard(self.root)
         # self.board = StackedPanelsSquare(self.root)
@@ -40,16 +41,22 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         # self.board = LightningCrossQuadrants(self.root)
         self.board.pack(side="top", fill="both", expand=True, padx=6, pady=6)
         self.board.ctrl = self
-        self.track = Track()
-        self.boardname = boardname
-        #self.load_py_conf()
+        #self.mode = 'default'
+        #self.boardname = 'square'
+        #if 'mode' in kwargs:
+        self.mode = kwargs.get('mode', 'default')
+        #if 'boardname' in kwargs:
+        self.boardname = kwargs.get('boardname', 'square')
+
+        if self.mode == 'track':
+            self.track = Track()
         self.load_yaml_conf()
 
         self.gui_setup()
         self.update_clock()
         logger.warning("=== START")
         # 2025
-        self.sleep_ms = 0.0025
+        self.sleep_ms = 0.5
 
     def update_clock(self):
         now = time.strftime("%H:%M:%S")
@@ -58,6 +65,7 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
 
     def gui_setup(self):
         logger.debug("gui_setup")
+        """
         def set_pattern():
             pat_name = variable.get()
             #constructor = globals()[pat_name]
@@ -67,23 +75,24 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
             self.board.pattern = self.pattern
 
             self.pattern.subclass_init()
+        """
 
         self.total_pattern_list()
 
-        variable = tk.StringVar(self.root)
-        variable.set("CHOOSE PATTERN")  # default value
+        self.variable = tk.StringVar(self.root)
+        self.variable.set("CHOOSE PATTERN")  # default value
         l1 = tk.Label(text="Pattern", fg="black", bg="white")
         l1.pack(padx=5, pady=10, side=tk.LEFT)
 
         logger.debug("total_patlist: %s", self.total_patlist)
         # OptionMenu erwartet: parent, variable, value, *values
         if self.total_patlist:
-            w = tk.OptionMenu(self.root, variable, self.total_patlist[0], *self.total_patlist)
+            w = tk.OptionMenu(self.root, self.variable, self.total_patlist[0], *self.total_patlist)
         else:
-            w = tk.OptionMenu(self.root, variable, '')
+            w = tk.OptionMenu(self.root, self.variable, '')
         w.pack(padx=5, pady=10, side=tk.LEFT)
 
-        button = tk.Button(self.root, text="OK", command=set_pattern)
+        button = tk.Button(self.root, text="Set Pattern", command=self.set_pattern)
         button.pack(fill=tk.X)
         button = tk.Button(self.root, text="RUN", command=self.repeater)
         button.pack(fill=tk.X, side=tk.RIGHT)
@@ -103,11 +112,14 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         logger.debug(self.pattern)
 
     def repeater(self):
-        pat_name = self.track.next_pattern()
-        self.set_pattern(pat_name)
-        repeats = self.track.get_current_repeats()
+        if self.mode == 'track':
+            pat_name = self.track.next_pattern()
+            self.set_pattern(pat_name=pat_name)
+            repeats = self.track.get_current_repeats()
+        else:
+            repeats = 1
+
         num_steps = self.pattern.states_count * repeats
-        print("num_steps: ", num_steps)
         for i in range(num_steps):
             self.pattern.next_state()
             self.change_board()
@@ -121,6 +133,7 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         self.root.mainloop()
 
     def next_state(self, event):
+        logger.debug("PatternControllerDisplay - next_state - pattern %s", self.pattern.type)
         self.pattern.next_state()
         self.change_board()
 
@@ -129,6 +142,16 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         # self.pattern.state_cur.__repr__()
 
 if __name__ == "__main__":
-    pcd = PatternControllerDisplay()
+    argv = sys.argv
+    options = {}
+
+    if len(argv) > 1:
+        options['mode'] = argv[1]
+        print("mode from cmdline: ", mode)
+    if len(argv) > 2:
+        options['boardname'] = argv[2]
+        print("boardname from cmdline: ", boardname)
+
+    pcd = PatternControllerDisplay(**options)
     pcd.init()
     pcd.run()

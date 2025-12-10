@@ -1,0 +1,19 @@
+digraph G {
+  rankdir=LR;
+  node [shape=box, fontname="Helvetica"];
+
+  "tk.Frame" [style=filled, fillcolor="#EFEFEF"];
+  "BoardBase\n(`lib/BoardBase.py`)" [style=filled, fillcolor="#FFEFD5"];
+  "GameBoard\n(`tk/BoardCanvas.py`)" -> "BoardBase\n(`lib/BoardBase.py`)";
+  "GameBoard\n(`tk/BoardCanvas.py`)" -> "tk.Frame" [arrowhead="onormal"];
+
+  "SquareFramePanels\n(`tk/SquareFramePanels.py`)" -> "GameBoard\n(`tk/BoardCanvas.py`)";
+  "StackedPanelsSquare\n(`tk/StackedPanelsSquare.py`)" -> "GameBoard\n(`tk/BoardCanvas.py`)";
+  "LightningCrossQuadrants\n(`tk/LightningCrossQuadrants.py`)" -> "GameBoard\n(`tk/BoardCanvas.py`)";
+
+  "DisplayBase\n(`lib/DisplayBase.py`)" [style=filled, fillcolor="#FFEFD5"];
+  "PatternControllerDisplay\n(`tk/board.py`)" -> "DisplayBase\n(`lib/DisplayBase.py`)";
+  "PatternControllerDisplay\n(`tk/board.py`)" -> "BoardBase\n(`lib/BoardBase.py`)";
+
+  "PatternControllerDisplay\n(`tk/board.py`)" -> "GameBoard\n(`tk/BoardCanvas.py`)" [style=dashed, label="contains", arrowhead="vee"];
+}

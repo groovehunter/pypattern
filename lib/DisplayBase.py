@@ -1,6 +1,6 @@
-import sys
-from os.path import join
-from settings import ROOT_DIR
+#import sys
+#from os.path import join
+#from settings import ROOT_DIR
 import lib.PanelPattern as panelpattern_mod
 import lib.LogicPattern as logicpattern_mod
 import lib.NextStatePattern as nextstatepattern_mod
@@ -54,7 +54,10 @@ class DisplayBase:
         self.total_patlist = sorted(pattern_names)
         logger.debug("Available patterns: %s ", self.total_patlist)
 
-    def set_pattern(self, pat_name):
+    def set_pattern(self, pat_name=None):
+        if pat_name is None:
+            pat_name = self.variable.get()
+        logger.debug('set_pattern: %s', pat_name)
         constructor = get_pattern_class_by_name(pat_name)
         self.pattern = constructor(self.board)
         self.pattern.subclass_init()

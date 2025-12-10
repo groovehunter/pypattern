@@ -1,0 +1,32 @@
+digraph PatternClasses {
+    rankdir=LR;
+    node [shape=box, fontname="Helvetica"];
+
+    "LightPattern";
+    "NextStatePattern" -> "LightPattern";
+    "AllOnOffPattern" -> "NextStatePattern";
+
+    "ComboPattern";
+    "CyclingOppositePanelsSwitching" -> "ComboPattern";
+    "CyclingOppositePanelsBlinking" -> "ComboPattern";
+
+    "SymmetryPattern" -> "LightPattern";
+    "X_SymmetryPattern" -> "SymmetryPattern";
+    "SymNegativPattern" -> "LightPattern";
+    "XaxisNegativPattern" -> "SymNegativPattern";
+    "XaxisNegativAllPattern" -> "XaxisNegativPattern";
+    "UpperLowerSwitching" -> "X_SymmetryPattern";
+
+    "FixedStateNumberPattern" -> "LightPattern";
+    "OppositePanelsSwitching" -> "FixedStateNumberPattern";
+    "OppositePanelsBlinking" -> "FixedStateNumberPattern";
+
+    "PanelPattern" -> "LightPattern";
+    "SynchronousPanelsPattern" -> "LightPattern";
+    "LogicPattern" -> "LightPattern";
+    "ExplicitStatesPattern" -> "LightPattern";
+    "LgPattern" -> "LightPattern";
+    "TrackPattern" -> "LightPattern";
+    "PatternHelper";
+}
+

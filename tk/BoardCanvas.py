@@ -73,12 +73,23 @@ class GameBoard(BoardBase, tk.Frame):
         for i, panel in self.panels.items():
             panel.init_lights()
 
+    def refresh_board(self):
+        """Leert das Canvas und zeichnet das Board gemäß aktuellem Zustand neu."""
+        self.canvas.delete("all")
+        self.create_grid()
+        for i, panel in self.panels.items():
+            for j, light in panel.lights.items():
+                self.set_square_color_atpos(light.position, light.state)
+
     def enlighten(self):
         logger.debug("BoardCanvas - enlighten")
-        #print("BCG 1 - enlighten in BoardCanvas")
+        """
         for i, panel in self.panels.items():
-            for i, light in panel.lights.items():
+            logger.debug("enlighten panel %s", i)
+            for j, light in panel.lights.items():
                 self.set_square_color_atpos(light.position, light.state)
+        """
+        self.refresh_board()
 
     def set_square_color(self, event):
         color = "yellow"
@@ -91,7 +102,7 @@ class GameBoard(BoardBase, tk.Frame):
             outline=col_outline, fill=color, tags="square")
 
     def set_square_color_atpos(self, pos, state):
-        #print("setting state %s at pos %s", state, pos)
+        #logger.debug("BoardCanvas - set_square_color  %s at pos %s", state, pos)
         color = "grey"
         if state == 1:
             color = "yellow"
