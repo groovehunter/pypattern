@@ -1,229 +1,111 @@
+from microdot import Microdot, Response, redirect
+import os
 import gc
 import re
-import os
-import sys
-# sys.path anpassen, damit das esp32-Modul gefunden wird
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from esp32.pdc import PdcSingleton as PDC
 
-# Kompatibilität für CPython (lokal) und MicroPython (ESP32)
-try:
-    import uasyncio as asyncio
-except ImportError:
-    import asyncio
+app = Microdot()
+Response.default_content_type = 'text/html'
 
-from flowpy.utils import setup_logger
-logger = setup_logger(__name__, __name__)
+STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../www'))
 
-url_pat = re.compile(
-    r'^(([^:/\\?#]+):)?' +  # scheme                # NOQA
-    r'(//([^/\\?#]*))?' +   # user:pass@host:port   # NOQA
-    r'([^\\?#]*)' +         # route                 # NOQA
-    r'(\\?([^#]*))?' +      # query                 # NOQA
-    r'(#(.*))?')            # fragment              # NOQA
+# Globale Variable für Statusnachricht
+status_message = None
 
+# Hilfsfunktion für statische Dateien
 
-def route(file):
-
-    async def _func(writer):
-        await send_file(writer, file)
-
-    return _func
-
-
-async def send_file(writer, file):
-    logger.debug("file: %s", file)
+def send_file(filename, message=None):
+    path = os.path.join(STATIC_DIR, filename)
     try:
-        with open(file, 'rb') as f:
-            content = f.read()
-        fsize = len(content)
+        with open(path, 'rb') as f:
+            content = f.read().decode('utf-8')
     except OSError:
-        # Fehlerausgabe bei fehlender Datei
-        writer.write(b'HTTP/1.0 404 Not Found\r\n')
-        writer.write(b'Content-Type: text/plain\r\n')
-        writer.write(b'Content-Length: 0\r\n')
-        writer.write(b'Connection: close\r\n')
-        writer.write(b'\r\n')
-        await writer.drain()
-        writer.close()
-        await writer.wait_closed()
-        return
-
+        return Response('404 Not Found', status_code=404)
     # Content-Type bestimmen
-    if file.endswith('.htm') or file.endswith('.html'):
+    if filename.endswith('.htm') or filename.endswith('.html'):
         content_type = 'text/html'
-    elif file.endswith('.css'):
+    elif filename.endswith('.css'):
         content_type = 'text/css'
-    elif file.endswith('.js'):
+    elif filename.endswith('.js'):
         content_type = 'application/javascript'
     else:
         content_type = 'application/octet-stream'
+    # Message einblenden
+    if message:
+        # Füge die Message direkt nach <body> ein
+        content = content.replace('<body>', f'<body><div style="background:#dff0d8;color:#3c763d;padding:10px;margin-bottom:10px;border-radius:5px;">{message}</div>', 1)
+    return Response(body=content.encode('utf-8'), headers={'Content-Type': content_type})
 
-    # Header senden
-    writer.write(b'HTTP/1.1 200 OK\r\n')
-    writer.write(f'Content-Type: {content_type}\r\n'.encode('utf-8'))
-    writer.write(f'Content-Length: {fsize}\r\n'.encode('utf-8'))
-    writer.write(b'Connection: close\r\n')
-    writer.write(b'\r\n')
-    await writer.drain()
-    # Body senden
-    # Sende die Datei in kleinen Chunks, um Buffer-Probleme zu vermeiden
-    chunk_size = 1024
-    for i in range(0, fsize, chunk_size):
-        writer.write(content[i:i+chunk_size])
-        await writer.drain()
-    writer.close()
-    await writer.wait_closed()
-    gc.collect()
+@app.route('/')
+def index(request):
+    global status_message
+    msg = status_message
+    status_message = None
+    return send_file('page.htm', message=msg)
 
-async def config(cfg):
+@app.route('/css/style.css')
+def style_css(request):
+    return send_file('style.css')
+
+@app.route('/static/jquery.js')
+def jquery_js(request):
+    return send_file('jquery-3.5.1.min.js')
+
+@app.route('/bpm/<bpm>')
+def set_bpm_route(request, bpm):
+    from esp32.pdc import PdcSingleton as PDC
+    global status_message
+    bpm = int(bpm)
+    sl_ms = int(1000 / (bpm / 60))
     pdc = PDC()
-    wifi = cfg.decode()
+    pdc.sleep_ms = sl_ms
+    status_message = f'BPM wurde auf {bpm} umgestellt.'
+    return redirect('/')
+
+@app.route('/pat/<pat>')
+def set_pat(request, pat):
+    from esp32.pdc import PdcSingleton as PDC
+    global status_message
+    pdc = PDC()
+    suc = pdc.board.set_pattern(pat)
+    status_message = f'Pattern wurde auf {pat} umgestellt.'
+    return redirect('/')
+
+@app.route('/velo/<velo>')
+def set_velo_route(request, velo):
+    from esp32.pdc import PdcSingleton as PDC
+    global status_message
+    bpm = int(velo)
+    sl_ms = int(1000 / (bpm / 60))
+    pdc = PDC()
+    pdc.sleep_ms = sl_ms
+    status_message = f'Velo wurde auf {velo} umgestellt.'
+    return redirect('/')
+
+@app.route('/track/<track>')
+def set_track_route(request, track):
+    from esp32.pdc import PdcSingleton as PDC
+    global status_message
+    pdc = PDC()
+    suc = pdc.board.track.set_track(int(track))
+    status_message = f'Track wurde auf {track} umgestellt.'
+    return redirect('/')
+
+@app.route('/stop/')
+def stop_route(request):
+    global status_message
+    status_message = 'Server wurde gestoppt.'
+    return redirect('/')
+
+@app.route('/config/', methods=['POST'])
+def config_route(request):
+    from esp32.pdc import PdcSingleton as PDC
+    global status_message
+    wifi = request.body.decode()
+    pdc = PDC()
     suc = pdc.config(wifi)
-    return suc
+    status_message = 'Config wurde umgestellt.'
+    return redirect('/')
 
-async def set_track(val):
-  pdc = PDC()
-  val = int(val.decode())
-  suc = pdc.board.track.set_track(val)
-  return suc
-
-async def set_pattern(pat):
-  pdc = PDC()
-  pat_name = pat.decode()
-  print("SETTING: ", pat_name)
-  suc = pdc.board.set_pattern(pat_name)
-  return suc
-
-def set_attr(attr_name, value, default=None):
-  if not value:  value = default
-  #print(value)
-  pdc = PDC()
-  setattr(pdc, attr_name, value)
-
-def calc_sleep_ms(bpm):
-  bps = bpm / 60
-  sl_ms = int(1000 / bps)
-  return sl_ms
-
-def middle_bpm(bpm):
-  if bpm < 80:
-    bpm = bpm * 2
-  if bpm > 200:
-    bpm = int(bpm/2)
-  return bpm
-
-async def set_bpm(value):
-  bpm = int(value.decode())
-  #bpm = middle_bpm(bpm)
-  sl_ms = calc_sleep_ms(bpm)
-  pdc = PDC()
-  pdc.sleep_ms = sl_ms
-  print("sl_ms", sl_ms)
-  #set_attr('sleep_ms', sl_ms, default=200)
-  return True
-
-async def set_velo(item):
-  velo = int(item.decode())
-  if not velo:  velo= 5
-  #print(velo)
-  bpm = velo
-  sl_ms = calc_sleep_ms(bpm)
-  #print(sl_ms)
-  set_attr('sleep_ms', sl_ms, default=200)
-  return True
-
-
-async def stop():
-    # Kompatibel für CPython und MicroPython
-    try:
-        loop = asyncio.get_event_loop()
-        loop.close()
-    except Exception as e:
-        print('Fehler beim Stop:', e)
-    # sys.exit() entfernt, da nach loop.close() nicht mehr erreichbar
-    return True
-
-# Basisverzeichnis für statische Dateien
-STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../www'))
-
-# Inline-Handler für die wichtigsten Endpunkte
-routes = {
-    b'/': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'page.htm')),
-    b'/static/jquery.js': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'jquery-3.5.1.min.js')),
-    b'/css/style.css': lambda writer: send_file(writer, os.path.join(STATIC_DIR, 'style.css')),
-}
-rpat = {
-    r'/pat/(.*)': lambda arg: set_pattern(arg),
-    r'/velo/(.*)': lambda arg: set_velo(arg),
-    r'/bpm/(.*)': lambda arg: set_bpm(arg),
-    r'/track/(.*)': lambda arg: set_track(arg),
-    r'/stop/': lambda arg=None: stop(),
-    r'/config/': lambda arg: config(arg),
-}
-
-async def parse_route(route, writer):
-    if route in routes:
-        await routes[route](writer)
-        return True
-    else:
-        for p in rpat:
-            m = re.match(p, route)
-            if m:
-                print("FOUND urlpattern x with arg y:", p, m.group(1) if m.lastindex else None)
-                await rpat[p](m.group(1) if m.lastindex else None)
-                await routes[b'/'](writer)
-                return True
-        else:
-            writer.write(b'HTTP/1.0 404 Not Found\r\n')
-            writer.write(b'\r\n')
-            await writer.drain()
-            writer.close()
-            await writer.wait_closed()
-            return False
-    gc.collect()
-
-async def http_server(reader, writer):
-    req = await reader.readline()
-    #print(req)
-    method, uri, proto = req.split(b" ")
-    print("method, uri, proto", method, uri, proto)
-    m = re.match(url_pat, uri.decode())
-    route = m.group(5)
-    l = None
-    while True:
-        h = await reader.readline()
-        if h == b"" or h == b"\r\n":
-            break
-        #print(h)
-        if b'Content-Length: ' in h:
-          try:
-            l = int(h[16:-2])
-            print ('Content Length is : ', l)
-          except:
-            continue
-
-    if l :
-      postquery = reader.read(l)
-      print(postquery)
-
-    print("route: {}".format(route))
-
-    suc = await parse_route(route, writer)
-
-    if not suc:
-        writer.write(b'HTTP/1.0 404 Not Found\r\n')
-        writer.write(b'\r\n')
-        await writer.drain()
-        writer.close()
-        await writer.wait_closed()
-    gc.collect()
-
-# Am Ende des Skripts: Serverstart für beide Varianten
 if __name__ == '__main__':
-    async def main():
-        server = await asyncio.start_server(http_server, '127.0.0.1', 8080)
-        print('Server läuft auf http://127.0.0.1:8080')
-        async with server:
-            await server.serve_forever()
-    asyncio.run(main())
+    app.run(host='0.0.0.0', port=8080, debug=True)
