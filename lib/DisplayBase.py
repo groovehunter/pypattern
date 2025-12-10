@@ -26,6 +26,13 @@ def list_pattern_classes(module, base_class=None, exclude=None):
                     result.append(name)
     return result
 
+def get_pattern_class_by_name(name):
+    for mod in [panelpattern_mod, logicpattern_mod, synchronouspanels_mod, nextstatepattern_mod, combopattern_mod]:
+        if hasattr(mod, name):
+            return getattr(mod, name)
+    raise KeyError(f"Pattern class '{name}' not found in known modules.")
+
+
 class DisplayBase:
     """ base stuff for a board: setting the pattern, """
 
@@ -48,8 +55,8 @@ class DisplayBase:
         logger.debug("Available patterns: %s ", self.total_patlist)
 
     def set_pattern(self, pat_name):
-        constructor = globals()[pat_name]
-        self.pattern = constructor(self)
+        constructor = get_pattern_class_by_name(pat_name)
+        self.pattern = constructor(self.board)
         self.pattern.subclass_init()
         logger.debug('set_pattern')
 

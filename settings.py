@@ -1,102 +1,87 @@
 ## main settings file
 import sys
 try:
-  is_micropython = sys.implementation[0]=='micropython'
-except:
-  is_micropython = False
+    is_micropython = sys.implementation[0] == 'micropython'
+except Exception:
+    is_micropython = False
 
-if sys.platform=='esp32' or is_micropython:
-  import uos as os
-  ROOT_DIR = '/'
-  CONFIG_PATH = ROOT_DIR + '/configuration.conf'
-if sys.platform=='linux':
-  import os
-  ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-  CONFIG_PATH = os.path.join(ROOT_DIR, 'configuration.conf')
+if sys.platform == 'esp32' or is_micropython:
+    import uos as os
+    ROOT_DIR = '/'
+    CONFIG_PATH = ROOT_DIR + '/configuration.conf'
+else:
+    import os
+    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    CONFIG_PATH = os.path.join(ROOT_DIR, 'configuration.conf')
 
-
-boardname = 'triangle_3x3'
+boardname = 'square'
 #boardname = 'square_4x2'
 #boardname = 'square_4x8'
-boardname = 'hexagon'
+#boardname = 'hexagon'
 #boardname = 'octagon'
 
 
 global_conf = {
-  'boardname': boardname,
-  'size': 300,
-  'speed': 500,
+    'boardname': boardname,
+    'size': 300,
+    'speed': 500,
 }
 
-
 board_conf = {
-  'octagon':
-    {
-      'num_lights_total': 16,
-      'num_areas': 8,
-      'num_panels': 8,
-      'num_lights_in_group': 2,
-      'area_names': ['rtu', 'rtl', 'rbu', 'rbl', 'lbl', 'lbu', 'ltl', 'ltu']
+    'octagon': {
+        'num_lights_total': 16,
+        'num_areas': 8,
+        'num_panels': 8,
+        'num_lights_in_group': 2,
+        'area_names': ['rtu', 'rtl', 'rbu', 'rbl', 'lbl', 'lbu', 'ltl', 'ltu']
     },
-
-   'hexagon':
-    {
-      'num_lights_total': 12,
-      'num_areas': 6,
-      'num_panels': 6,
-      'num_lights_in_group': 2,
-      'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
+    'hexagon': {
+        'num_lights_total': 12,
+        'num_areas': 6,
+        'num_panels': 6,
+        'num_lights_in_group': 2,
+        'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
     },
-
-    'triangle':
-    {
-      'num_lights_total': 12,
-      'num_areas': 3,
-      'num_panels': 3,
-      'num_lights_in_group': 4,
-      'area_names': ['r', 'b', 'l']
+    'triangle': {
+        'num_lights_total': 12,
+        'num_areas': 3,
+        'num_panels': 3,
+        'num_lights_in_group': 4,
+        'area_names': ['r', 'b', 'l']
     },
-
-    'triangle_3x3':
-    {
-      'num_lights_total': 9,
-      'num_areas': 3,
-      'num_panels': 3,
-      'num_lights_in_group': 3,
-      'area_names': ['r', 'b', 'l']
+    'triangle_3x3': {
+        'num_lights_total': 9,
+        'num_areas': 3,
+        'num_panels': 3,
+        'num_lights_in_group': 3,
+        'area_names': ['r', 'b', 'l']
     },
-
-    'square4x1':
-    {
-      'num_lights_total': 4,
-      'num_areas': 4,
-      'num_panels': 4,
-      'num_lights_in_group': 1,
-      'area_names': ['t', 'r', 'b', 'l']
+    'square4x1': {
+        'num_lights_total': 4,
+        'num_areas': 4,
+        'num_panels': 4,
+        'num_lights_in_group': 1,
+        'area_names': ['t', 'r', 'b', 'l']
     },
-    'square4x2':
-    {
-      'num_lights_total': 8,
-      'num_areas': 4,
-      'num_panels': 4,
-      'num_lights_in_group': 2,
-      'area_names': ['t', 'r', 'b', 'l']
+    'square4x2': {
+        'num_lights_total': 8,
+        'num_areas': 4,
+        'num_panels': 4,
+        'num_lights_in_group': 2,
+        'area_names': ['t', 'r', 'b', 'l']
     },
-
-    'square':
-    {
-      'num_lights_total': 16,
-      'num_areas': 4,
-      'num_panels': 4,
-      'num_lights_in_group': 4,
-      'area_names': ['t', 'r', 'b', 'l']
+    'square': {
+        'num_lights_total': 16,
+        'num_areas': 4,
+        'num_panels': 4,
+        'num_lights_in_group': 4,
+        'area_names': ['t', 'r', 'b', 'l']
     },
-    'square_4x8':
-    {
-      'num_lights_total': 32,
-      'num_areas': 4,
-      'num_panels': 4,
-      'num_lights_in_group': 8,
-      'area_names': ['t', 'r', 'b', 'l']
+    'square_4x8': {
+        'num_lights_total': 32,
+        'num_areas': 4,
+        'num_panels': 4,
+        'num_lights_in_group': 8,
+        'area_names': ['t', 'r', 'b', 'l']
     },
 }

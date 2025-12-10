@@ -8,3 +8,5 @@ class DummyPin:
     def on(self): pass
     def off(self): pass
     def value(self, val): pass
+
+    def off(self):

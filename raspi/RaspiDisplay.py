@@ -39,12 +39,11 @@ class RaspiDisplay(DisplayBase):
     GPIO.setmode(GPIO.BCM)
     for i, pin in RaspiMap.items():
         GPIO.setup(pin, GPIO.OUT)
-
   def init(self):
     p_list = self.total_pattern_list()
     self.init_panels()
     self.init_panel_lights()
-
+        self.init_panel_lights()
   def init_panels(self):
     self.panels = {
       't' : Panel(1),
@@ -52,12 +51,12 @@ class RaspiDisplay(DisplayBase):
       'b' : Panel(3),
       'l' : Panel(4),
     }
-
+        }
   def init_panel_lights(self):
       for i, panel in self.panels.items():
           panel.init_lights()
           #print("init panel ", panel)
-
+              #print("init panel ", panel)
   def enlighten(self):
     print("pattern: ", self.pattern.__class__)
     for i, panel in self.panels.items():
@@ -65,24 +64,24 @@ class RaspiDisplay(DisplayBase):
       for i, light in panel.lights.items():
         pin_nr = (panel.pid-1) * 4 + i
         self.raspiPin(pin_nr, light.state)
-
+            self.raspiPin(pin_nr, light.state)
   def raspiPin(self, i, state):
     pin_lvl = state_map[state]
     pin_board = RaspiMap[i+1]
     # print("set bcm pin", pin_board, "to", pin_lvl)
     GPIO.output(pin_board, pin_lvl)
-
+        GPIO.output(pin_board, pin_lvl)
   def test(self):
     for i, panel in self.panels.items():
       panel.full()
     self.enlighten()
-
+        self.enlighten()
   def test_pattern(self):
     while True:
       self.pattern.next_state()
       self.enlighten()
       sleep(5)
-
+          sleep(5)
   def run(self):
     """ random pattern, but only which use next_state method """
     print(self.pattern)
@@ -98,3 +97,5 @@ class RaspiDisplay(DisplayBase):
     pat_name = p_list[0]
     self.pattern = self.set_pattern(pat_name)
 """
+
+              sleep(1)

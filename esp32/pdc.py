@@ -14,19 +14,19 @@ def connect(wifi):
 
 
 class PdcSingleton(object):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(PdcSingleton, cls).__new__(cls)
   def __new__(cls):
     if not hasattr(cls, 'instance'):
       cls.instance = super(PdcSingleton, cls).__new__(cls)
     return cls.instance
-
+        self.velocity = 5
   def init(self):
     print("init PDC")
     self.velocity = 5
     self.sleep_ms = 300
-
+            self.board = Esp32Board()
     if not hasattr(self, 'board'):
         #self.board = GenericBoard()
         self.board = Esp32Board()
-
-  def config(self, wifi):
-    self.connect(wifi)

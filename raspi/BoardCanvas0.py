@@ -23,6 +23,8 @@ class GameBoard:
             panel.init_lights()
 
     def enlighten(self):
-        for i, panel in self.panels.items():
           for i, light in panel.lights.items():
               print(light.state)
+                print(light.state)
+
+        pass

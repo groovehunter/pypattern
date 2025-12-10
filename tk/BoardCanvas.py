@@ -1,13 +1,15 @@
 import tkinter as tk
 
 from flowpy.utils import setup_logger
+from lib.BoardBase import BoardBase
+
 logger = setup_logger(__name__, __name__ + '.log')
 
 
-class GameBoard(tk.Frame):
+class GameBoard(BoardBase, tk.Frame):
     def __init__(self, parent, rows=6, columns=6, size=60, color1="white", color2="grey"):
-        '''size is the size of a square, in pixels'''
-
+        BoardBase.__init__(self)
+        tk.Frame.__init__(self, parent)
         self.rows = rows
         self.columns = columns
         self.size = size
@@ -18,13 +20,18 @@ class GameBoard(tk.Frame):
         canvas_width = columns * size
         canvas_height = rows * size
 
-        tk.Frame.__init__(self, parent)
         self.canvas = tk.Canvas(self, borderwidth=0, highlightthickness=0,
             width=canvas_width, height=canvas_height, background="bisque")
         self.canvas.pack(side="top", fill="both", expand=True, padx=4, pady=4)
 
         self.canvas.bind("<Configure>", self.refresh2)
         self.canvas.bind("<Button-1>", self.set_square_color)
+
+        # Board-Konfiguration laden
+        self.boardname = getattr(self, 'boardname', 'square')
+        self.boardcfg = None
+        self.cfg = None
+        self.load_py_conf()
 
     def init_keys(self):
         self.canvas.bind("<Button-3>", self.ctrl.next_state )

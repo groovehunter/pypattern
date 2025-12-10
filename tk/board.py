@@ -42,11 +42,14 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         self.board.ctrl = self
         self.track = Track()
         self.boardname = boardname
-        self.load_py_conf()
+        #self.load_py_conf()
+        self.load_yaml_conf()
 
         self.gui_setup()
         self.update_clock()
         logger.warning("=== START")
+        # 2025
+        self.sleep_ms = 0.0025
 
     def update_clock(self):
         now = time.strftime("%H:%M:%S")
@@ -57,13 +60,16 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         logger.debug("gui_setup")
         def set_pattern():
             pat_name = variable.get()
-            constructor = globals()[pat_name]
+            #constructor = globals()[pat_name]
+            constructor = get_pattern_class_by_name(pat_name)
             self.pattern = constructor(self.board)
             self.pattern.initial_state()
             self.board.pattern = self.pattern
-            self.board.pattern.subclass_init()
+
+            self.pattern.subclass_init()
 
         self.total_pattern_list()
+
         variable = tk.StringVar(self.root)
         variable.set("CHOOSE PATTERN")  # default value
         l1 = tk.Label(text="Pattern", fg="black", bg="white")
@@ -105,7 +111,7 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         for i in range(num_steps):
             self.pattern.next_state()
             self.change_board()
-            sleep(self.sleep_ms)
+            time.sleep(self.sleep_ms)
 
         self.board.enlighten()  # meta for flatarray and normal
         # self.board.enlighten_flatarray()

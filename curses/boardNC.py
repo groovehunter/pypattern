@@ -37,3 +37,4 @@ if __name__ == "__main__":
     pcd.board.test_pattern()
     curses.endwin()
     sys.exit()
+
