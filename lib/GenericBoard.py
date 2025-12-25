@@ -4,7 +4,7 @@ from DisplayBase import DisplayBase
 
 # BoardBase ?
 #class GenericBoard(GenericGeometry, DisplayBase):
-class GenericBoard(BoardBase, GenericGeometry, DisplayBase):
+class GenericBoard(GenericGeometry, DisplayBase):
   pass
 
   def subclass_init(self):

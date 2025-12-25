@@ -10,11 +10,10 @@ Finale.
 ein current counter
 sollder track object selber mitzählen?? Oder macht das run function?
 """
-import os
 from settings import ROOT_DIR
-from flowpy.utils import setup_logger
+from flowpy.simplelogger import SimpleLogger
 
-logger = setup_logger(__name__, __name__+'.log')
+logger = SimpleLogger(path=__name__+'.log')
 
 pat_map = {
     'SLC': 'SingleLightCycling',
@@ -32,7 +31,7 @@ pat_map = {
     'COPB':'CyclingOppositePanelsBlinking',
 
 }
-import csv
+#import csv
 
 # rename to TrackSupport
 class Track:
@@ -57,9 +56,10 @@ class Track:
         self.lines = {}
         lc = 0
         with open(fn, 'r') as f:
-            self.reader = csv.reader(f, delimiter=' ')
-            self.track = self.reader #[row for row in reader]
-            for line in self.reader:
+            lines = f.readlines()
+            #self.reader = csv.reader(f, delimiter=' ')
+            #self.track = self.reader #[row for row in reader]
+            for line in lines:
                 self.lines[lc] = line
                 logger.debug('line of csv: %s', str(line))
                 lc +=1

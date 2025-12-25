@@ -75,8 +75,8 @@ class GameBoard(BoardBase, tk.Frame):
 
     def refresh_board(self):
         """Leert das Canvas und zeichnet das Board gemäß aktuellem Zustand neu."""
-        self.canvas.delete("all")
-        self.create_grid()
+        #self.canvas.delete("all")
+        #self.create_grid()
         for i, panel in self.panels.items():
             for j, light in panel.lights.items():
                 self.set_square_color_atpos(light.position, light.state)

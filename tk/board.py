@@ -34,6 +34,8 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
     """ make pattern of pattern controller visible """
 
     def __init__(self, **kwargs):
+        # hier glaub ich sollte das nicht hin
+        #BoardBase.__init__(self, **kwargs)
         self.root = tk.Tk()
         # self.board = GameBoard(self.root)
         # self.board = StackedPanelsSquare(self.root)
@@ -57,6 +59,7 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         logger.warning("=== START")
         # 2025
         self.sleep_ms = 0.5
+        self.msecs = 200
 
     def update_clock(self):
         now = time.strftime("%H:%M:%S")
@@ -101,11 +104,12 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
         self.label_clock.pack()
         self.root.after(1000, self.update_clock)
 
+        self.init()
+
     def init(self):
-        self.msecs = 500
         self.board.init_keys()
         self.board.init()
-        self.board.track = Track()
+        #self.board.track = Track()
 
         self.pattern = PairedLightsCycling(self.board)
         self.pattern.initial_state()
@@ -120,6 +124,9 @@ class PatternControllerDisplay(DisplayBase, BoardBase):
             repeats = 1
 
         num_steps = self.pattern.states_count * repeats
+        logger.debug("PatternControllerDisplay - repeater - pattern %s, num_steps %d", self.pattern.type, num_steps)
+        # just a guess
+        #self.pattern.initial_state()
         for i in range(num_steps):
             self.pattern.next_state()
             self.change_board()
@@ -153,5 +160,5 @@ if __name__ == "__main__":
         print("boardname from cmdline: ", boardname)
 
     pcd = PatternControllerDisplay(**options)
-    pcd.init()
+    #pcd.init()
     pcd.run()

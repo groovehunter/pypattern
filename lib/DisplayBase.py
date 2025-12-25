@@ -8,8 +8,8 @@ import lib.SynchronousPanelsPattern as synchronouspanels_mod
 import lib.ComboPattern as combopattern_mod
 import inspect
 import random
-from flowpy.utils import setup_logger
-logger = setup_logger(__name__, __name__ + '.log')
+from flowpy.simplelogger import SimpleLogger
+logger = SimpleLogger(path=__name__+'.log')
 
 
 def list_pattern_classes(module, base_class=None, exclude=None):

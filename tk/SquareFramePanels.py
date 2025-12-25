@@ -5,7 +5,7 @@ from tk.TkPanel import TkPanel
 class SquareFramePanels(GameBoard):
     def __init__(self, parent):
         super().__init__(parent)
-        self.load_py_conf()  # boardcfg wird gesetzt
+        #self.load_py_conf()  # boardcfg wird gesetzt
         self.num_panels = 4
         self.num_lights_total = 16
         self.num_lights_in_group = 4
