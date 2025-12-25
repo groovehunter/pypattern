@@ -57,8 +57,6 @@ class Track:
         lc = 0
         with open(fn, 'r') as f:
             lines = f.readlines()
-            #self.reader = csv.reader(f, delimiter=' ')
-            #self.track = self.reader #[row for row in reader]
             for line in lines:
                 self.lines[lc] = line
                 logger.debug('line of csv: %s', str(line))
@@ -68,7 +66,6 @@ class Track:
             #self.tracks = [line.rstrip() for line in f]
 #        if line.startswith(' '): continue
 #        self.tracks[c] = line
-        self.tracks[0] = self.track
 
     def next_pattern(self):
         if self.linescopy == {}:   # track "ended", reset it

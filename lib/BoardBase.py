@@ -1,7 +1,7 @@
 from flowpy.simplelogger import SimpleLogger
 logger = SimpleLogger(path=__name__+'.log')
 
-import yaml
+import json
 from settings import board_conf, global_conf, ROOT_DIR
 
 class BoardBase:
@@ -25,10 +25,10 @@ class BoardBase:
         self.cfg = global_conf
         self.configure()
 
-    def load_yaml_conf(self):
+    def load_json_conf(self):
 
-        with open(ROOT_DIR + '/conf/settings.yaml') as cfgfile:
-            cfg = yaml.load(cfgfile, Loader=yaml.Loader)
+        with open(ROOT_DIR + '/conf/settings.json') as cfgfile:
+            cfg = json.load(cfgfile)
         self.boardcfg = cfg[self.boardname]
         self.cfg = cfg['global']
         self.configure()

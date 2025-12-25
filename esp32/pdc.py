@@ -1,4 +1,7 @@
-from esp32.Esp32Board import Esp32Board
+try:
+    from Esp32Board import Esp32Board
+except ImportError:
+    from esp32.Esp32Board import Esp32Board
 
 
 def connect(wifi):
