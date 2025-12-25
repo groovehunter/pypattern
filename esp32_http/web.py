@@ -1,18 +1,18 @@
+import gc
+gc.collect()
+
 from microdot import Microdot, Response, redirect
 import os
-import gc
-import re
-from esp32.pdc import PdcSingleton as PDC
+#from esp32.pdc import PdcSingleton as PDC
 
 app = Microdot()
 Response.default_content_type = 'text/html'
 
 STATIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../www'))
 
-# Globale Variable für Statusnachricht
+
 status_message = None
 
-# Hilfsfunktion für statische Dateien
 
 def send_file(filename, message=None):
     path = os.path.join(STATIC_DIR, filename)
@@ -21,7 +21,7 @@ def send_file(filename, message=None):
             content = f.read().decode('utf-8')
     except OSError:
         return Response('404 Not Found', status_code=404)
-    # Content-Type bestimmen
+    
     if filename.endswith('.htm') or filename.endswith('.html'):
         content_type = 'text/html'
     elif filename.endswith('.css'):
@@ -30,10 +30,9 @@ def send_file(filename, message=None):
         content_type = 'application/javascript'
     else:
         content_type = 'application/octet-stream'
-    # Message einblenden
+    
     if message:
-        # Füge die Message direkt nach <body> ein
-        content = content.replace('<body>', f'<body><div style="background:#dff0d8;color:#3c763d;padding:10px;margin-bottom:10px;border-radius:5px;">{message}</div>', 1)
+        content = content.replace('<body>', '<body><div class="status-message">{}</div>'.format(message), 1)
     return Response(body=content.encode('utf-8'), headers={'Content-Type': content_type})
 
 @app.route('/')
@@ -59,7 +58,7 @@ def set_bpm_route(request, bpm):
     sl_ms = int(1000 / (bpm / 60))
     pdc = PDC()
     pdc.sleep_ms = sl_ms
-    status_message = f'BPM wurde auf {bpm} umgestellt.'
+    status_message = 'BPM wurde auf {} umgestellt.'.format(bpm)
     return redirect('/')
 
 @app.route('/pat/<pat>')
@@ -68,18 +67,7 @@ def set_pat(request, pat):
     global status_message
     pdc = PDC()
     suc = pdc.board.set_pattern(pat)
-    status_message = f'Pattern wurde auf {pat} umgestellt.'
-    return redirect('/')
-
-@app.route('/velo/<velo>')
-def set_velo_route(request, velo):
-    from esp32.pdc import PdcSingleton as PDC
-    global status_message
-    bpm = int(velo)
-    sl_ms = int(1000 / (bpm / 60))
-    pdc = PDC()
-    pdc.sleep_ms = sl_ms
-    status_message = f'Velo wurde auf {velo} umgestellt.'
+    status_message = 'Pattern wurde auf {} umgestellt.'.format(pat)
     return redirect('/')
 
 @app.route('/track/<track>')
@@ -88,7 +76,7 @@ def set_track_route(request, track):
     global status_message
     pdc = PDC()
     suc = pdc.board.track.set_track(int(track))
-    status_message = f'Track wurde auf {track} umgestellt.'
+    status_message = 'Track wurde auf {} umgestellt.'.format(track)
     return redirect('/')
 
 @app.route('/stop/')
@@ -97,15 +85,6 @@ def stop_route(request):
     status_message = 'Server wurde gestoppt.'
     return redirect('/')
 
-@app.route('/config/', methods=['POST'])
-def config_route(request):
-    from esp32.pdc import PdcSingleton as PDC
-    global status_message
-    wifi = request.body.decode()
-    pdc = PDC()
-    suc = pdc.config(wifi)
-    status_message = 'Config wurde umgestellt.'
-    return redirect('/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
