@@ -1,4 +1,7 @@
-from esp32.Esp32Board import Esp32Board
+try:
+    from Esp32Board import Esp32Board
+except ImportError:
+    from esp32.Esp32Board import Esp32Board
 
 
 def connect(wifi):
@@ -22,7 +25,7 @@ class PdcSingleton(object):
     def init(self):
         print("init PDC")
         self.velocity = 5
-        self.sleep_ms = 300
+        self.sleep_ms = 500
         if not hasattr(self, 'board'):
             # self.board = GenericBoard()
             self.board = Esp32Board()

@@ -51,7 +51,7 @@ def check_filesystem_usage():
 check_memory()
 check_filesystem_usage()
 
-syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf', 'microdot']
+syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
 if mp:
     for p in syspath:
         slashed_p = '/' + p
@@ -89,9 +89,16 @@ async def run_pdc():
 
 
 loop = asyncio.get_event_loop()
+
+
+from boot import connect
+connect()
+
+
 wifi_if = network.WLAN(network.STA_IF)
 
 if wifi_if.isconnected():
+    print("WIFI CONNECTED [OK]")
     factory = asyncio.start_server(http_server, '0.0.0.0', 8080)
     server = loop.run_until_complete(factory)
 

@@ -14,10 +14,10 @@ else:
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     CONFIG_PATH = os.path.join(ROOT_DIR, 'configuration.conf')
 
-boardname = 'square'
+#boardname = 'square'
 #boardname = 'square_4x2'
 #boardname = 'square_4x8'
-#boardname = 'hexagon'
+boardname = 'hexagon'
 #boardname = 'octagon'
 
 

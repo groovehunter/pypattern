@@ -1,4 +1,7 @@
-from esp32.esp32_conf import pinmap
+try:
+    from esp32_conf import pinmap
+except ImportError:
+    from esp32.esp32_conf import pinmap
 from lib.Light import Light
 from settings import boardname
 

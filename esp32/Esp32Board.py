@@ -1,7 +1,11 @@
 from lib.GenericGeometry import GenericGeometry
 from lib.BoardBase import BoardBase
 from lib.DisplayBase_uP import DisplayBase
-from esp32.Esp32Light import Esp32Light
+
+try:
+    from Esp32Light import Esp32Light
+except ImportError:
+    from esp32.Esp32Light import Esp32Light
 
 try:
     from ucollections import OrderedDict  # MicroPython
@@ -19,7 +23,7 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
     def enlight_led(self, i):
         """ accessing the hardware pins """
         self.led[i].pin.value(self.led[i].state)
-        print(self.led[i].pin, self.led[i].state)
+        #print(self.led[i].pin, self.led[i].state)
 
     def change_board(self):
         super().enlighten()
