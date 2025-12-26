@@ -49,7 +49,7 @@ class Panel:
     def is_full(self):
         assume = True
         for key, light in self.lights.items():
-            print(light.state)
+            #print(light.state)
             if not light.state:
                 return False
         return assume

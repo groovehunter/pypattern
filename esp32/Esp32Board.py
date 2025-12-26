@@ -39,4 +39,4 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
             led[i] = Esp32Light(i)
         self.led = led
         print("Esp32Board - init_leds")
-        print(self.led)
+        #print(self.led)

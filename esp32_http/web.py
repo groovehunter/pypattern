@@ -1,7 +1,13 @@
 import gc
 import re
-import os
+import os, sys
 from pdc import PdcSingleton as PDC
+
+if sys.platform == 'esp32':
+    cwd = os.getcwd()
+else:
+    from env import HOME
+    cwd = HOME
 
 url_pat = re.compile(
     r'^(([^:/\\?#]+):)?' +  # scheme                # NOQA
@@ -12,7 +18,7 @@ url_pat = re.compile(
 
 
 def route(file):
-
+    file = cwd + file
     async def _func(writer):
         await send_file(writer, file)
 
@@ -30,7 +36,8 @@ async def send_file(writer, file):
     writer.write(b'Transfer-Encoding: chunked\r\n')
     writer.write(b'\r\n')
     await writer.drain()
-    gc.collect()
+
+    #gc.collect()
     max_chunk_size = 1024
     with open(file, 'rb') as f:
         for x in range(0, fsize, max_chunk_size):
@@ -43,6 +50,7 @@ async def send_file(writer, file):
             gc.collect()
     writer.write(b"\r\n")
     await writer.drain()
+
     writer.close()
     await writer.wait_closed()
     gc.collect()
@@ -51,13 +59,13 @@ async def send_file(writer, file):
 async def set_pattern(pat):
     pdc = PDC()
     #pdc.init()
-    pat_name = pat.decode()
+    pat_name = pat
     print("SETTING: ", pat_name)
     suc = pdc.board.set_pattern(pat_name)
     return suc
 
 async def set_velo(item):
-  velo = int(item.decode())
+  velo = int(item)
   if not velo:  velo= 5
   print(velo)
   pdc = PDC()
@@ -76,19 +84,42 @@ rpat = {
 async def parse_route(route, writer):
     if route in routes:
         await routes[route](writer)
+        return True
     else:
         for p in rpat:
             m = re.match(p, route)
             if m:
                 print("FOUND", m.group(1))
                 await rpat[p](m.group(1))
-                await routes[b'/'](writer)
+                # Nach erfolgreicher Aktion: HTTP-Redirect senden
+                writer.write(b'HTTP/1.0 302 Found\r\n')
+                writer.write(b'Location: /\r\n')
+                writer.write(b'Content-Type: text/html\r\n\r\n')
+                writer.write(b'<html><body>Redirecting...</body></html>')
+                await writer.drain()
+                writer.close()
+                await writer.wait_closed()
+                return True
+    return False
+
+async def not_found(writer):
+    writer.write(b'HTTP/1.0 404 Not Found\r\n')
+    writer.write(b'\r\n')
+    await writer.drain()
+    writer.close()
+    await writer.wait_closed()
+    #gc.collect()
 
 async def http_server(reader, writer):
     req = await reader.readline()
     print(req)
+    if req is b"":
+        writer.close()
+        await writer.wait_closed()
+        return
+
     method, uri, proto = req.split(b" ")
-    m = re.match(url_pat, uri)
+    m = re.match(url_pat, uri.decode())
     route = m.group(5)
 
     while True:
@@ -97,14 +128,11 @@ async def http_server(reader, writer):
             break
         print(h)
 
-    print("route: {}".format(route.decode('utf-8')))
+    print("route: {}".format(route))
 
     suc = await parse_route(route, writer)
 
     if not suc:
-        writer.write(b'HTTP/1.0 404 Not Found\r\n')
-        writer.write(b'\r\n')
-        await writer.drain()
-        writer.close()
-        await writer.wait_closed()
+        await not_found(writer)
+
     gc.collect()

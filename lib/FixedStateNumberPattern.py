@@ -9,7 +9,7 @@ class FixedStateNumberPattern(LightPattern):
     type = 'FixedStateNumberPattern'
 
     def subclass_init(self):
-        print("FixedStateNumberPattern - subclass_init")
+        #print("FixedStateNumberPattern - subclass_init")
         self.init_panels_array()
         self.init_pattern_panels()
 

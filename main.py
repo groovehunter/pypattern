@@ -1,17 +1,17 @@
-### entry point - only for ESP32 platforms
+### entry point - for ESP32 platforms and others
+
 import sys, os
-from settings import boardname
-import network
 #print(__file__)
+#print(sys.path)
 
-
-mp = False
+MICROPYTHON = False
 if sys.platform == 'esp32':  # or sys.implementation[0]=='micropython':
-    mp = True
+    MICROPYTHON = True
 
 cwd = ''
 if sys.platform == 'esp32':
     import esp
+    import network
     esp.osdebug(None)
     cwd = os.getcwd()
     import uasyncio as asyncio
@@ -19,9 +19,9 @@ else:
     print("WARNING: NO esp32 environment !")
     from env import HOME
     cwd = HOME
-    sys.exit()
+    #sys.exit()
+    import asyncio
 
-from lib.Track import Track
 import gc
 gc.collect()
 
@@ -33,7 +33,6 @@ def check_memory():
     print('alloc: ', alloc)
     print('total: ', alloc+free)
           
-# Funktion zur Berechnung des Speicherverbrauchs
 def check_filesystem_usage():
     # Gesamtgröße des Dateisystems
     total = os.statvfs('/')
@@ -48,21 +47,25 @@ def check_filesystem_usage():
     print("Genutzter Speicher:", used_size // 1024, "KB")
 
 # Speicherverbrauch abfragen
-check_memory()
-check_filesystem_usage()
+if MICROPYTHON:
+    check_memory()
+    check_filesystem_usage()
 
 syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
-if mp:
+#if MICROPYTHON:
+if True:
     for p in syspath:
         slashed_p = '/' + p
         abs_path = cwd + slashed_p
         if abs_path not in sys.path:
             sys.path.append(abs_path)
-
-print(sys.path)
+else:
+    pass
 
 from web import http_server
 from pdc import PdcSingleton as PDC
+from settings import boardname
+from Track import Track
 
 pdc = PDC()
 pdc.init()
@@ -91,16 +94,20 @@ async def run_pdc():
 loop = asyncio.get_event_loop()
 
 
-from boot import connect
-connect()
+print('in main before connect')
+if MICROPYTHON:
+    from boot import connect
+    connect()
+    print('after')
 
-
-wifi_if = network.WLAN(network.STA_IF)
-
-if wifi_if.isconnected():
-    print("WIFI CONNECTED [OK]")
+    wifi_if = network.WLAN(network.STA_IF)
+    if wifi_if.isconnected():
+        print("WIFI CONNECTED [OK]")
+        factory = asyncio.start_server(http_server, '0.0.0.0', 8080)
+        server = loop.run_until_complete(factory)
+else:
     factory = asyncio.start_server(http_server, '0.0.0.0', 8080)
     server = loop.run_until_complete(factory)
 
-loop.create_task(run_pdc())
+#loop.create_task(run_pdc())
 loop.run_forever()
