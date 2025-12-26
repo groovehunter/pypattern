@@ -89,13 +89,9 @@ async def run_pdc():
 
 
 loop = asyncio.get_event_loop()
-#wifi_if = network.WLAN(network.STA_IF)
-wifi_if = network.WLAN(network.AP_IF)
-wifi_if.active(True)
-wifi_if.config(essid='uvchakras', password='turnaround123')
+wifi_if = network.WLAN(network.STA_IF)
 
-#if wifi_if.isconnected():
-if True:
+if wifi_if.isconnected():
     factory = asyncio.start_server(http_server, '0.0.0.0', 8080)
     server = loop.run_until_complete(factory)
 

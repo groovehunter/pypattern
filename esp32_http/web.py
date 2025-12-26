@@ -1,135 +1,110 @@
 import gc
-import socket
-import sys
+import re
 import os
+from pdc import PdcSingleton as PDC
 
-gc.collect()
+url_pat = re.compile(
+    r'^(([^:/\\?#]+):)?' +  # scheme                # NOQA
+    r'(//([^/\\?#]*))?' +   # user:pass@host:port   # NOQA
+    r'([^\\?#]*)' +         # route                 # NOQA
+    r'(\\?([^#]*))?' +      # query                 # NOQA
+    r'(#(.*))?')            # fragment              # NOQA
 
-STATIC_DIR = '/www'
-status_message = None
 
-# Hilfsfunktion: Sende statische Datei
+def route(file):
 
-def send_file(filename, message=None):
-    path = STATIC_DIR + '/' + filename
-    try:
-        with open(path, 'rb') as f:
-            content = f.read().decode('utf-8')
-    except OSError:
-        return '404 Not Found', 'text/plain', 404
-    if filename.endswith('.htm') or filename.endswith('.html'):
-        content_type = 'text/html'
-    elif filename.endswith('.css'):
-        content_type = 'text/css'
-    elif filename.endswith('.js'):
-        content_type = 'application/javascript'
+    async def _func(writer):
+        await send_file(writer, file)
+
+    return _func
+
+
+async def send_file(writer, file):
+    fstat = os.stat(file)
+    fsize = fstat[6]
+
+    writer.write(b'HTTP/1.0 200 OK\r\n')
+    writer.write(b'Content-Type: text/html\r\n')
+    writer.write('Content-Length: {}\r\n'.format(fsize).encode('utf-8'))
+    writer.write(b'Accept-Ranges: none\r\n')
+    writer.write(b'Transfer-Encoding: chunked\r\n')
+    writer.write(b'\r\n')
+    await writer.drain()
+    gc.collect()
+    max_chunk_size = 1024
+    with open(file, 'rb') as f:
+        for x in range(0, fsize, max_chunk_size):
+            chunk_size = min(max_chunk_size, fsize-x)
+            chunk_header = "{:x}\r\n".format(chunk_size).encode('utf-8')
+            writer.write(chunk_header)
+            writer.write(f.read(chunk_size))
+            writer.write(b'\r\n')
+            await writer.drain()
+            gc.collect()
+    writer.write(b"\r\n")
+    await writer.drain()
+    writer.close()
+    await writer.wait_closed()
+    gc.collect()
+
+
+async def set_pattern(pat):
+    pdc = PDC()
+    #pdc.init()
+    pat_name = pat.decode()
+    print("SETTING: ", pat_name)
+    suc = pdc.board.set_pattern(pat_name)
+    return suc
+
+async def set_velo(item):
+  velo = int(item.decode())
+  if not velo:  velo= 5
+  print(velo)
+  pdc = PDC()
+  pdc.velocity = velo
+  return True
+
+routes = {
+    b'/': route('/www/page.htm'),
+    b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
+    }
+rpat = {
+    r'/pat/(.*)': set_pattern,
+    r'/velo/(.*)': set_velo,
+    }
+
+async def parse_route(route, writer):
+    if route in routes:
+        await routes[route](writer)
     else:
-        content_type = 'application/octet-stream'
-    if message:
-        content = content.replace('<body>', '<body><div class="status-message">{}</div>'.format(message), 1)
-    return content, content_type, 200
+        for p in rpat:
+            m = re.match(p, route)
+            if m:
+                print("FOUND", m.group(1))
+                await rpat[p](m.group(1))
+                await routes[b'/'](writer)
 
-# Routing: 1 Ebene
+async def http_server(reader, writer):
+    req = await reader.readline()
+    print(req)
+    method, uri, proto = req.split(b" ")
+    m = re.match(url_pat, uri)
+    route = m.group(5)
 
-def handle_request(path):
-    global status_message
-    # Root
-    if path == '/':
-        msg = status_message
-        status_message = None
-        content, ctype, code = send_file('page.htm', message=msg)
-        return code, ctype, content
-    # CSS
-    elif path == '/css/style.css':
-        content, ctype, code = send_file('style.css')
-        return code, ctype, content
-    # jQuery
-    elif path == '/static/jquery.js':
-        content, ctype, code = send_file('jquery-3.5.1.min.js')
-        return code, ctype, content
-    # BPM
-    elif path.startswith('/bpm/'):
-        try:
-            bpm = int(path.split('/')[-1])
-            from esp32.pdc import PdcSingleton as PDC
-            sl_ms = int(1000 / (bpm / 60))
-            pdc = PDC()
-            pdc.sleep_ms = sl_ms
-            status_message = 'BPM wurde auf {} umgestellt.'.format(bpm)
-            return 302, 'text/html', '<meta http-equiv="refresh" content="0; url=/" />'
-        except Exception as e:
-            return 400, 'text/plain', 'Bad BPM'
-    # Pattern
-    elif path.startswith('/pat/'):
-        try:
-            pat = path.split('/')[-1]
-            from esp32.pdc import PdcSingleton as PDC
-            pdc = PDC()
-            pdc.board.set_pattern(pat)
-            status_message = 'Pattern wurde auf {} umgestellt.'.format(pat)
-            return 302, 'text/html', '<meta http-equiv="refresh" content="0; url=/" />'
-        except Exception as e:
-            return 400, 'text/plain', 'Bad Pattern'
-    # Track
-    elif path.startswith('/track/'):
-        try:
-            track = int(path.split('/')[-1])
-            from esp32.pdc import PdcSingleton as PDC
-            pdc = PDC()
-            pdc.board.track.set_track(track)
-            status_message = 'Track wurde auf {} umgestellt.'.format(track)
-            return 302, 'text/html', '<meta http-equiv="refresh" content="0; url=/" />'
-        except Exception as e:
-            return 400, 'text/plain', 'Bad Track'
-    # Stop
-    elif path == '/stop/':
-        status_message = 'Server wurde gestoppt.'
-        return 302, 'text/html', '<meta http-equiv="refresh" content="0; url=/" />'
-    # Not found
-    else:
-        return 404, 'text/plain', 'Not found'
-
-# Minimaler HTTP-Server
-
-def http_server(host='0.0.0.0', port=8080):
-    s = socket.socket()
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((host, port))
-    s.listen(5)
-    print('HTTP Server läuft auf {}:{}'.format(host, port))
     while True:
-        try:
-            conn, addr = s.accept()
-            request = conn.recv(1024)
-            if not request:
-                conn.close()
-                continue
-            # Request parsen
-            try:
-                req_line = request.decode().split('\r\n')[0]
-                method, path, _ = req_line.split()
-            except Exception:
-                conn.close()
-                continue
-            # Nur GET unterstützen
-            if method != 'GET':
-                conn.send(b'HTTP/1.0 405 Method Not Allowed\r\n\r\n')
-                conn.close()
-                continue
-            code, ctype, content = handle_request(path)
-            # Header
-            header = 'HTTP/1.0 {}\r\nContent-Type: {}\r\n\r\n'.format(code, ctype)
-            conn.send(header.encode())
-            if isinstance(content, str):
-                conn.send(content.encode())
-            else:
-                conn.send(content)
-            conn.close()
-        except Exception as e:
-            try:
-                conn.close()
-            except:
-                pass
-            continue
+        h = await reader.readline()
+        if h == b"" or h == b"\r\n":
+            break
+        print(h)
 
-# Für Import in main.py
+    print("route: {}".format(route.decode('utf-8')))
+
+    suc = await parse_route(route, writer)
+
+    if not suc:
+        writer.write(b'HTTP/1.0 404 Not Found\r\n')
+        writer.write(b'\r\n')
+        await writer.drain()
+        writer.close()
+        await writer.wait_closed()
+    gc.collect()
