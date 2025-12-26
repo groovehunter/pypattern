@@ -80,28 +80,14 @@ class Track:
         if self.current >= len(self.linescopy):
             self.current = 0
 
-        pat_item = self.linescopy[self.current]
-        logger.debug('pat_item: %s', str(pat_item))
-        pat_abbr = pat_item[0]
-        repeats = int(pat_item[1])
-        speed = pat_item[2]
-        self.speed_tend = 0
-        if '-' in speed:
-            si1, si2 = speed.split('-')
-            logger.debug('si1-si2 : %s-%s', si1, si2)
-            s1, s2 = int(si1), int(si2)
-
-            self.speed_tend = int(abs(s1-s2))
-            if s1 > s2:
-                self.speed_tend = -self.speed_tend
-                self.speed = s1
-            else:
-                self.speed = s1
-        else:
-            self.speed = speed
-        logger.debug("set speed %s", self.speed )
-        logger.debug("set speed_tend %s", self.speed_tend )
+        pat_items = self.linescopy[self.current].split(" ")
+        #logger.debug('pat_items: %s', str(pat_items))
+        print(pat_items)
+        pat_abbr = pat_items[0]
+        repeats = int(pat_items[1])
+        speed = pat_items[2]
         logger.debug("playing times: %d", repeats)
+
         self.cur_pat = pat_abbr
         self.cur_repeats = repeats
         return pat_map[pat_abbr]
