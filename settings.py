@@ -17,7 +17,12 @@ else:
 #boardname = 'square'
 #boardname = 'square_4x2'
 #boardname = 'square_4x8'
-boardname = 'hexagon'
+# uses qq pins 22+23;
+#boardname = 'hexagon_qq'
+# avoid rx and tx pins
+boardname = 'hexagon_rxtx'
+#boardname = 'hexagon_single'
+#boardname = 'test'
 #boardname = 'octagon'
 
 
@@ -28,6 +33,13 @@ global_conf = {
 }
 
 board_conf = {
+    'test': {
+        'num_lights_total': 16,
+        'num_areas': 2,
+        'num_panels': 2,
+        'num_lights_in_group': 8,
+        'area_names': ['r', 'l']
+    },
     'octagon': {
         'num_lights_total': 16,
         'num_areas': 8,
@@ -35,11 +47,25 @@ board_conf = {
         'num_lights_in_group': 2,
         'area_names': ['rtu', 'rtl', 'rbu', 'rbl', 'lbl', 'lbu', 'ltl', 'ltu']
     },
-    'hexagon': {
+    'hexagon_qq': {
         'num_lights_total': 12,
         'num_areas': 6,
         'num_panels': 6,
         'num_lights_in_group': 2,
+        'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
+    },
+    'hexagon_rxtx': {
+        'num_lights_total': 12,
+        'num_areas': 6,
+        'num_panels': 6,
+        'num_lights_in_group': 2,
+        'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
+    },
+    'hexagon_single': {
+        'num_lights_total': 6,
+        'num_areas': 6,
+        'num_panels': 6,
+        'num_lights_in_group': 1,
         'area_names': ['rt', 'rm', 'rb', 'lb', 'lm', 'lt']
     },
     'triangle': {

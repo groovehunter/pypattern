@@ -3,13 +3,29 @@ global:
   rows: 6
   size: 100
   color1: blue
+  
+test:
+  area_names: [r, l]
+  num_lights_total: 16
+  num_areas: 2
+  num_panels: 2
+  num_lights_in_group: 8
+  klass: TestBoard
 
-hexagon:
+hexagon_qq:
   area_names: [t, ru, rl, b, ll, lu]
   num_lights_total: 12
   num_areas: 6
   num_panels: 6
   num_lights_in_group: 2
+  klass: HexagonBoard
+  
+hexagon_single:
+  area_names: [t, ru, rl, b, ll, lu]
+  num_lights_total: 6
+  num_areas: 6
+  num_panels: 6
+  num_lights_in_group: 1
   klass: HexagonBoard
 
 square:

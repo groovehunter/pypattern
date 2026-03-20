@@ -59,7 +59,7 @@ class LightPattern(object):
         self.lights = {}
         c = 1
         # init light array with auto increment index ## MOVE TO BOARD!
-        print('init_light_array')
+        #print('init_light_array')
         #print(self.board.panels)
         for p, panel in self.board.panels.items():
             for l, light in panel.lights.items():

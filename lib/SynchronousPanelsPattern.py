@@ -39,7 +39,7 @@ class Windmill(SynchronousPanelsPattern):
             p += '-' * (nlig - i - 1)
             pc += 1
             self.panel_states[pc] = p
-        print("panel states", self.panel_states)
+        #print("panel states", self.panel_states)
 
     def next_state(self):
         super().next_state()
@@ -64,7 +64,7 @@ class MiddleEdgeSynchronousPattern(SynchronousPanelsPattern):
         # not useful!! legacy o--o -oo- stuff only for square
         self.panel_states[1] = p1
         self.panel_states[2] = p2
-        print(self.panel_states)
+        #print(self.panel_states)
 
     def next_state(self):
         super().next_state()

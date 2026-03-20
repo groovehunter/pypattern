@@ -30,7 +30,7 @@ class AlternatingPanels(FixedStateNumberPattern):
         # ein state is, alle ungeraden werden aktiviert
         if self.count == 1:
             for i in range(1, self.board.num_panels, 2):
-                print(i)
+                #print(i)
                 self.panels[i].full()
                 self.panels[i+1].clear()
         else:
@@ -78,7 +78,8 @@ class OppositePanelsSwitching(FixedStateNumberPattern, PatternHelper):
         self.calc_opp()
 
     def initial_state(self):
-        print("OPS _ start pos", self.i)
+        #print("OPS _ start pos", self.i)
+        pass
 
     def next_state(self):
         super().next_state()

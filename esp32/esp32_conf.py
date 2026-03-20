@@ -1,69 +1,41 @@
+
 # esp32 pins:
 # physically, on the sheet, TOP to DOWN:
 # L: 32, 33, 25, 26, 27, 14, 12, 13
 # R: 21, 19, 18,  5, 23, 22,  4,  2
 
+
+# From bottom (usb port) left, wie use these GPIO pins clockwise:
+# Four pins together is a quart (q)
+
+# left side upwards
+q1 = [13, 12, 14, 27]
+q2 = [26, 25, 33, 32]
+
+# right side upwards
+q3a = [2, 4]
+q3b = [16, 17]  # RxTx ports but can use it for digi changes
+
+#
+q4a = [5, 18]
+q4b = [19, 21]
+
+# These pins at upper right version on orig boards are redirected  to the place where 16+17 are.
+qq = [22, 23]
+
+def make_pinmap(*groups):
+    """Erzeugt ein {index: gpio}-Dict aus beliebigen Gruppen."""
+    pins = []
+    for group in groups:
+        pins.extend(group)
+    return {i+1: pin for i, pin in enumerate(pins)}
+
+# Beispiele für verschiedene Pinmaps:
 pinmap = {
-  'triangle_3x3': {
- 1: 21,
- 2: 19,
- 3: 18,
- 4:  5,
- 5: 23,
- 6: 22,
- 7:  4,
- 8:  2,
- 9: 13,
-},
-
-  'square_4x2': {
-  1: 32,
-  2: 33,
-  3: 25,
-  4: 26,
-  5: 27,
-  6: 14,
-  7: 12,
-  8: 13,
-},
-
-  'square_4x4': {
-1: 21,
-2: 19,
-3: 18,
-4: 5,
-5: 23,
-6: 22,
-7: 4,
-8: 2,
-9: 12,
-10: 14,
-11: 27,
-12: 26,
-13: 25,
-14: 33,
-15: 32,
-16: 35,
-},
-# for big hexagon
-# 5:32
-# 6:33
-# for small
-# 5:23
-# 6:22
-  'hexagon': {
-1: 21,
-2: 19,
-3: 18,
-4: 5,
-5: 32,
-6: 33,
-
- 7: 25,
- 8: 26,
- 9: 27,
-10: 14,
-11: 12,
-12: 13,
-},
+    'hexagon_qq': make_pinmap(q1, q2, q3a, qq),
+    'hexagon_rxtx': make_pinmap(q1, q2, q3a, q3b),
+    'hexagon_single': make_pinmap(q3a, q3b, q4a),
+    #'hexagon_full': make_pinmap(q1, q2, q3a, q3b, q4a, q4b, qq),
+    #'test': make_pinmap(q1, q2, q3a, qq),
+    # beliebige weitere Kombinationen möglich
 }

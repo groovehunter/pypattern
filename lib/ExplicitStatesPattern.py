@@ -13,10 +13,10 @@ class ExplicitStatesPattern(LightPattern):
         self.state_0()
 
     def next_state(self):
+        #print("next: state %i" % self.count)
         if self.count == self.states_count:
             self.count = 0
         self.count += 1
-        print("next: state %i" % self.count)
         exec('self.state_' + str(self.count) + '()')
 
 class WindmillPattern(ExplicitStatesPattern):

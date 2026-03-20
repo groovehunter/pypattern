@@ -82,7 +82,7 @@ class Track:
 
         pat_items = self.linescopy[self.current].split(" ")
         #logger.debug('pat_items: %s', str(pat_items))
-        print(pat_items)
+        #print(pat_items)
         pat_abbr = pat_items[0]
         repeats = int(pat_items[1])
         speed = pat_items[2]
