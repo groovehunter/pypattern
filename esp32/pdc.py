@@ -3,7 +3,7 @@ try:
 except ImportError:
     from esp32.Esp32Board import Esp32Board
 
-
+"""
 def connect(wifi):
     import network
     sta_if = network.WLAN(network.STA_IF)
@@ -14,6 +14,7 @@ def connect(wifi):
         while not sta_if.isconnected():
             pass
         print('network config:', sta_if.ifconfig())
+"""
 
 
 class PdcSingleton(object):
