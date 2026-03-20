@@ -29,27 +29,30 @@ async def send_file(writer, file):
     fstat = os.stat(file)
     fsize = fstat[6]
 
-    writer.write(b'HTTP/1.0 200 OK\r\n')
-    writer.write(b'Content-Type: text/html\r\n')
-    writer.write('Content-Length: {}\r\n'.format(fsize).encode('utf-8'))
-    writer.write(b'Accept-Ranges: none\r\n')
-    writer.write(b'Transfer-Encoding: chunked\r\n')
-    writer.write(b'\r\n')
+    if file.endswith('.css'):
+        ctype = b'text/css'
+    elif file.endswith('.js'):
+        ctype = b'application/javascript'
+    else:
+        ctype = b'text/html'
+
+    header = (
+        b'HTTP/1.0 200 OK\r\n'
+        b'Content-Type: ' + ctype + b'\r\n' +
+        ('Content-Length: {}\r\n'.format(fsize)).encode('utf-8') +
+        b'\r\n'
+    )
+    writer.write(header)
     await writer.drain()
 
-    #gc.collect()
-    max_chunk_size = 1024
     with open(file, 'rb') as f:
-        for x in range(0, fsize, max_chunk_size):
-            chunk_size = min(max_chunk_size, fsize-x)
-            chunk_header = "{:x}\r\n".format(chunk_size).encode('utf-8')
-            writer.write(chunk_header)
-            writer.write(f.read(chunk_size))
-            writer.write(b'\r\n')
+        while True:
+            chunk = f.read(1024)
+            if not chunk:
+                break
+            writer.write(chunk)
             await writer.drain()
             gc.collect()
-    writer.write(b"\r\n")
-    await writer.drain()
 
     writer.close()
     await writer.wait_closed()
@@ -58,28 +61,67 @@ async def send_file(writer, file):
 
 async def set_pattern(pat):
     pdc = PDC()
-    #pdc.init()
     pat_name = pat
     print("SETTING: ", pat_name)
     suc = pdc.board.set_pattern(pat_name)
+    if suc:
+        pdc.current_pattern = pat_name
     return suc
 
 async def set_velo(item):
-  velo = int(item)
-  if not velo:  velo= 5
-  print(velo)
-  pdc = PDC()
-  pdc.velocity = velo
-  return True
+    velo = int(item)
+    if velo < 80:
+        velo = 2 * velo
+    if velo > 180:
+        velo = velo / 2
+    print("velo", velo)
+    pdc = PDC()
+    pdc.sleep_ms = int(60000 / velo)
+    pdc.current_bpm = velo
+    return True
+
+async def set_track(item):
+    track = int(item)
+    print("track", track)
+    pdc = PDC()
+    pdc.current_track = track
+    return True
+
+async def get_status(writer):
+    import json
+    pdc = PDC()
+    bpm = getattr(pdc, 'current_bpm', None)
+    if bpm is None and hasattr(pdc, 'sleep_ms') and pdc.sleep_ms > 0:
+        bpm = round(60000 / pdc.sleep_ms)
+    data = {
+        'track':   getattr(pdc, 'current_track',   None),
+        'bpm':     bpm,
+        'pattern': getattr(pdc, 'current_pattern', None),
+    }
+    body = json.dumps(data).encode('utf-8')
+    response = (
+        b'HTTP/1.0 200 OK\r\n'
+        b'Content-Type: application/json\r\n'
+        + ('Content-Length: {}\r\n'.format(len(body))).encode('utf-8') +
+        b'\r\n'
+        + body
+    )
+    writer.write(response)
+    await writer.drain()
+    writer.close()
+    await writer.wait_closed()
+
 
 routes = {
-    b'/': route('/www/page.htm'),
-    b'/static/jquery.js': route('/www/jquery-3.5.1.min.js'),
-    }
+    '/':              route('/www/page.htm'),
+    '/www/style.css': route('/www/style.css'),
+    '/status':        get_status,
+}
 rpat = {
-    r'/pat/(.*)': set_pattern,
-    r'/velo/(.*)': set_velo,
-    }
+    r'/pat/(.*)':   set_pattern,
+    r'/bpm/(.*)':   set_velo,
+    r'/track/(.*)': set_track,
+}
 
 async def parse_route(route, writer):
     if route in routes:
@@ -91,29 +133,29 @@ async def parse_route(route, writer):
             if m:
                 print("FOUND", m.group(1))
                 await rpat[p](m.group(1))
-                # Nach erfolgreicher Aktion: HTTP-Redirect senden
-                writer.write(b'HTTP/1.0 302 Found\r\n')
-                writer.write(b'Location: /\r\n')
-                writer.write(b'Content-Type: text/html\r\n\r\n')
-                writer.write(b'<html><body>Redirecting...</body></html>')
+                # AJAX-Aufruf: 200 OK mit leerem Body reicht aus
+                response = b'HTTP/1.0 200 OK\r\nContent-Length: 0\r\n\r\n'
+                writer.write(response)
                 await writer.drain()
                 writer.close()
                 await writer.wait_closed()
                 return True
+
     return False
 
 async def not_found(writer):
-    writer.write(b'HTTP/1.0 404 Not Found\r\n')
-    writer.write(b'\r\n')
+    response = b'HTTP/1.0 404 Not Found\r\n\r\n'
+    writer.write(response)
     await writer.drain()
     writer.close()
     await writer.wait_closed()
     #gc.collect()
 
 async def http_server(reader, writer):
+    print("start http_server")
     req = await reader.readline()
     print(req)
-    if req is b"":
+    if req == b"" or req == b"\r\n":
         writer.close()
         await writer.wait_closed()
         return
@@ -126,9 +168,8 @@ async def http_server(reader, writer):
         h = await reader.readline()
         if h == b"" or h == b"\r\n":
             break
-        print(h)
-
-    print("route: {}".format(route))
+        #print(h)
+    #print("route: {}".format(route))
 
     suc = await parse_route(route, writer)
 
