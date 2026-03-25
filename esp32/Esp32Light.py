@@ -14,9 +14,14 @@ else:
 
 
 
+
+
 class Esp32Light(Light):
   def __init__(self, lid):
     Light.__init__(self, lid)
+    print(pinmap)
+    print(boardname)
+    print(pinmap[boardname])
     pin_nr = pinmap[boardname][lid]
     try:
         self.pin = Pin(pin_nr, Pin.OUT)

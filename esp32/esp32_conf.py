@@ -10,12 +10,15 @@
 
 # left side upwards
 q1 = [13, 12, 14, 27]
-q2 = [26, 25, 33, 32]
+
+q2a = [26, 25]
+q2b = [33, 32]
+q2 = q2a + q2b
 
 # right side upwards
 q3a = [2, 4]
 q3b = [16, 17]  # RxTx ports but can use it for digi changes
-
+q3 = q3a + q3b
 #
 q4a = [5, 18]
 q4b = [19, 21]
@@ -34,7 +37,8 @@ def make_pinmap(*groups):
 pinmap = {
     'hexagon_qq': make_pinmap(q1, q2, q3a, qq),
     'hexagon_rxtx': make_pinmap(q1, q2, q3a, q3b),
-    'hexagon_single': make_pinmap(q3a, q3b, q4a),
+    'hexagon_single': make_pinmap(q1, q2a),
+    #'hexagon_single': make_pinmap(q3a, q3b, q4a),
     #'hexagon_full': make_pinmap(q1, q2, q3a, q3b, q4a, q4b, qq),
     #'test': make_pinmap(q1, q2, q3a, qq),
     # beliebige weitere Kombinationen möglich

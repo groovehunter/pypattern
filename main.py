@@ -107,28 +107,41 @@ def get_time_ms():
 async def run_pdc():
     print("STARTING run_pdc")
     while True:
-        t_init_start = get_time_ms()
-        
-        pat_name = pdc.board.track.next_pattern()
-        pdc.board.set_pattern(pat_name)
-        pdc.board.pattern.subclass_init()
-        repeats = pdc.board.track.get_current_repeats()
-        num_steps = pdc.board.pattern.states_count * repeats
-        #print("num_steps: ", num_steps)
-        t_prep = get_time_ms() - t_init_start
-        #print(t_prep)
-        
-        fac = 0.8
-        for i in range(num_steps):
-            start = get_time_ms()
-            pdc.board.pattern.next_state()
-            pdc.board.change_board()
-            elapsed = get_time_ms() - start
-            rest = pdc.sleep_ms - elapsed  # Zeit bis zum nächsten Schritt
-            if rest > 0:
-                sl = (rest * fac) / 1000
-                #print('sl: %s --- elapsed: %s, rest:%s' % (sl, elapsed, rest))
-                await asyncio.sleep(sl)
+        if pdc.is_manual_pattern():
+            # Nur das gewählte Pattern in Endlosschleife spielen
+            pat_name = pdc.current_pattern
+            if pat_name:
+                pdc.board.set_pattern(pat_name)
+                pdc.board.pattern.subclass_init()
+                num_steps = pdc.board.pattern.states_count
+                for i in range(num_steps):
+                    start = get_time_ms()
+                    pdc.board.pattern.next_state()
+                    pdc.board.change_board()
+                    elapsed = get_time_ms() - start
+                    rest = pdc.sleep_ms - elapsed
+                    if rest > 0:
+                        await asyncio.sleep(rest / 1000)
+            else:
+                await asyncio.sleep(0.1)
+        else:
+            t_init_start = get_time_ms()
+            pat_name = pdc.board.track.next_pattern()
+            pdc.board.set_pattern(pat_name)
+            pdc.set_current_pattern(pat_name)
+            pdc.board.pattern.subclass_init()
+            repeats = pdc.board.track.get_current_repeats()
+            num_steps = pdc.board.pattern.states_count * repeats
+            fac = 0.8
+            for i in range(num_steps):
+                start = get_time_ms()
+                pdc.board.pattern.next_state()
+                pdc.board.change_board()
+                elapsed = get_time_ms() - start
+                rest = pdc.sleep_ms - elapsed
+                if rest > 0:
+                    sl = (rest * fac) / 1000
+                    await asyncio.sleep(sl)
 
 
 loop = asyncio.get_event_loop()
@@ -141,7 +154,7 @@ if MICROPYTHON:
     from boot import connect
     # for DEV skip Wifi
     connect()
-    print('after')
+    print('after connect method')
 
     wifi_if = network.WLAN(network.STA_IF)
     if wifi_if.isconnected():

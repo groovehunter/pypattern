@@ -17,7 +17,7 @@ class ExplicitStatesPattern(LightPattern):
         if self.count == self.states_count:
             self.count = 0
         self.count += 1
-        exec('self.state_' + str(self.count) + '()')
+        getattr(self, f'state_{self.count}')()
 
 class WindmillPattern(ExplicitStatesPattern):
     states_count = 4

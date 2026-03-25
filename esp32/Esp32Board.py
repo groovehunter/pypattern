@@ -1,4 +1,7 @@
 from lib.GenericGeometry import GenericGeometry
+import os
+#print(os.listdir('/lib'))
+
 from lib.BoardBase import BoardBase
 from lib.DisplayBase_uP import DisplayBase
 
@@ -40,3 +43,4 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
         self.led = led
         print("Esp32Board - init_leds")
         #print(self.led)
+

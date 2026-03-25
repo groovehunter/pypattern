@@ -20,8 +20,8 @@ else:
 # uses qq pins 22+23;
 #boardname = 'hexagon_qq'
 # avoid rx and tx pins
-boardname = 'hexagon_rxtx'
-#boardname = 'hexagon_single'
+#boardname = 'hexagon_rxtx'
+boardname = 'hexagon_single'
 #boardname = 'test'
 #boardname = 'octagon'
 

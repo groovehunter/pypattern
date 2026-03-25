@@ -11,7 +11,7 @@ else:
 
 url_pat = re.compile(
     r'^(([^:/\\?#]+):)?' +  # scheme                # NOQA
-    r'(//([^/\\?#]*))?' +   # user:pass@host:port   # NOQA
+    r'//([^/\\?#]*)?' +     # user:pass@host:port   # NOQA
     r'([^\\?#]*)' +         # route                 # NOQA
     r'(\\?([^#]*))?' +      # query                 # NOQA
     r'(#(.*))?')            # fragment              # NOQA
@@ -64,16 +64,18 @@ async def set_pattern(pat):
     pat_name = pat
     print("SETTING: ", pat_name)
     suc = pdc.board.set_pattern(pat_name)
-    if suc:
-        pdc.current_pattern = pat_name
+    #if suc:
+    pdc.set_current_pattern(pat_name)
     return suc
 
 async def set_velo(item):
     velo = int(item)
+    """
     if velo < 80:
         velo = 2 * velo
     if velo > 180:
         velo = velo / 2
+    """
     print("velo", velo)
     pdc = PDC()
     pdc.sleep_ms = int(60000 / velo)
@@ -81,10 +83,15 @@ async def set_velo(item):
     return True
 
 async def set_track(item):
-    track = int(item)
-    print("track", track)
+    track_id = int(item)
     pdc = PDC()
-    pdc.current_track = track
+    # Setze den Track direkt am Board-Objekt
+    if hasattr(pdc, 'board') and hasattr(pdc.board, 'track'):
+        pdc.board.track.set_track(track_id)
+        pdc.set_current_track(track_id)
+        print(f"Track wurde auf {track_id} umgestellt.")
+    else:
+        print("Fehler: pdc.board oder pdc.board.track nicht gefunden!")
     return True
 
 async def get_status(writer):
@@ -93,6 +100,7 @@ async def get_status(writer):
     bpm = getattr(pdc, 'current_bpm', None)
     if bpm is None and hasattr(pdc, 'sleep_ms') and pdc.sleep_ms > 0:
         bpm = round(60000 / pdc.sleep_ms)
+    print(bpm)
     data = {
         'track':   getattr(pdc, 'current_track',   None),
         'bpm':     bpm,
@@ -152,7 +160,7 @@ async def not_found(writer):
     #gc.collect()
 
 async def http_server(reader, writer):
-    print("start http_server")
+    #print("start http_server")
     req = await reader.readline()
     print(req)
     if req == b"" or req == b"\r\n":
@@ -161,8 +169,17 @@ async def http_server(reader, writer):
         return
 
     method, uri, proto = req.split(b" ")
-    m = re.match(url_pat, uri.decode())
-    route = m.group(5)
+    try:
+        # Extrahiere den Pfad robust, unabhängig von Query-String
+        route = uri.decode().split('?', 1)[0]
+    except Exception as e:
+        print(f"Fehler beim Parsen der URI: {e}")
+        response = b'HTTP/1.0 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nUngültige Anfrage.'
+        writer.write(response)
+        await writer.drain()
+        writer.close()
+        await writer.wait_closed()
+        return
 
     while True:
         h = await reader.readline()

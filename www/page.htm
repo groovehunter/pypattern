@@ -5,13 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pattern Controller</title>
   <link href="/www/style.css" rel="stylesheet">
-  <link href="file:///home/flow/git-uber/pypattern/www/style.css" rel="stylesheet">
+  <style>
+.pattern-desc { display: none; }
+#toggle-desc { font-size:0.92em; color:#888; background:transparent; border:none; cursor:pointer; padding:0 8px; }
+#track-select {
+  background: #1a1a28;
+  color: #dde1f0;
+  border: 1px solid #2a2a40;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 1em;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+#track-select:focus {
+  outline: 2px solid #5b8dee;
+}
+</style>
 </head>
 <body>
-
-  <header>
-    <span class="logo">&#11041; Pattern Controller</span>
-  </header>
 
   <!-- STATUS BAR -->
   <section class="status-bar">
@@ -33,94 +46,116 @@
   <section class="card">
     <h2>BPM</h2>
     <div class="bpm-controls">
-      <select id="bpm-select" aria-label="BPM Vorauswahl" onchange="applyBpm(this.value)">
-        <option value="">&#8211; Vorauswahl &#8211;</option>
-        <option value="100">100</option>
-        <option value="110">110</option>
-        <option value="120">120</option>
-        <option value="128">128</option>
-        <option value="134">134</option>
-        <option value="140">140</option>
-        <option value="150">150</option>
-        <option value="160">160</option>
-        <option value="174">174</option>
-        <option value="180">180</option>
-        <option value="200">200</option>
-        <option value="220">220</option>
-        <option value="240">240</option>
-        <option value="260">260</option>
-      </select>
-      <div class="slider-row">
+      <div class="slider-row" style="margin-bottom: 10px;">
         <span class="slider-label">60</span>
-        <input type="range" id="bpm-slider" aria-label="BPM Schieberegler" min="60" max="280" value="120"
-               oninput="syncBpmFromSlider(this.value)">
-        <span class="slider-label">280</span>
+        <input type="range" id="bpm-slider" aria-label="BPM Schieberegler" min="60" max="400" value="120"
+               oninput="syncBpmFromSlider(this.value)" style="flex:1; min-width:0;">
+        <span class="slider-label">400</span>
       </div>
-      <div class="bpm-input-row">
-        <input type="number" id="bpm-input" aria-label="BPM Eingabe" min="60" max="280" value="120"
-               oninput="syncBpmFromInput(this.value)">
-        <span class="unit">BPM</span>
-        <button onclick="applyBpm(document.getElementById('bpm-input').value)">Set</button>
+      <div class="bpm-input-flex" style="display:flex; gap:8px; align-items:center;">
+        <select id="bpm-select" aria-label="BPM" onchange="applyBpm(this.value)" style="max-width:110px; flex:0 0 auto;">
+          <option value="">Wähle</option>
+          <option value="100">100</option>
+          <option value="120">120</option>
+          <option value="130">130</option>
+          <option value="140">140</option>
+          <option value="150">150</option>
+          <option value="160">160</option>
+          <option value="180">180</option>
+          <option value="200">200</option>
+          <option value="220">220</option>
+          <option value="300">300</option>
+          <option value="1000">1000</option>
+          <option value="2000">2000</option>
+          <option value="5000">5000</option>
+        </select>
+        <input type="number" id="bpm-input" aria-label="BPM Eingabe" min="10" max="5000" value="120"
+               oninput="syncBpmFromInput(this.value)" style="max-width:110px; flex:0 0 auto;">
+        <span class="unit" style="margin-right:4px;">BPM</span>
+        <button onclick="applyBpm(document.getElementById('bpm-input').value)" style="max-width:50px; flex:0 0 auto;">Set</button>
       </div>
     </div>
+  </section>
+
+  <!-- TRACK -->
+  <section class="card">
+    <h2>Track</h2>
+    <form id="track-form" onsubmit="submitTrack(event)" style="display: flex; gap: 8px; align-items: center; max-width: 320px;">
+      <select id="track-select" name="track" style="flex: 1 1 0; min-width: 120px;">
+        <option value="1">Track 1</option>
+        <option value="2">Track 2</option>
+        <option value="3">Track 3</option>
+      </select>
+      <button type="submit" style="flex: 0 0 auto; min-width: 90px;">Wechseln</button>
+    </form>
   </section>
 
   <!-- PATTERN -->
   <section class="card">
     <h2>Pattern</h2>
-    <div class="pattern-grid">
-      <ul class="pattern-list" id="pattern-list"></ul>
-      <div class="pattern-desc" id="pattern-desc">
-        <p class="hint">Wähle ein Pattern aus der Liste.</p>
+    <form id="pattern-form" onsubmit="submitPattern(event)">
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+        <button type="submit">Übernehmen</button>
+        <button type="button" id="toggle-desc" style="font-size:0.92em; color:#888; background:transparent; border:none; cursor:pointer; padding:0 8px;">Beschreibungen anzeigen</button>
       </div>
-    </div>
+      <ul class="pattern-list">
+        <li>
+          <label><input type="radio" name="pattern" value="WindmillPattern" checked> WindmillPattern</label>
+          <div class="pattern-desc">Windmühlen-Effekt, Drehrichtung nicht mehr erkennbar.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="PairedLightsCycling"> PairedLightsCycling</label>
+          <div class="pattern-desc">Ein Paar von LEDs läuft durch alle Positionen.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="SingleDarkspotCycling"> SingleDarkspotCycling</label>
+          <div class="pattern-desc">Ein einzelner dunkler Punkt wandert zyklisch durch alle Positionen.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="SingleLightCycling"> SingleLightCycling</label>
+          <div class="pattern-desc">Ein einzelnes Licht läuft nacheinander durch alle Positionen.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="SingleLightCyclingLP"> SingleLightCyclingLP</label>
+          <div class="pattern-desc">Wie SingleLightCycling, aber mit langem Puls / Fade-Effekt.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="AllOnOff"> AllOnOff</label>
+          <div class="pattern-desc">Alle Lichter schalten synchron im Rhythmus an und aus.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="CyclingPanels"> CyclingPanels</label>
+          <div class="pattern-desc">Panels leuchten der Reihe nach auf – ein Panel pro Beat.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="Middle_Edge_Cycling"> Middle_Edge_Cycling</label>
+          <div class="pattern-desc">Mitte und Rand wechseln sich abwechselnd ab.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="PanelsHorizontalVertical"> PanelsHorizontalVertical</label>
+          <div class="pattern-desc">Horizontale und vertikale Panelgruppen alternieren.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="DarkPanelRotationPanelPattern"> DarkPanelRotationPanelPattern</label>
+          <div class="pattern-desc">Ein dunkles Panel rotiert über die gesamte Fläche.</div>
+        </li>
+        <li>
+          <label><input type="radio" name="pattern" value="RotationPanelPattern"> RotationPanelPattern</label>
+          <div class="pattern-desc">Alle Panels rotieren gleichmäßig im Uhrzeigersinn.</div>
+        </li>
+      </ul>
+    </form>
   </section>
 
 <script>
-const patterns = [
-  { name: 'WindmillPattern',
-    desc: 'Windmühlen-Rotation: Panels drehen sich sequenziell wie ein Windrad.' },
-  { name: 'PairedLightsCycling',
-    desc: 'Je zwei gegenüberliegende Lichter wechseln sich im Beat ab.' },
-  { name: 'SingleDarkspotCycling',
-    desc: 'Ein einzelner dunkler Punkt wandert zyklisch durch alle Positionen.' },
-  { name: 'SingleLightCycling',
-    desc: 'Ein einzelnes Licht läuft nacheinander durch alle Positionen.' },
-  { name: 'SingleLightCyclingLP',
-    desc: 'Wie SingleLightCycling, aber mit langem Puls / Fade-Effekt.' },
-  { name: 'AllOnOff',
-    desc: 'Alle Lichter schalten synchron im Rhythmus an und aus.' },
-  { name: 'CyclingPanels',
-    desc: 'Panels leuchten der Reihe nach auf – ein Panel pro Beat.' },
-  { name: 'Middle_Edge_Cycling',
-    desc: 'Mitte und Rand wechseln sich abwechselnd ab.' },
-  { name: 'PanelsHorizontalVertical',
-    desc: 'Horizontale und vertikale Panelgruppen alternieren.' },
-  { name: 'DarkPanelRotationPanelPattern',
-    desc: 'Ein dunkles Panel rotiert über die gesamte Fläche.' },
-  { name: 'RotationPanelPattern',
-    desc: 'Alle Panels rotieren gleichmäßig im Uhrzeigersinn.' },
-];
 
-// Pattern-Liste aufbauen
-const listEl = document.getElementById('pattern-list');
-const descEl = document.getElementById('pattern-desc');
-
-patterns.forEach(p => {
-  const li = document.createElement('li');
-  const a  = document.createElement('a');
-  a.href        = '#';
-  a.textContent = p.name;
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    document.querySelectorAll('#pattern-list a').forEach(x => x.classList.remove('active'));
-    a.classList.add('active');
-    descEl.innerHTML = '<strong>' + p.name + '</strong><p>' + p.desc + '</p>';
-    fetch('/pat/' + p.name).catch(() => {});
-  });
-  li.appendChild(a);
-  listEl.appendChild(li);
-});
+function submitPattern(e) {
+  e.preventDefault();
+  const selected = document.querySelector('input[name="pattern"]:checked');
+  if (selected) {
+    fetch('/pat/' + selected.value).catch(() => {});
+  }
+}
 
 // BPM
 function syncBpmFromSlider(v) {
@@ -133,11 +168,20 @@ function syncBpmFromInput(v) {
 }
 function applyBpm(v) {
   v = parseInt(v);
-  if (!v || v < 60 || v > 280) return;
+  if (!v || v < 10 || v > 5000) return;
   document.getElementById('bpm-slider').value = v;
   document.getElementById('bpm-input').value  = v;
-  document.getElementById('bpm-select').value = '';
+  document.getElementById('bpm-select').value = v;
   fetch('/bpm/' + v).catch(() => {});
+}
+
+// Track
+function submitTrack(e) {
+  e.preventDefault();
+  const track = document.getElementById('track-select').value;
+  fetch('/track/' + track)
+    .then(() => location.reload())
+    .catch(() => {});
 }
 
 // Status-Polling alle 3s
@@ -146,13 +190,27 @@ function refreshStatus() {
     .then(r => r.json())
     .then(d => {
       document.getElementById('status-track').textContent   = d.track   || '\u2013';
-      document.getElementById('status-bpm').textContent     = d.bpm ? d.bpm + ' BPM' : '\u2013';
+      document.getElementById('status-bpm').textContent     = d.bpm ? d.bpm : '\u2013';
       document.getElementById('status-pattern').textContent = d.pattern || '\u2013';
     })
     .catch(() => {});
 }
 refreshStatus();
-setInterval(refreshStatus, 3000);
+setInterval(refreshStatus, 5000);
+
+// Pattern-Beschreibungen Toggle
+const toggleBtn = document.getElementById('toggle-desc');
+const descs = document.querySelectorAll('.pattern-desc');
+let descVisible = false;
+function updateDescVisibility() {
+  descs.forEach(d => d.style.display = descVisible ? '' : 'none');
+  toggleBtn.textContent = descVisible ? 'Beschreibungen ausblenden' : 'Beschreibungen anzeigen';
+}
+toggleBtn.addEventListener('click', function() {
+  descVisible = !descVisible;
+  updateDescVisibility();
+});
+updateDescVisibility();
 </script>
 
 </body>

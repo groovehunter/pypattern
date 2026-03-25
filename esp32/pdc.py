@@ -27,6 +27,21 @@ class PdcSingleton(object):
         print("init PDC")
         self.velocity = 5
         self.sleep_ms = 500
+        self.current_track = 0
+        self.current_pattern = None
+        self.manual_pattern_mode = False
         if not hasattr(self, 'board'):
             # self.board = GenericBoard()
             self.board = Esp32Board()
+
+    def set_current_track(self, track_id):
+        self.current_track = track_id
+        self.manual_pattern_mode = False
+
+    def set_current_pattern(self, pattern_name):
+        self.current_pattern = pattern_name
+        self.manual_pattern_mode = True
+
+    def is_manual_pattern(self):
+        return getattr(self, 'manual_pattern_mode', False)
+
