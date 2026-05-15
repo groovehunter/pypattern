@@ -19,6 +19,19 @@ class Panel:
     def full(self):
         for key, val in self.lights.items():
             val.state = 1
+            
+    def is_clear():
+        for key, val in self.lights.items():
+            if val.state == 1:
+                return False
+        return True
+
+    def is_full():
+        for key, val in self.lights.items():
+            if val.state == 0:
+                return False
+        return True
+
 
     def viceversa(self):
         for key, light in self.lights.items():

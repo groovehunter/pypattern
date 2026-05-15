@@ -100,7 +100,7 @@
       </div>
       <ul class="pattern-list">
         <li>
-          <label><input type="radio" name="pattern" value="WindmillPattern" checked> WindmillPattern</label>
+          <label><input type="radio" name="pattern" value="PanelWindmill" checked> PanelWindmillPattern</label>
           <div class="pattern-desc">Windmühlen-Effekt, Drehrichtung nicht mehr erkennbar.</div>
         </li>
         <li>
@@ -116,12 +116,20 @@
           <div class="pattern-desc">Ein einzelnes Licht läuft nacheinander durch alle Positionen.</div>
         </li>
         <li>
-          <label><input type="radio" name="pattern" value="SingleLightCyclingLP"> SingleLightCyclingLP</label>
-          <div class="pattern-desc">Wie SingleLightCycling, aber mit langem Puls / Fade-Effekt.</div>
-        </li>
-        <li>
           <label><input type="radio" name="pattern" value="AllOnOff"> AllOnOff</label>
           <div class="pattern-desc">Alle Lichter schalten synchron im Rhythmus an und aus.</div>
+        </li>
+      </form>
+    </section>
+    <section class="card">
+      <h2>Pattern NOT OKAY</h2>
+      <li>
+        <label><input type="radio" name="pattern" value="WindmillPattern" checked> WindmillPattern</label>
+        <div class="pattern-desc">Windmühlen-Effekt, Drehrichtung nicht mehr erkennbar.</div>
+      </li>
+        <li>
+          <label><input type="radio" name="pattern" value="SingleLightCyclingLP"> SingleLightCyclingLP</label>
+          <div class="pattern-desc">Wie SingleLightCycling, aber mit langem Puls / Fade-Effekt.</div>
         </li>
         <li>
           <label><input type="radio" name="pattern" value="CyclingPanels"> CyclingPanels</label>
@@ -144,7 +152,6 @@
           <div class="pattern-desc">Alle Panels rotieren gleichmäßig im Uhrzeigersinn.</div>
         </li>
       </ul>
-    </form>
   </section>
 
 <script>

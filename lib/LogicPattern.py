@@ -53,3 +53,21 @@ class SingleLightCycling(LogicPattern):
         self.lights[self.count+1].state = 1
         if self.count == 1:
             self.lights[self.board.num_lights_total].state = 0
+
+class PanelWindmill(LogicPattern):
+    def next_state(self):
+        super().next_state()
+        for panel in self.panels:
+            if panel.is_clear():
+                panel.full()
+            elif panel.is_full():
+                panel.clear()
+
+    def initial_state(self):
+        for c in len(self.panels):
+            if c%2:
+                self.panels[c].full()
+                self.panels[c+1].clear()
+
+
+

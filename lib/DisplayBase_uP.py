@@ -15,6 +15,7 @@ class DisplayBase:
         'Middle_Edge_Cycling',
         'PanelsHorizontalVertical',
         'SingleLightCycling',
+        'PanelWindmill'
         'WindmillPattern',
         'AddedPanels',
         'DarkPanelRotationPanelPattern',
