@@ -1,30 +1,37 @@
-from lib.LogicPattern import *
-from lib.ExplicitStatesPattern import *
-from lib.NextStatePattern import *
-from lib.PanelPattern import *
-from lib.FixedStateNumberPattern import *
-from lib.SynchronousPanelsPattern import *
-from lib.ComboPattern import *
+# Import all patterns from the new structure
+from lib.patterns.flat import *
+from lib.patterns.panel import *
+from lib.patterns.new import *
+from lib.patterns.meta import *
+from lib.patterns.group import *
+
+# Keep other necessary imports
+# from lib.ComboPattern import * # Obsolete
 
 import random
 
 class DisplayBase:
     pattern_list = [
-        'AllOnOff',
-        'CyclingPanels',
-        'Middle_Edge_Cycling',
-        'PanelsHorizontalVertical',
+        # Patterns from flat.py
         'SingleLightCycling',
-        'PanelWindmill'
-        'WindmillPattern',
-        'AddedPanels',
-        'DarkPanelRotationPanelPattern',
-        'RotationPanelPattern',
-        'SwitchingPanels',
-        'PairedLightsCycling',
         'SingleDarkspotCycling',
-        'SingleLightCyclingLP',
+        'PairedLightsCycling',
+
+        # Patterns from panel.py
+        'AlternatingPanels',
         'AllOnOffPattern',
+        'RotationPanelPattern',
+        'DarkPanelRotationPanelPattern',
+        'AddedPanels',
+
+        # Pattern from new.py
+        'Chase',
+
+        # Pattern from meta.py
+        'ComboPattern',
+
+        # Pattern from group.py
+        'AlternatingGroups',
     ]
 
     # argument, which pattern styles can be used; TODO
@@ -32,12 +39,11 @@ class DisplayBase:
         self.total_patlist = self.pattern_list
         return self.total_patlist
 
-    def set_pattern(self, pat_name):
+    def set_pattern(self, pat_name, **kwargs):
         # print("setting pattern ", pat_name)
         constructor = globals()[pat_name]
-        self.pattern = constructor(self)
-        self.pattern.subclass_init()
-        # self.pattern.init_light_array() # 09-29 test
+        self.pattern = constructor(self, **kwargs)
+        self.pattern.initialize() # Use the new initialize method
 
     def set_random_pat(self):
         rand = random.choice(self.total_patlist)

@@ -1,3 +1,7 @@
+from flowpy.simplelogger import SimpleLogger
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
+
+
 # is this supposed to be an abstract light for pattern class
 # OR is this a hardware LED item??
 # OR BOTH possible?!!
@@ -12,6 +16,16 @@ class Light:
 
     def __repr__(self):
         return "Light %i: %i" % (self.lid, self.state)
+
+    def on(self):
+        self.state = 1
+        logger.debug(f"Light {self.lid} ON (state={self.state})")
+        print(f"Light {self.lid} ON (state={self.state})")
+
+    def off(self):
+        self.state = 0
+        logger.debug(f"Light {self.lid} OFF (state={self.state})")
+        print(f"Light {self.lid} OFF (state={self.state})")
 
 
 class LocatedLight(Light):
@@ -38,3 +52,14 @@ class CoordLight(Light):
         else:
             total = "Light (coord n/a): %i" % (self.state)
         return total
+
+    def on(self):
+        self.state = 1
+        logger.debug(f"CoordLight {self.lid} ON (state={self.state})")
+        print(f"CoordLight {self.lid} ON (state={self.state})")
+
+    def off(self):
+        self.state = 0
+        logger.debug(f"CoordLight {self.lid} OFF (state={self.state})")
+        print(f"CoordLight {self.lid} OFF (state={self.state})")
+

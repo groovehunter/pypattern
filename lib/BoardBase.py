@@ -1,5 +1,5 @@
 from flowpy.simplelogger import SimpleLogger
-logger = SimpleLogger(path=__name__+'.log')
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 
 import json
 from settings import board_conf, global_conf, ROOT_DIR
@@ -52,7 +52,7 @@ class BoardBase:
         """ the main init protocol """
         logger.debug("BoardBase - init start")
         self.init_panels()
-        self.init_panel_lights()
+        # self.init_panel_lights()  # Entfernt, damit Panel-Lichter nicht überschrieben werden
         self.init_leds()
         self.init_groups()
         self.subclass_init()

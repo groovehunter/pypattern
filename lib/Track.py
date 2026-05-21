@@ -13,7 +13,7 @@ sollder track object selber mitzählen?? Oder macht das run function?
 from settings import ROOT_DIR
 from flowpy.simplelogger import SimpleLogger
 
-logger = SimpleLogger(path=__name__+'.log')
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 
 pat_map = {
     'SLC': 'SingleLightCycling',

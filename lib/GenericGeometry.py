@@ -1,3 +1,6 @@
+from flowpy.simplelogger import SimpleLogger
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
+from flowpy.simplelogger import SimpleLogger
 import sys
 from lib.LightGroup import LightGroup
 from lib.Area import Area
@@ -8,6 +11,8 @@ if sys.platform == 'esp32':
     from ucollections import OrderedDict
 else:
     from collections import OrderedDict
+
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 
 
 class GenericGeometry:
@@ -26,16 +31,17 @@ class GenericGeometry:
             panels[pid] = PanelCoordLights(pid, size=self.num_lights_in_group)
             pid += 1
         self.panels = OrderedDict(panels)
-        print(self.panels)
+        # logger.debug(self.panels)
 
     def init_areas(self):
-        """ init a dict of Areas (like Panels) - UNUSED """
-        areas = {}
-        for i in range(1, self.num_areas):
-            areas[i] = Area()
-            areas[i].aid = i
-            areas[i].name = self.area_names[i]
-        self.areas = areas
+        """ init a dict of Areas (like Panels) - DEPRECATED / UNUSED """
+        # areas = {}
+        # for i in range(1, self.num_areas):
+        #     areas[i] = Area()
+        #     areas[i].aid = i
+        #     areas[i].name = self.area_names[i]
+        # self.areas = areas
+        pass
 
     def init_groups(self):
         """ initiate ares in groups """
@@ -49,72 +55,95 @@ class GenericGeometry:
         for i in range(1, self.num_areas+1):
             self.groupsA[i] = LightGroup(i)
             self.groupsB[i] = LightGroup(i)
-            print("init LG A+B # ", i)
+            # logger.debug("init LG A+B # ", i)
 
         lid = 1  # index flat light array
         for i in range(1, self.num_areas+1):
             for l in range(nlig):
                 flat_indexA = i * nlig + l
                 flat_indexB = i * nlig + l + int(nlig/2)
-                print("i, l: ", i, l)
+                # logger.debug("i, l: ", i, l)
                 if flat_indexA > self.num_lights_total:
                     flat_indexA = flat_indexA - self.num_lights_total
                 if flat_indexB > self.num_lights_total:
                     flat_indexB = flat_indexB - self.num_lights_total
-                print("flat_index", flat_indexA, flat_indexB)
+                # logger.debug("flat_index", flat_indexA, flat_indexB)
                 self.groupsA[i].lights[l] = self.led[flat_indexA]
                 self.groupsB[i].lights[l] = self.led[flat_indexB]
 
         for i, group in self.groupsA.items():
             pass
-        print(self.groupsA)
-        print(self.groupsB)
+        # logger.debug(self.groupsA)
+        # logger.debug(self.groupsB)
 
     def init_panel_lights(self):
         """ for all panels, call the method to initiate the lights """
         for pname, panel in self.panels.items():
             panel.init_lights()
 
-    def enlighten_flatarray(self):
-        """ go through all lights of the board and set the state """
-        # print(self.pattern.lights)
-        for i, led in self.led.items():
-            self.led[i].state = self.pattern.lights[i].state
-            # in display superclass
+    def enlighten_flat(self):
+        """
+        Setzt für jedes Light im flachen Array self.led den aktuellen state auf die Hardware (z.B. Esp32Light) ODER ruft in der Desktop-Variante nur die Synchronisation auf.
+        Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
+        """
+        logger.debug("enlighten_flat aufgerufen")
+        for i in self.led.keys():
             self.enlight_led(i)
 
     def enlighten_panel(self):
-        """ loop all panels and their lights to set the state """
-        # why not loop over self.pattern.panels.items() ?
-        for i, panel in self.panels.items():
-            c = (panel.pid-1)*self.num_lights_in_group + 1
-            # print(panel.lights)
-            for i, light in panel.lights.items():
-                self.led[c].state = light.state
-                self.enlight_led(c)
-                c += 1
-        # self.show_lightning_leds()
+        """
+        Setzt für jedes Light in jedem Panel den aktuellen state auf die Hardware (z.B. Esp32Light) ODER ruft in der Desktop-Variante nur die Synchronisation auf.
+        Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
+        """
+        logger.debug("enlighten_panel aufgerufen")
+        print("enlighten_panel aufgerufen")
+        for panel in self.panels.values():
+            for light_idx_in_panel, light in panel.lights.items():
+                flat_idx = (panel.pid - 1) * self.num_lights_in_group + light_idx_in_panel
+                logger.debug(f"enlighten_panel: Panel {panel.pid}, Light {light_idx_in_panel} -> flat_idx={flat_idx}, state={light.state}")
+                print(f"enlighten_panel: Panel {panel.pid}, Light {light_idx_in_panel} -> flat_idx={flat_idx}, state={light.state}")
+                if flat_idx in self.led:
+                    self.enlight_led(flat_idx)
 
-    def show_lightning_leds(self):
-        """ debugging output, which leds have ON value """
-        white = []
-        for i, led in self.led.items():
-            if led.pin.value() == 1:
-                white.append(led)
-        print(white)
+    def enlighten_group(self):
+        """
+        Setzt für jede Gruppe (z.B. für Pattern mit Gruppenlogik) die aktiven/inaktiven Lichter auf den gewünschten state.
+        Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
+        """
+        logger.debug("enlighten_group aufgerufen")
+        print("enlighten_group aufgerufen")
+        active_group = self.board.groupsA if self.pattern.count == 0 else self.board.groupsB
+        inactive_group = self.board.groupsB if self.pattern.count == 0 else self.board.groupsA
+
+        for group in active_group.values():
+            for light in group.lights.values():
+                logger.debug(f"enlighten_group: active light {light.lid} -> ON")
+                print(f"enlighten_group: active light {light.lid} -> ON")
+                light.on()
+                self.enlight_led(light.lid)
+
+        for group in inactive_group.values():
+            for light in group.lights.values():
+                logger.debug(f"enlighten_group: inactive light {light.lid} -> OFF")
+                print(f"enlighten_group: inactive light {light.lid} -> OFF")
+                light.off()
+                self.enlight_led(light.lid)
 
     def enlighten(self):
-        """ branch different methods according to pattern klass """
-        # print(self.pattern.type)
-        enligthen_by_panel = [
-            'PanelPattern',
-            'SynchronousPanelsPattern',
-            'FixedStateNumberPattern',
-            'ComboPattern',
-        ]
-        if self.pattern.type in enligthen_by_panel:  # etc...
+        """
+        Generische Render-Methode.
+        Ruft je nach Pattern-Render-Mode die passende enlighten_* Methode auf.
+        Für Hardware-Boards (ESP32) werden die Hardware-Lichter direkt geschaltet.
+        Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw(),
+        das in change_board() der Board-Klasse aufgerufen wird.
+        """
+        render_mode = getattr(self.pattern, 'render_mode', 'flat')
+
+        if render_mode == 'panel':
             self.enlighten_panel()
-        if self.pattern.type == 'LogicPattern':
-            self.enlighten_flatarray()
+        elif render_mode == 'group':
+            self.enlighten_group()
+        else:  # default to 'flat'
+            self.enlighten_flat()
 
         self.update_board()

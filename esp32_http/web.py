@@ -174,7 +174,7 @@ async def http_server(reader, writer):
         route = uri.decode().split('?', 1)[0]
     except Exception as e:
         print(f"Fehler beim Parsen der URI: {e}")
-        response = b'HTTP/1.0 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nUngültige Anfrage.'
+        response = b'HTTP/1.0 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nUngueltige Anfrage.'
         writer.write(response)
         await writer.drain()
         writer.close()

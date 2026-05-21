@@ -1,79 +1,50 @@
 from flowpy.simplelogger import SimpleLogger
-logger = SimpleLogger(path=__name__+'.log')
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 
 from lib.Panel import Panel
 
 class LightPattern(object):
-    """ Base class for light pattern, basic init methods """
+    """
+    Base class for all light patterns.
+    A pattern holds the logic to manipulate the state of lights on a board.
+    It does NOT hold the state itself, but operates on the board's lights/panels.
+    """
+    # 'flat': The pattern manipulates self.board.led directly.
+    # 'panel': The pattern manipulates lights within self.board.panels.
+    render_mode = 'flat'
 
     def __init__(self, board):
-        logger.debug('init LightPattern')
+        logger.debug(f'Initializing {self.__class__.__name__} pattern.')
         self.board = board
-        self.lights = {}
-        self.count = 1
-
-    def subclass_init(self):
-        raise NotImplementedError
-    def initial_state(self):
-        raise NotImplementedError
-    def next_state(self):
-        raise NotImplementedError
-
-    def init_panels_array(self):
-        """ method to init another array of panels as attribute of the pattern """
-        self.panels = {}
-        n = self.board.num_panels
-        c = 1
-        for i, panel in self.board.panels.items():
-            self.panels[c] = panel
-            c += 1
-        # make endless chain -
-        self.panels[n+1] = self.panels[1]
-        self.panels[n+2] = self.panels[2]
-
-    def init_pattern_panels(self):
-        """ like the boards panels, set also the panels of the pattern
-            but indexed with pid number instead of an unused abbr
-        """
-        n = self.board.num_panels
-        #self.panels = {}
-        for loc_index, panel in self.board.panels.items():
-            #print("subclass_init: panel.pids: ", panel.pid)
-            self.panels[panel.pid] = panel
-            self.panels[panel.pid].clear()
-        self.panels[n+1] = self.panels[1]
-        self.panels[n+2] = self.panels[2]
-        self.panels[n+3] = self.panels[3]
-
-    def init_light_array_2(self):
-        """ simple copy reference to flat light array of board """
-        n = self.board.num_lights_total
-        for c in range(1, n+1):
-            self.lights[c] = self.board.led[c]
-        # make endless chain -
-        self.lights[n+1] = self.lights[1]
-        self.lights[n+2] = self.lights[2]
-
-    def init_light_array(self):
-        """ looping the panels, and init like that a flat array of lights """
-        self.lights = {}
-        c = 1
-        # init light array with auto increment index ## MOVE TO BOARD!
-        #print('init_light_array')
-        #print(self.board.panels)
-        for p, panel in self.board.panels.items():
-            for l, light in panel.lights.items():
-                self.lights[c] = light
-                c += 1
-        n = self.board.num_lights_total
-        # make endless chain -
-        self.lights[n+1] = self.lights[1]
-        self.lights[n+2] = self.lights[2]
         self.count = 0
-        #print(self.lights)
 
+    def initialize(self):
+        """
+        Called once after the pattern is created to perform specific initializations
+        and to set the very first visual state.
+        Subclasses should override this.
+        """
+        pass
 
-### legacy o--o hardcoded patterns
+    def next_state(self):
+        """
+        Calculates and sets the next state of the lights.
+        This is the core logic of the pattern, called in a loop.
+        """
+        raise NotImplementedError
+
+    def clear_all_lights(self):
+        """Helper method to turn all lights on the board off."""
+        for light in self.board.led.values():
+            light.off()
+
+    def clear_all_panels(self):
+        """Helper method to clear all panels on the board."""
+        for panel in self.board.panels.values():
+            panel.clear()
+
+    # --- Legacy Methods (to be reviewed and possibly removed) ---
+
     def set_all_panels(self, pat):
         """ legacy method, to set all panels to visual pattern seq """
         for i, panel in self.board.panels.items():

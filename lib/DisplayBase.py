@@ -1,68 +1,66 @@
-#import sys
-#from os.path import join
-#from settings import ROOT_DIR
-import lib.PanelPattern as panelpattern_mod
-import lib.LogicPattern as logicpattern_mod
-import lib.NextStatePattern as nextstatepattern_mod
-import lib.SynchronousPanelsPattern as synchronouspanels_mod
-import lib.ComboPattern as combopattern_mod
-import inspect
+# Import all patterns from the new structure
+from lib.patterns.flat import *
+from lib.patterns.panel import *
+from lib.patterns.new import *
+from lib.patterns.meta import *
+from lib.patterns.group import *
+from lib.patterns.utils import *
+
 import random
 from flowpy.simplelogger import SimpleLogger
-logger = SimpleLogger(path=__name__+'.log')
-
-
-def list_pattern_classes(module, base_class=None, exclude=None):
-    """
-    Liefert alle Klassennamen im Modul, die (optional) von base_class erben und nicht im exclude-Set stehen.
-    """
-    if exclude is None:
-        exclude = set()
-    result = []
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj) and obj.__module__ == module.__name__:
-            if base_class is None or issubclass(obj, base_class):
-                if name not in exclude:
-                    result.append(name)
-    return result
-
-def get_pattern_class_by_name(name):
-    for mod in [panelpattern_mod, logicpattern_mod, synchronouspanels_mod, nextstatepattern_mod, combopattern_mod]:
-        if hasattr(mod, name):
-            return getattr(mod, name)
-    raise KeyError(f"Pattern class '{name}' not found in known modules.")
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 
 
 class DisplayBase:
-    """ base stuff for a board: setting the pattern, """
+    """
+    Base class for the CPython display environment.
+    Handles pattern loading and switching.
+    """
+
+    def __init__(self):
+        self.pattern_list = [
+            # This list should ideally be the same as in DisplayBase_uP
+            'SingleLightCycling', 'SingleDarkspotCycling', 'PairedLightsCycling',
+            'AlternatingPanels', 'AllOnOffPattern', 'RotationPanelPattern',
+            'DarkPanelRotationPanelPattern', 'AddedPanels', 'Chase',
+            'ComboPattern', 'AlternatingGroups'
+        ]
+        self.total_patlist = self.pattern_list
+        self.pattern = None
+        # This is used by the Tkinter GUI, needs to be handled gracefully
+        self.variable = None
 
     def total_pattern_list(self):
-        # Sammle alle Pattern-Klassen aus den relevanten Modulen
-        exclude = {'LightPattern', 'NextStatePattern', 'PanelPattern', 'LogicPattern', 'SynchronousPanelsPattern'}
-        pattern_names = set()
-        # PanelPattern
-        pattern_names.update(list_pattern_classes(panelpattern_mod, exclude=exclude))
-        # LogicPattern
-        pattern_names.update(list_pattern_classes(logicpattern_mod, exclude=exclude))
-        # SynchronousPanelsPattern
-        pattern_names.update(list_pattern_classes(synchronouspanels_mod, exclude=exclude))
-        # NextStatePattern
-        pattern_names.update(list_pattern_classes(nextstatepattern_mod, exclude=exclude))
-        # ComboPattern (optional, falls gewünscht)
-        pattern_names.update(list_pattern_classes(combopattern_mod, exclude=exclude))
-        # Sortiert für bessere Übersicht
-        self.total_patlist = sorted(pattern_names)
+        # This method is now simpler as the list is predefined.
         logger.debug("Available patterns: %s ", self.total_patlist)
+        return self.total_patlist
 
-    def set_pattern(self, pat_name=None):
-        if pat_name is None:
-            pat_name = self.variable.get()
-        logger.debug('set_pattern: %s', pat_name)
-        constructor = get_pattern_class_by_name(pat_name)
-        self.pattern = constructor(self.board)
-        self.pattern.subclass_init()
-        logger.debug('set_pattern')
+    def set_pattern(self, pat_name=None, **kwargs):
+        if pat_name is None and self.variable:
+             pat_name = self.variable.get()
+
+        if not pat_name:
+            logger.warning("set_pattern called with no pattern name.")
+            return
+
+        logger.debug('set_pattern: %s with args %s', pat_name, kwargs)
+        try:
+            # The board object is passed to the pattern constructor.
+            # In the CPython context, `self` is the DisplayBase, but the pattern expects the board.
+            # This assumes DisplayBase is mixed into the board class (e.g., GenericBoard).
+            board_instance = self
+            constructor = get_pattern_class_by_name(pat_name, globals())
+            self.pattern = constructor(board_instance, **kwargs)
+            self.pattern.initialize()
+            logger.debug('Pattern %s initialized.', pat_name)
+        except KeyError as e:
+            logger.error(e)
+        except Exception as e:
+            logger.error("Failed to set pattern '%s': %s", pat_name, e)
 
     def set_random_pat(self):
+        if not self.total_patlist:
+            logger.warning("Cannot set random pattern, list is empty.")
+            return
         rand = random.choice(self.total_patlist)
         self.set_pattern(rand)

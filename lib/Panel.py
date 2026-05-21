@@ -14,12 +14,12 @@ class Panel:
 
     def clear(self):
         for key, val in self.lights.items():
-            val.state = 0
+            val.off()
 
     def full(self):
         for key, val in self.lights.items():
-            val.state = 1
-            
+            val.on()
+
     def is_clear():
         for key, val in self.lights.items():
             if val.state == 1:
@@ -73,6 +73,4 @@ class Panel:
         # print(self.lights)
 
 class PanelCoordLights(Panel):
-    def init_lights(self):
-        for i in range(1, self.size+1):
-            self.lights[i] = CoordLight(i)
+    pass
