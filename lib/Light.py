@@ -20,12 +20,12 @@ class Light:
     def on(self):
         self.state = 1
         logger.debug(f"Light {self.lid} ON (state={self.state})")
-        print(f"Light {self.lid} ON (state={self.state})")
+        #print(f"Light {self.lid} ON (state={self.state})")
 
     def off(self):
         self.state = 0
         logger.debug(f"Light {self.lid} OFF (state={self.state})")
-        print(f"Light {self.lid} OFF (state={self.state})")
+        #print(f"Light {self.lid} OFF (state={self.state})")
 
 
 class LocatedLight(Light):
@@ -56,10 +56,10 @@ class CoordLight(Light):
     def on(self):
         self.state = 1
         logger.debug(f"CoordLight {self.lid} ON (state={self.state})")
-        print(f"CoordLight {self.lid} ON (state={self.state})")
+        #print(f"CoordLight {self.lid} ON (state={self.state})")
 
     def off(self):
         self.state = 0
         logger.debug(f"CoordLight {self.lid} OFF (state={self.state})")
-        print(f"CoordLight {self.lid} OFF (state={self.state})")
+        #print(f"CoordLight {self.lid} OFF (state={self.state})")
 

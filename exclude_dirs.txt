@@ -39,11 +39,3 @@ pythonProject/
 uv.lock
 *.egg-info
 
-# symlinks to libs
-flowpy
-yaml_config_support
-framecache_support
-yldpipe
-yldpipeNG
-ypipe
-

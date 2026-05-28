@@ -98,63 +98,48 @@
         <button type="submit">Übernehmen</button>
         <button type="button" id="toggle-desc" style="font-size:0.92em; color:#888; background:transparent; border:none; cursor:pointer; padding:0 8px;">Beschreibungen anzeigen</button>
       </div>
-      <ul class="pattern-list">
-        <li>
-          <label><input type="radio" name="pattern" value="PanelWindmill" checked> PanelWindmillPattern</label>
-          <div class="pattern-desc">Windmühlen-Effekt, Drehrichtung nicht mehr erkennbar.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="PairedLightsCycling"> PairedLightsCycling</label>
-          <div class="pattern-desc">Ein Paar von LEDs läuft durch alle Positionen.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="SingleDarkspotCycling"> SingleDarkspotCycling</label>
-          <div class="pattern-desc">Ein einzelner dunkler Punkt wandert zyklisch durch alle Positionen.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="SingleLightCycling"> SingleLightCycling</label>
-          <div class="pattern-desc">Ein einzelnes Licht läuft nacheinander durch alle Positionen.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="AllOnOff"> AllOnOff</label>
-          <div class="pattern-desc">Alle Lichter schalten synchron im Rhythmus an und aus.</div>
-        </li>
+      <ul id="pattern-list" class="pattern-list">
+        <!-- pattern items will be populated dynamically from /patterns -->
+      </ul>
       </form>
     </section>
-    <section class="card">
-      <h2>Pattern NOT OKAY</h2>
-      <li>
-        <label><input type="radio" name="pattern" value="WindmillPattern" checked> WindmillPattern</label>
-        <div class="pattern-desc">Windmühlen-Effekt, Drehrichtung nicht mehr erkennbar.</div>
-      </li>
-        <li>
-          <label><input type="radio" name="pattern" value="SingleLightCyclingLP"> SingleLightCyclingLP</label>
-          <div class="pattern-desc">Wie SingleLightCycling, aber mit langem Puls / Fade-Effekt.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="CyclingPanels"> CyclingPanels</label>
-          <div class="pattern-desc">Panels leuchten der Reihe nach auf – ein Panel pro Beat.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="Middle_Edge_Cycling"> Middle_Edge_Cycling</label>
-          <div class="pattern-desc">Mitte und Rand wechseln sich abwechselnd ab.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="PanelsHorizontalVertical"> PanelsHorizontalVertical</label>
-          <div class="pattern-desc">Horizontale und vertikale Panelgruppen alternieren.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="DarkPanelRotationPanelPattern"> DarkPanelRotationPanelPattern</label>
-          <div class="pattern-desc">Ein dunkles Panel rotiert über die gesamte Fläche.</div>
-        </li>
-        <li>
-          <label><input type="radio" name="pattern" value="RotationPanelPattern"> RotationPanelPattern</label>
-          <div class="pattern-desc">Alle Panels rotieren gleichmäßig im Uhrzeigersinn.</div>
-        </li>
-      </ul>
+    <!-- dynamic area for patterns that are not available / warnings could be added here -->
   </section>
 
 <script>
+// fetch available patterns from server and populate the pattern list
+function loadPatterns() {
+  fetch('/patterns')
+    .then(r => r.json())
+    .then(list => {
+      const ul = document.getElementById('pattern-list');
+      ul.innerHTML = '';
+      if (!Array.isArray(list) || list.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'Keine Patterns verfügbar.';
+        ul.appendChild(li);
+        return;
+      }
+      list.forEach((p, idx) => {
+        const li = document.createElement('li');
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'pattern';
+        input.value = p;
+        if (idx === 0) input.checked = true;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + p));
+        li.appendChild(label);
+        ul.appendChild(li);
+      });
+    })
+    .catch(() => {
+      const ul = document.getElementById('pattern-list');
+      ul.innerHTML = '<li>Fehler beim Laden der Patterns.</li>';
+    });
+}
+window.addEventListener('load', loadPatterns);
 
 function submitPattern(e) {
   e.preventDefault();

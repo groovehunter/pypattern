@@ -51,6 +51,7 @@ class DisplayBase:
             board_instance = self
             constructor = get_pattern_class_by_name(pat_name, globals())
             self.pattern = constructor(board_instance, **kwargs)
+            # synchronous initialize
             self.pattern.initialize()
             logger.debug('Pattern %s initialized.', pat_name)
         except KeyError as e:

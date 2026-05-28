@@ -1,3 +1,6 @@
+
+from flowpy.simplelogger import SimpleLogger
+logger = SimpleLogger(path=__name__+'.log', level='DEBUG')
 from lib.LightPattern import LightPattern
 from lib.patterns.utils import get_pattern_class_by_name
 
@@ -8,7 +11,7 @@ class ComboPattern(LightPattern):
     """
     render_mode = 'panel' # Default, can be overridden by sub-patterns.
 
-    def __init__(self, board, pattern_configs, ticks_to_switch=30):
+    def __init__(self, board, pattern_configs=None, ticks_to_switch=30):
         """
         Initializes the ComboPattern.
         :param board: The board object.
@@ -26,23 +29,44 @@ class ComboPattern(LightPattern):
         self.current_sub_pattern = None
 
     def _load_sub_pattern(self):
-        """Loads and initializes the sub-pattern at the current index."""
+        """Loads and initializes the sub-pattern at the current index.
+        This is made robust: pattern_configs may be empty (no-op), and
+        the lookup will try the local globals first and then common
+        pattern modules under lib.patterns.
+        """
         if not self.pattern_configs:
             return
 
         pat_name, kwargs = self.pattern_configs[self.sub_pattern_index]
 
+        constructor = None
+        # First try the provided globals (module-local)
         try:
             constructor = get_pattern_class_by_name(pat_name, globals())
-            self.current_sub_pattern = constructor(self.board, **kwargs)
+        except KeyError:
+            # Try well-known pattern modules
+            from importlib import import_module
+            for modname in ('lib.patterns.flat', 'lib.patterns.panel', 'lib.patterns.new', 'lib.patterns.group', 'lib.patterns.meta'):
+                try:
+                    mod = import_module(modname)
+                    if hasattr(mod, pat_name):
+                        constructor = getattr(mod, pat_name)
+                        break
+                except Exception:
+                    continue
+
+        if constructor is None:
+            logger.error("Error: Sub-pattern '%s' not found.", pat_name)
+            self._advance_to_next_sub_pattern()
+            return
+
+        try:
+            self.current_sub_pattern = constructor(self.board, **(kwargs or {}))
             self.current_sub_pattern.initialize()
             # Adapt render mode to the current sub-pattern
-            self.render_mode = self.current_sub_pattern.render_mode
-        except KeyError:
-            print(f"Error: Sub-pattern '{pat_name}' not found.")
-            self._advance_to_next_sub_pattern() # Skip to the next one
+            self.render_mode = getattr(self.current_sub_pattern, 'render_mode', self.render_mode)
         except Exception as e:
-            print(f"Error initializing sub-pattern '{pat_name}': {e}")
+            logger.error("Error initializing sub-pattern '%s': %s", pat_name, e)
             self._advance_to_next_sub_pattern() # Skip to the next one
 
     def _advance_to_next_sub_pattern(self):
@@ -64,10 +88,8 @@ class ComboPattern(LightPattern):
         """
         if not self.current_sub_pattern:
             return
-
-        # Advance the sub-pattern's state
+        # Advance the sub-pattern's state (synchronous)
         self.current_sub_pattern.next_state()
-
         self.tick_count += 1
         if self.tick_count >= self.ticks_to_switch:
             self._advance_to_next_sub_pattern()

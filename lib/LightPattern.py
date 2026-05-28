@@ -34,9 +34,48 @@ class LightPattern(object):
         raise NotImplementedError
 
     def clear_all_lights(self):
-        """Helper method to turn all lights on the board off."""
-        for light in self.board.led.values():
-            light.off()
+        """Helper method to turn all lights on the board off.
+        Preferentially operates on logical lights (`board.logic_lights`) if present;
+        otherwise falls back to hardware lights (`board.led`).
+        """
+        if hasattr(self.board, 'logic_lights') and self.board.logic_lights:
+            for light in self.board.logic_lights.values():
+                try:
+                    light.off()
+                except Exception:
+                    pass
+        else:
+            for light in getattr(self.board, 'led', {}).values():
+                try:
+                    light.off()
+                except Exception:
+                    pass
+
+    def _get_light_obj(self, lid):
+        """Return the logical light if available, otherwise the hardware light.
+        Raises KeyError if no light found.
+        """
+        if hasattr(self.board, 'logic_lights') and self.board.logic_lights:
+            if lid in self.board.logic_lights:
+                return self.board.logic_lights[lid]
+        if hasattr(self.board, 'led') and self.board.led:
+            if lid in self.board.led:
+                return self.board.led[lid]
+        raise KeyError(f'Light {lid} not found')
+
+    def light_on(self, lid):
+        """Turn a single light on (logical preferred)."""
+        try:
+            self._get_light_obj(lid).on()
+        except Exception:
+            pass
+
+    def light_off(self, lid):
+        """Turn a single light off (logical preferred)."""
+        try:
+            self._get_light_obj(lid).off()
+        except Exception:
+            pass
 
     def clear_all_panels(self):
         """Helper method to clear all panels on the board."""

@@ -86,7 +86,7 @@ class GenericGeometry:
         Setzt für jedes Light im flachen Array self.led den aktuellen state auf die Hardware (z.B. Esp32Light) ODER ruft in der Desktop-Variante nur die Synchronisation auf.
         Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
         """
-        logger.debug("enlighten_flat aufgerufen")
+        #logger.debug("enlighten_flat aufgerufen")
         for i in self.led.keys():
             self.enlight_led(i)
 
@@ -96,14 +96,16 @@ class GenericGeometry:
         Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
         """
         logger.debug("enlighten_panel aufgerufen")
-        print("enlighten_panel aufgerufen")
+        # Panel-Status als Zeichenkette ausgeben
+        panel_status = []
         for panel in self.panels.values():
+            status = ['O' if light.state else '-' for light in panel.lights.values()]
+            panel_status.append('[' + ''.join(status) + ']')
             for light_idx_in_panel, light in panel.lights.items():
                 flat_idx = (panel.pid - 1) * self.num_lights_in_group + light_idx_in_panel
-                logger.debug(f"enlighten_panel: Panel {panel.pid}, Light {light_idx_in_panel} -> flat_idx={flat_idx}, state={light.state}")
-                print(f"enlighten_panel: Panel {panel.pid}, Light {light_idx_in_panel} -> flat_idx={flat_idx}, state={light.state}")
                 if flat_idx in self.led:
                     self.enlight_led(flat_idx)
+        logger.debug(' '.join(panel_status))
 
     def enlighten_group(self):
         """
@@ -111,21 +113,19 @@ class GenericGeometry:
         Für die Desktop-Variante (GraphicBoard) erfolgt die eigentliche Umschaltung über sync_lights_to_hw().
         """
         logger.debug("enlighten_group aufgerufen")
-        print("enlighten_group aufgerufen")
+        #print("enlighten_group aufgerufen")
         active_group = self.board.groupsA if self.pattern.count == 0 else self.board.groupsB
         inactive_group = self.board.groupsB if self.pattern.count == 0 else self.board.groupsA
 
         for group in active_group.values():
             for light in group.lights.values():
                 logger.debug(f"enlighten_group: active light {light.lid} -> ON")
-                print(f"enlighten_group: active light {light.lid} -> ON")
                 light.on()
                 self.enlight_led(light.lid)
 
         for group in inactive_group.values():
             for light in group.lights.values():
                 logger.debug(f"enlighten_group: inactive light {light.lid} -> OFF")
-                print(f"enlighten_group: inactive light {light.lid} -> OFF")
                 light.off()
                 self.enlight_led(light.lid)
 

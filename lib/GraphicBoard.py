@@ -62,10 +62,10 @@ class GraphicBoard(DisplayBase, GenericGeometry, BoardBase):
     def enlight_led(self, i):
         """ accessing the hardware (graphic) """
         logger.debug(f"enlight_led({i}): state={self.led[i].state}")
-        print(f"enlight_led({i}): state={self.led[i].state}")
+        #print(f"enlight_led({i}): state={self.led[i].state}")
         self.led[i].on() if self.led[i].state else self.led[i].off()
-        logger.debug(f"GraphicLight {self.led[i]} set to {self.led[i].state}")
-        print(f"GraphicLight {self.led[i]} set to {self.led[i].state}")
+        #logger.debug(f"GraphicLight {self.led[i]} set to {self.led[i].state}")
+        #print(f"GraphicLight {self.led[i]} set to {self.led[i].state}")
 
     def update_board(self):
         # Hier könnte man ggf. das tkinter Fenster updaten, falls nötig
@@ -82,9 +82,9 @@ class GraphicBoard(DisplayBase, GenericGeometry, BoardBase):
         logger.debug("GraphicBoard - init_leds fertig")
 
     def change_board(self):
-        logger.debug("change_board aufgerufen")
-        print("change_board aufgerufen")
+        #logger.debug("change_board aufgerufen")
+        #print("change_board aufgerufen")
         super().enlighten()
         self.sync_lights_to_hw()
         logger.debug("change_board fertig")
-        print("change_board fertig")
+        #print("change_board fertig")

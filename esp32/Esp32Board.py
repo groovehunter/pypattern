@@ -21,8 +21,7 @@ except ImportError:
 
 class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
     def __init__(self):
-        print("init board")
-        logger.debug("Esp32Board __init__")
+        logger.debug("Esp32Board __init__ (init board)")
         self.logic_lights = None  # Wird in init_logic_lights gesetzt
 
     def subclass_init(self):
@@ -70,19 +69,18 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
     def enlight_led(self, i):
         """ accessing the hardware pins """
         logger.debug(f"enlight_led({i}): state={self.led[i].state}")
-        print(f"enlight_led({i}): state={self.led[i].state}")
-        print(f"  -> Pin-Objekt: {self.led[i].pin}, Typ: {type(self.led[i].pin)}")
-        print(f"  -> Pin-Nummer: {getattr(self.led[i].pin, 'id', 'unbekannt') if hasattr(self.led[i].pin, 'id') else str(self.led[i].pin)}")
+        #print(f"enlight_led({i}): state={self.led[i].state}")
         self.led[i].pin.value(self.led[i].state)
-        logger.debug(f"Pin {self.led[i].pin} set to {self.led[i].state}")
-        print(f"Pin {self.led[i].pin} set to {self.led[i].state}")
+        #logger.debug(f"Pin {self.led[i].pin} set to {self.led[i].state}")
 
     def change_board(self):
-        logger.debug("change_board aufgerufen")
-        print("change_board aufgerufen")
+        # Ensure logic lights are copied to hardware lights, then enlighten
+        try:
+            self.sync_lights_to_hw()
+        except Exception:
+            logger.exception("sync_lights_to_hw failed")
         super().enlighten()
         logger.debug("change_board fertig")
-        print("change_board fertig")
 
     # stub XXX del
     def update_board(self):
@@ -94,6 +92,5 @@ class Esp32Board(DisplayBase, GenericGeometry, BoardBase):
             logger.debug(f"init_leds: initialisiere Esp32Light {i}")
             led[i] = Esp32Light(i)
         self.led = led
-        print("Esp32Board - init_leds")
         logger.debug("Esp32Board - init_leds fertig")
 

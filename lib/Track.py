@@ -29,6 +29,7 @@ pat_map = {
     'COPS': 'CyclingOppositePanelsSwitching',
     'OPB': 'OppositePanelsBlinking',
     'COPB':'CyclingOppositePanelsBlinking',
+    'CMB': 'ComboPattern',
 
 }
 #import csv
@@ -88,8 +89,59 @@ class Track:
         speed = pat_items[2]
         logger.debug("playing times: %d", repeats)
 
+        # reset any previous kwargs
+        try:
+            self.last_pattern_kwargs = None
+        except Exception:
+            pass
+
+        # Support a simple inline ComboPattern syntax: after the first three fields
+        # the remainder is a combo spec where subpatterns are separated by '|'
+        # and optional kwargs follow a ':' with comma-separated key=val pairs.
+        # Example: "CMB 1 120 Chase:length=4|RotationPanelPattern"
+        combo_spec = None
+        if pat_abbr in ('CMB', 'COMBO') and len(pat_items) > 3:
+            combo_spec = " ".join(pat_items[3:]).strip()
+
         self.cur_pat = pat_abbr
         self.cur_repeats = repeats
+
+        if combo_spec:
+            # parse combo_spec into pattern_configs
+            configs = []
+            parts = combo_spec.split('|')
+            for part in parts:
+                part = part.strip()
+                if not part:
+                    continue
+                if ':' in part:
+                    pname, kvals = part.split(':', 1)
+                    kwargs = {}
+                    for kv in kvals.split(','):
+                        if '=' in kv:
+                            k, v = kv.split('=', 1)
+                            k = k.strip()
+                            v = v.strip()
+                            # try to convert numeric values
+                            if v.isdigit():
+                                v = int(v)
+                            else:
+                                try:
+                                    fv = float(v)
+                                    v = fv
+                                except Exception:
+                                    pass
+                            kwargs[k] = v
+                    configs.append((pname.strip(), kwargs))
+                else:
+                    configs.append((part, {}))
+            # store last pattern kwargs for the caller (pdc_desktop) to pick up
+            try:
+                self.last_pattern_kwargs = {'pattern_configs': configs, 'ticks_to_switch': repeats}
+            except Exception:
+                self.last_pattern_kwargs = None
+            return pat_map.get(pat_abbr, pat_abbr)
+
         return pat_map[pat_abbr]
 
     def get_current_speed(self):

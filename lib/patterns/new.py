@@ -14,10 +14,12 @@ class Chase(LightPattern):
 
     def initialize(self):
         self.clear_all_lights()
-        # Light up the initial comet
+        # Light up the initial comet (prefer logical lights)
         for i in range(1, self.length + 1):
-            if i in self.board.led:
-                self.board.led[i].on()
+            try:
+                self.light_on(i)
+            except Exception:
+                pass
 
     def next_state(self):
         self.count += 1
@@ -32,8 +34,11 @@ class Chase(LightPattern):
         # Index of the tail to be turned off
         tail_idx = (self.count - 1 + num_lights -1) % num_lights + 1
 
-        if tail_idx in self.board.led:
-            self.board.led[tail_idx].off()
-        if head_idx in self.board.led:
-            self.board.led[head_idx].on()
-
+        try:
+            self.light_off(tail_idx)
+        except Exception:
+            pass
+        try:
+            self.light_on(head_idx)
+        except Exception:
+            pass
