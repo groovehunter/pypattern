@@ -1,33 +1,11 @@
-from wifikey import ESSID, PASS
+import gc
+try:
+    import machine
+    # MicroPython ESP32 Setup
+    machine.freq(240000000) # Full speed
+except ImportError:
+    pass # Desktop Mock
 
+# Clean boot up
+gc.collect()
 
-
-def connect():
-    import network
-    import time
-    sta_if = network.WLAN(network.STA_IF)
-
-    #if not sta_if.isconnected():
-    if True:
-        print('connecting to network...')
-        sta_if.active(True)
-        sta_if.connect(ESSID, PASS)
-
-        while not sta_if.isconnected():
-            time.sleep(1)
-        
-        sta_if.ifconfig(('192.168.43.10', '255.255.255.0', '192.168.43.1', '8.8.8.8'))
-        print("Connection ip set:", sta_if.ifconfig())
-
-#        for i in range(10000):
-#            if sta_if.isconnected():
-#                break
-
-def installpip():
-    import upip
-    upip.install('micropython-uasyncio')
-    upip.install('micropython-pkg_resources')
-
-# for import only
-#connect()
-#installpip()

@@ -1,141 +1,162 @@
-### entry point - for ESP32 platforms and others
+try:
+    import uasyncio as asyncio
+except ImportError:
+    import asyncio
 
-import sys
-if sys.platform != 'esp32':
-    print("Dieses Skript ist nur für ESP32/MicroPython vorgesehen. Bitte desktop_main.py für Desktop verwenden.")
-    sys.exit(0)
+from app.core.config import load_config
+from app.core.config import save_config
+from app.core.logger import log
+from app.hardware.wifi import WifiManager
+from app.hardware.led_controller import get_controller
+from app.hardware.layouts import get_layout
+from app.patterns.panel import Engine
+import app.patterns.library as library
+from app.patterns.playlist import PlaylistManager
+from app.web.server import WebServer
 
-import os
-import esp
-import network
-esp.osdebug(None)
-cwd = os.getcwd()
-import uasyncio as asyncio
-import time
-import gc
-from flowpy.simplelogger import SimpleLogger
-logger = SimpleLogger(path=__name__ + '.log', level='DEBUG')
-gc.collect()
+# Globale Variable für Manager & Webserver
+playlist_manager = None
+engine = None
+leds = None
+config = None
 
-def check_memory():
-    free = gc.mem_free()
-    alloc = gc.mem_alloc()
-    print('avail: ', free)
-    print('alloc: ', alloc)
-    print('total: ', alloc+free)
+def get_current_state_str():
+    global playlist_manager
+    if not playlist_manager: return "None"
+    mode = f"Playlist: {playlist_manager.active_playlist_name}" if playlist_manager.active_playlist_name else "Manual"
+    return f"{mode} | {playlist_manager.get_current_name()}"
 
-def check_filesystem_usage():
-    total = os.statvfs('/')
-    total_size = total[0] * total[2]
-    free_size = total[0] * total[3]
-    used_size = total_size - free_size
-    print("Gesamter Speicher:", total_size // 1024, "KB")
-    print("Verfügbarer Speicher:", free_size // 1024, "KB")
-    print("Genutzter Speicher:", used_size // 1024, "KB")
+def get_available_patterns():
+    # Holt alle Klassen aus library.py die auf 'Pattern' enden
+    return [name for name in dir(library) if name.endswith('Pattern') and name != 'BasePattern']
 
+def api_set_pattern(name):
+    global playlist_manager
+    return playlist_manager.set_manual_pattern(name)
 
-syspath = ['esp32', 'www', 'esp32_http', 'lib', 'conf']
-# Entferne evtl. vorhandene relative Einträge
-for p in syspath:
-    if p in sys.path:
-        sys.path.remove(p)
-# MicroPython: Pfade mit führendem Slash
-for p in syspath:
-    abs_path = '/' + p if not p.startswith('/') else p
-    if abs_path not in sys.path:
-        sys.path.append(abs_path)
+def get_available_playlists():
+    global playlist_manager
+    return playlist_manager.get_available_playlists()
 
-#print(sys.path)
-from web import http_server
-from pdc import PdcSingleton as PDC
-from settings import boardname
-from Track import Track
+def api_set_playlist(name):
+    global playlist_manager
+    return playlist_manager.start_playlist(name)
 
-# Immer Esp32Board verwenden!
-pdc = PDC()
-pdc.init(board_type='esp32')
-pdc.board.boardname = boardname
-pdc.board.load_py_conf()
-pdc.board.init()
-pdc.board.track = Track()
+def get_current_layout_name():
+    global config
+    if config:
+        return config.get("hardware", {}).get("layout", "default")
+    return "default"
 
+def get_available_layouts():
+    from app.hardware.layouts import load_hardware_config
+    hw = load_hardware_config()
+    return list(hw.get("layouts", {}).keys())
 
-def get_time_ms():
+def api_set_layout(name):
+    global config
+    from app.core.config import save_config
+    if config:
+        config.setdefault("hardware", {})["layout"] = name
+        save_config(config, "config.json")
+    from app.core.logger import log
+    log.info(f"Layout '{name}' saved as default.")
+
+    # 1. Alte Logikschleife sicher stoppen (optional, aber Engine leeren reicht oft)
+    playlist_manager.engine.clear_all()
+    playlist_manager.engine.update_hardware()
+
+    # 2. Alte LEDs freigeben (besonders ESP32 wichtig)
+    if hasattr(playlist_manager.engine.hw, "deinit"):
+        playlist_manager.engine.hw.deinit()
+
+    # 3. Neue Hardware Objekte aufbauen
+    from app.hardware.layouts import get_layout
+    pinmap, panel_config, leds_per_panel = get_layout(name)
+    leds = get_controller(pinmap)
+    from app.patterns.panel import Engine
+    engine = Engine(leds, panel_config, leds_per_panel)
+    playlist_manager.engine = engine  # Dem Playlist Manager die neue Engine unterschieben
+
+    # 4. Aktuelles Muster fix neu starten auf den neuen Panels
+    if playlist_manager.active_playlist_name:
+        playlist_manager.start_playlist(playlist_manager.active_playlist_name)
+    else:
+        # manual pattern neu starten
+        patt_name = playlist_manager.get_current_name()
+        if patt_name != "None":
+            playlist_manager.set_manual_pattern(patt_name)
+    return True
+
+def api_set_speed(val):
+    global playlist_manager
+    return playlist_manager.set_manual_speed(val)
+
+async def main():
+    global playlist_manager, engine, config, leds
+    log.info("Starting PyPattern System...")
+    
+    # 1. Init Config
+    config = load_config("config.json")
+    
+    # 2. Init & Connect WiFi (Non-Blocking)
+    wifi = WifiManager(config)
+    await wifi.connect()
+    
+    # Start WiFi Watchdog (läuft im Hintergrund und macht Reconnects, falls nötig)
+    asyncio.create_task(wifi.keepalive())
+    
+    # 3. Hardware / Layout ermitteln
+    layout_name = config.get("hardware", {}).get("layout", "default")
+    pinmap, panel_config, leds_per_panel = get_layout(layout_name)
+    log.info(f"Loaded layout '{layout_name}': {len(panel_config)} panels, {len(pinmap)} lights, {leds_per_panel} leds_per_panel")
+
+    # 4. Hardware Controller & Pattern Engine (Logikschicht) initiieren
+    leds = get_controller(pinmap)
+    engine = Engine(leds, panel_config, leds_per_panel)
+
+    # 5. Playlist-Manager initiieren (FPS = 10 entspricht await asyncio.sleep(0.1))
+    playlist_manager = PlaylistManager(engine, fps=10)
+    
+    # 6. Webserver initiieren & starten
+    web = WebServer(
+        get_current_state_str,
+        api_set_pattern,
+        get_available_patterns,
+        get_available_playlists,
+        api_set_playlist,
+        get_available_layouts,
+        api_set_layout,
+        get_current_layout_name,
+        api_set_speed
+    )
+    asyncio.create_task(web.start(port=8080))
+
+    # 7. Start-Playlist laden!
+    playlist_manager.start_playlist("track1_classic")
+    log.info("LED Engine (4 Panels) bereit. Starte asynchrone Pattern-Loop!")
+
+    # 8. Main Application Loop
+    log.info("Entering main application loop (System is ready!)...")
+
+    # Ziel: ca. 10 FPS (Tick alle 100ms)
+    TICK_MS = 0.1
+
     try:
-        return time.ticks_ms()
-    except:
-        return int(time.time() * 1000)
+        while True:
+            # 1. State verändern (Playlist steuert das Timing, Pattern steuern die Logik)
+            playlist_manager.tick()
 
+            # 2. GANZ WICHTIG: Das berechnete Bild an die Hardware senden!
+            engine.update_hardware()
+            
+            # Warten für sauberes Timing
+            await asyncio.sleep(TICK_MS)
+    except asyncio.CancelledError:
+        log.info("Main loop cancelled.")
 
-
-async def run_pdc():
-    print("STARTING run_pdc")
-    while True:
-        try:
-            if pdc.is_manual_pattern():
-                pat_name = pdc.current_pattern
-                if pat_name:
-                    pdc.board.set_pattern(pat_name)
-                    if hasattr(pdc.board.pattern, 'states_count'):
-                        num_steps = pdc.board.pattern.states_count
-                    else:
-                        num_steps = 1
-                    for _ in range(num_steps):
-                        start = get_time_ms()
-                        pdc.board.pattern.next_state()
-                        pdc.board.change_board()
-                        elapsed = get_time_ms() - start
-                        rest = pdc.sleep_ms - elapsed
-                        if rest > 0:
-                            await asyncio.sleep(rest / 1000)
-                else:
-                    await asyncio.sleep(0.1)
-            else:
-                t_init_start = get_time_ms()
-                pat_name = pdc.board.track.next_pattern()
-                pdc.board.set_pattern(pat_name)
-                pdc.set_current_pattern(pat_name)
-                repeats = pdc.board.track.get_current_repeats()
-                if hasattr(pdc.board.pattern, 'states_count'):
-                    num_steps = pdc.board.pattern.states_count * repeats
-                else:
-                    num_steps = 30 * repeats
-                fac = 0.8
-                for _ in range(num_steps):
-                    start = get_time_ms()
-                    pdc.board.pattern.next_state()
-                    pdc.board.change_board()
-                    elapsed = get_time_ms() - start
-                    rest = pdc.sleep_ms - elapsed
-                    if rest > 0:
-                        sl = (rest * fac) / 1000
-                        await asyncio.sleep(sl)
-            await asyncio.sleep(0.05)
-        except Exception as e:
-            logger.error("Exception in run_pdc: %s", e)
-            await asyncio.sleep(1)
-
-loop = asyncio.get_event_loop()
-
-
-PORT = 8080
-
-print('in main before connect')
-from boot import connect
-# for DEV skip Wifi
-connect()
-print('after connect method')
-
-wifi_if = network.WLAN(network.STA_IF)
-if wifi_if.isconnected():
-    print("WIFI CONNECTED [OK]")
-    factory = asyncio.start_server(http_server, '192.168.43.10', PORT)
-    print(f"[DEBUG] Starte Webserver auf 192.168.43.10:{PORT}")
-    server = loop.run_until_complete(factory)
-    print(f"[DEBUG] Webserver läuft auf 192.168.43.10:{PORT}")
-    print("after start_server")
-
-
-loop.create_task(run_pdc())
-
-loop.run_forever()
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        log.info("System stopped via KeyboardInterrupt.")

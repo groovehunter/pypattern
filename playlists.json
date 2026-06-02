@@ -1,0 +1,40 @@
+{
+  "ambient_chill": {
+    "defaults": {"speed": 4},
+    "items": [
+      {"pattern": "RandomSparklePattern", "duration_sec": 30, "args": {"speed": 3, "density": 15}},
+      {"pattern": "PulseAllPattern", "duration_sec": 20, "args": {"speed": 8}},
+      {"pattern": "WindmillPattern", "duration_sec": 25, "args": {"speed": 5}},
+      {"pattern": "RotatePanelPattern", "duration_sec": 15, "args": {"speed": 6}}
+    ]
+  },
+  "party_strobe": {
+    "defaults": {"speed": 1},
+    "items": [
+      {"pattern": "LarsonScannerPattern", "duration_sec": 12, "args": {"speed": 1}},
+      {"pattern": "CheckerboardPattern", "duration_sec": 15, "args": {"interval": 2}},
+      {"pattern": "RandomSparklePattern", "duration_sec": 10, "args": {"speed": 1, "density": 80}},
+      {"pattern": "WindmillPattern", "duration_sec": 12, "args": {"speed": 1}},
+      {"pattern": "PulseAllPattern", "duration_sec": 8, "args": {"speed": 2}}
+    ]
+  },
+  "demo_mix": {
+    "defaults": {"speed": 2},
+    "items": [
+      {"pattern": "LarsonScannerPattern", "duration_sec": 15, "args": {"speed": 2}},
+      {"pattern": "WindmillPattern", "duration_sec": 15, "args": {"speed": 2}},
+      {"pattern": "CheckerboardPattern", "duration_sec": 10, "args": {"interval": 4}},
+      {"pattern": "PulseAllPattern", "duration_sec": 12, "args": {"speed": 4}},
+      {"pattern": "RandomSparklePattern", "duration_sec": 20, "args": {"speed": 2, "density": 40}},
+      {"pattern": "RotatePanelPattern", "duration_sec": 10, "args": {"speed": 3}}
+    ]
+  },
+  "track1_classic": {
+    "defaults": {"speed": 2, "interval": 5},
+    "items": [
+      {"pattern": "RotatePanelPattern", "duration_sec": 15},
+      {"pattern": "CheckerboardPattern", "duration_sec": 15},
+      {"pattern": "WindmillPattern", "duration_sec": 15, "args": {"speed": 1}}
+    ]
+  }
+}
