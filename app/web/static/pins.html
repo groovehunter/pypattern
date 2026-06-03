@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyPattern Pin Editor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container pin-editor">
+        <h2>Pin-Zuordnung</h2>
+        <p class="hint-text">Layout waehlen, Pins je Slot setzen und bei Bedarf als neues Layout klonen.</p>
+
+        <div class="card">
+            <div id="layoutTabs" class="tabs"></div>
+
+            <div class="editor-actions">
+                <button class="mini-btn" onclick="reloadPinStatus()">Neu laden</button>
+                <button class="mini-btn" onclick="saveLayout()">Speichern</button>
+                <a class="mini-link" href="/">Zurueck zur Steuerung</a>
+            </div>
+
+            <div class="clone-row">
+                <input id="cloneName" type="text" placeholder="Neuer Layout-Name (z.B. my_board)">
+                <button class="mini-btn" onclick="cloneCurrentLayout()">Layout klonen</button>
+            </div>
+
+            <div id="pinLegend" class="pin-legend"></div>
+            <div id="pinMsg" class="pin-msg"></div>
+            <div id="layoutEditor" class="layout-editor"></div>
+        </div>
+    </div>
+    <script src="/static/pins.js"></script>
+</body>
+</html>
+

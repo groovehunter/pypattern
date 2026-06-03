@@ -71,6 +71,7 @@ class PlaylistManager:
         self.ticks_remaining = 0
         self.current_pattern = None
         self.manual_speed = 2  # default speed for manual patterns
+        self.is_running = True
     def _load(self, path="playlists.json"):
         try:
             with open(path, "r") as f:
@@ -94,6 +95,7 @@ class PlaylistManager:
             log.error(f"Playlist '{name}' not found.")
             return False
         log.info(f"Starting playlist: {name}")
+        self.is_running = True
         self.active_playlist_name = name
         self.current_index = -1
         self.ticks_remaining = 0
@@ -102,6 +104,7 @@ class PlaylistManager:
     def set_manual_pattern(self, name, **kwargs):
         """ Stoppt die aktuelle Playlist und setzt hart ein manuelles Pattern (z.B. durch UI-Klick) """
         if hasattr(library, name):
+            self.is_running = True
             self.active_playlist_name = None  # Playlist abbrechen
             p_class = getattr(library, name)
             
@@ -114,7 +117,20 @@ class PlaylistManager:
             return True
         log.error(f"Pattern '{name}' not found in library.")
         return False
-        
+
+    def stop(self):
+        self.is_running = False
+        self.engine.clear_all()
+        log.info("Playback stopped.")
+        return True
+
+    def start(self):
+        self.is_running = True
+        if self.current_pattern is None and self.active_playlist_name:
+            self.next_in_playlist()
+        log.info("Playback started.")
+        return True
+
     def set_manual_speed(self, val):
         try:
             self.manual_speed = int(val)
@@ -147,14 +163,37 @@ class PlaylistManager:
             
         self.current_index = (self.current_index + 1) % len(items)
         track_item = items[self.current_index]
-        
+        if not isinstance(track_item, dict):
+            log.error(f"Track skipped invalid item: {track_item}")
+            self.ticks_remaining = int(10 * self.fps)
+            return
+
         p_name = track_item.get("pattern")
-        
+        if not isinstance(p_name, str) or not p_name:
+            log.error(f"Track skipped invalid pattern entry: {str(p_name)}")
+            try:
+                invalid_duration_sec = int(track_item.get("duration_sec", 10))
+            except (TypeError, ValueError):
+                invalid_duration_sec = 10
+            self.ticks_remaining = int(invalid_duration_sec * self.fps)
+            return
+
         # Wir kombinieren Playlist-Defaults mit pattern-spezifischen Args
-        p_args = defaults.copy()
-        p_args.update(track_item.get("args", {}))
-        
-        duration_sec = track_item.get("duration_sec", 10)
+        p_args = {}
+        if isinstance(defaults, dict):
+            for key, value in defaults.items():
+                if isinstance(key, str):
+                    p_args[key] = value
+        item_args = track_item.get("args", {})
+        if isinstance(item_args, dict):
+            for key, value in item_args.items():
+                if isinstance(key, str):
+                    p_args[key] = value
+
+        try:
+            duration_sec = int(track_item.get("duration_sec", 10))
+        except (TypeError, ValueError):
+            duration_sec = 10
         
         if hasattr(library, p_name):
             p_class = getattr(library, p_name)
@@ -171,6 +210,8 @@ class PlaylistManager:
             self.ticks_remaining = int(duration_sec * self.fps) # Trotzdem die Zeit abwarten
 
     def tick(self):
+        if not self.is_running:
+            return
         # 1. Timer der Playlist herunterzählen
         if self.active_playlist_name:
             self.ticks_remaining -= 1

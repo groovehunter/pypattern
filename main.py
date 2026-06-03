@@ -23,6 +23,8 @@ config = None
 def get_current_state_str():
     global playlist_manager
     if not playlist_manager: return "None"
+    if not playlist_manager.is_running:
+        return f"Stopped | {playlist_manager.get_current_name()}"
     mode = f"Playlist: {playlist_manager.active_playlist_name}" if playlist_manager.active_playlist_name else "Manual"
     return f"{mode} | {playlist_manager.get_current_name()}"
 
@@ -54,8 +56,12 @@ def get_available_layouts():
     return list(hw.get("layouts", {}).keys())
 
 def api_set_layout(name):
-    global config
+    global config, engine, leds, playlist_manager
     from app.core.config import save_config
+    was_running = playlist_manager.is_running
+    active_playlist_name = playlist_manager.active_playlist_name
+    current_pattern_name = playlist_manager.get_current_name()
+
     if config:
         config.setdefault("hardware", {})["layout"] = name
         save_config(config, "config.json")
@@ -79,18 +85,77 @@ def api_set_layout(name):
     playlist_manager.engine = engine  # Dem Playlist Manager die neue Engine unterschieben
 
     # 4. Aktuelles Muster fix neu starten auf den neuen Panels
-    if playlist_manager.active_playlist_name:
-        playlist_manager.start_playlist(playlist_manager.active_playlist_name)
+    if active_playlist_name:
+        playlist_manager.start_playlist(active_playlist_name)
     else:
         # manual pattern neu starten
-        patt_name = playlist_manager.get_current_name()
-        if patt_name != "None":
-            playlist_manager.set_manual_pattern(patt_name)
+        if current_pattern_name != "None":
+            playlist_manager.set_manual_pattern(current_pattern_name)
+        else:
+            playlist_manager.current_pattern = None
+    if not was_running:
+        playlist_manager.stop()
+    engine.update_hardware()
     return True
 
 def api_set_speed(val):
     global playlist_manager
     return playlist_manager.set_manual_speed(val)
+
+def api_start():
+    global playlist_manager, engine
+    if not playlist_manager:
+        return False
+    result = playlist_manager.start()
+    engine.update_hardware()
+    return result
+
+def api_stop():
+    global playlist_manager, engine
+    if not playlist_manager:
+        return False
+    result = playlist_manager.stop()
+    engine.update_hardware()
+    return result
+
+def get_is_running():
+    global playlist_manager
+    if not playlist_manager:
+        return False
+    return playlist_manager.is_running
+
+
+def api_get_pins_status():
+    from app.hardware.layouts import get_layout_editor_status
+    status = get_layout_editor_status("hardware.json")
+    status["current_layout"] = get_current_layout_name()
+    return status
+
+
+def api_set_pin(layout_name, panel_index, slot_index, pin):
+    from app.hardware.layouts import set_layout_pin
+    return set_layout_pin(
+        layout_name=layout_name,
+        panel_index=panel_index,
+        slot_index=slot_index,
+        pin=pin,
+        path="hardware.json",
+        protect_default=True,
+    )
+
+
+def api_save_pins(layout_name):
+    # Der Editor speichert aktuell direkt bei jeder Aenderung.
+    from app.hardware.layouts import load_hardware_config
+    hw = load_hardware_config("hardware.json")
+    if layout_name in hw.get("layouts", {}):
+        return True, "Layout is up-to-date"
+    return False, "Layout not found"
+
+
+def api_clone_layout(source_name, target_name):
+    from app.hardware.layouts import clone_layout
+    return clone_layout(source_name, target_name, path="hardware.json")
 
 async def main():
     global playlist_manager, engine, config, leds
@@ -128,7 +193,14 @@ async def main():
         get_available_layouts,
         api_set_layout,
         get_current_layout_name,
-        api_set_speed
+        api_set_speed,
+        api_start,
+        api_stop,
+        get_is_running,
+        api_get_pins_status,
+        api_set_pin,
+        api_save_pins,
+        api_clone_layout,
     )
     asyncio.create_task(web.start(port=8080))
 

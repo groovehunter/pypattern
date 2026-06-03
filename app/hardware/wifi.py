@@ -1,4 +1,3 @@
-import sys
 try:
     import uasyncio as asyncio
 except ImportError:
@@ -9,11 +8,27 @@ try:
     import network
 except ImportError:
     class DummyWLAN:
-        def __init__(self, *args): pass
-        def active(self, *args): return True
-        def connect(self, *args): pass
-        def isconnected(self): return True
-        def ifconfig(self, *args): return ("127.0.0.1", "255.255.255.0", "1.1.1.1", "8.8.8.8")
+        def __init__(self, iface=None):
+            self.iface = iface
+            self._active = False
+            self.connected = False
+            self._ifconfig = ("127.0.0.1", "255.255.255.0", "1.1.1.1", "8.8.8.8")
+        def active(self, state=None):
+            if state is None:
+                return self._active
+            self._active = bool(state)
+            if not self._active and self.iface == 0:
+                self.connected = False
+            return self._active
+        def connect(self, *args):
+            if self._active and self.iface == 0:
+                self.connected = True
+        def isconnected(self):
+            return self._active and self.connected if self.iface == 0 else self._active
+        def ifconfig(self, *args):
+            if args:
+                self._ifconfig = args[0]
+            return self._ifconfig
         def config(self, **kwargs): pass
     class network:
         STA_IF = 0
@@ -84,11 +99,19 @@ class WifiManager:
             self.ap_if.config(essid=ap_ssid)
         log.info(f"AP Mode started on SSID '{ap_ssid}' / IP: {self.ap_if.ifconfig()[0]}")
     async def keepalive(self):
-        """ Background task checking connection every ~15 seconds """
+        """ Background task checking connection using the configured reconnect interval. """
         while True:
-            await asyncio.sleep(15)
-            # Wenn STA eigentlich aktiv ist, aber die Verbindung abbrach:
-            if self.sta_if.active() and not self.sta_if.isconnected():
-                log.warn("WiFi connection lost! Attempting background reconnect...")
+            interval = self.config.get("reconnect_interval_sec", 120)
+            try:
+                interval = int(interval)
+            except (TypeError, ValueError):
+                interval = 120
+            if interval < 1:
+                interval = 1
+
+            await asyncio.sleep(interval)
+            # Reconnect auch aus dem AP-Fallback heraus versuchen.
+            if not self.sta_if.isconnected():
+                log.warn(f"WiFi not connected. Attempting background reconnect every {interval}s...")
                 # Kein Blockieren! Wiederholt intern Non-Blocking connects.
                 await self.connect()

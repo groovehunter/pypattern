@@ -27,15 +27,20 @@ Die website soll vom Handy aus bedienbar sein;
 
 ### Ablauf
 
-Der Controller soll sich beim Start mit einem vorhandenen WLAN verbinden. Anschließend wird ein Webserver gestartet, über den die Steuerung der Lichter möglich ist. 
+Der Controller soll sich beim Start mit einem vorhandenen WLAN verbinden. Anschlieend wird ein Webserver gestartet, ber den die Steuerung der Lichter mglich ist. 
 
-Die Implementierung sollte so erfolgen dass der zeitliche Ablauf der Muster nicht von der Reaktionszeit des Webservers abhängig ist. Es soll also möglich sein, dass die Muster auch dann weiterlaufen, wenn gerade eine Anfrage an den Webserver bearbeitet wird. Die Zahl der Requests ist überschaubar. 
+Die Implementierung sollte so erfolgen dass der zeitliche Ablauf der Muster nicht von der Reaktionszeit des Webservers abhngig ist. Es soll also mglich sein, dass die Muster auch dann weiterlaufen, wenn gerade eine Anfrage an den Webserver bearbeitet wird. Die Zahl der Requests ist berschaubar. 
 
 
-### Geplante Funktionen
+### Geplante & neu implementierte Funktionen
 
-Es soll eine einfache Möglichkeit geben, die Muster zu ändern und neue Muster hinzuzufügen.
+Es soll eine einfache Mglichkeit geben, die Muster zu ndern und neue Muster hinzuzufgen.
 
+* **Dynamische Hardware Layouts:** Untersttzung verschiedener Hardware-Formen (z. B. Square, Hexagon, Triangle) ber eine Konfigurationsdatei. Die Layouts definieren Panels mit unterschiedlichen Anzahlen von LEDs. Die Musterlogik passt sich dynamisch an (symmetrisches Rendering, unabhngig vom Layout).
+* **Live Layout-Wechsel:** Das Webinterface erlaubt den fliegenden Wechsel zwischen den Hardware-Formen ohne Neustart; neue Konfigurationen werden direkt angewandt.
+* **Playlists & Tracks:** Automatischer Wechsel zwischen Mustern, formatiert als JSON (`playlists.json`). Jede Playlist definiert eigene Intervalle, Geschwindigkeiten und individuelle Muster-Parameter pro Track.
+* **Manuelle Geschwindigkeitskontrolle:** Wenn Lichter manuell angesteuert werden, kann ein "BPM" Schieberegler ber das Webinterface die Lauflichtgeschwindigkeit ohne zu ruckeln vllig nahtlos beschleunigen oder verlangsamen.
+* **Non-Blocking uasyncio Engine:** Weder WLAN-Abbrche, noch der GUI-Server drfen die Taktung der LEDs unterbrechen.
 
 ---
 

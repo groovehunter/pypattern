@@ -7,6 +7,7 @@ DEFAULT_CONFIG = {
         "ap_fallback_ssid": "PyPattern-AP",
         "ap_fallback_pwd": "password123",
         "timeout_sec": 15,
+        "reconnect_interval_sec": 120,
         "ip": "192.168.43.10",
         "netmask": "255.255.255.0",
         "gateway": "192.168.43.1",

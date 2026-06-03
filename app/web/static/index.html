@@ -8,14 +8,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>PyPattern ✨</h1>
+        <h2>PyPattern ✨</h2>
         <div class="card status-card">
-            <h2>Aktuell: <span id="currentPatt">Lade...</span></h2>
-            <p>Layout:
-                <select id="layoutSelect" onchange="setLayout(this.value)" style="background:var(--bg); color:var(--text); padding:5px; border-radius:5px;">
+            <h3><span id="currentPatt">Lade...</span></h3>
+            <div class="layout-controls-row">
+                <select id="layoutSelect" onchange="setLayout(this.value)" class="layout-select">
                     <option>Lade...</option>
                 </select>
-            </p>
+                <p class="status-icon-wrap">Stat:<span id="runIcon" class="status-icon">x</span></p>
+                <button id="startBtn" class="mini-btn" onclick="startPlayback()">Start</button>
+                <button id="stopBtn" class="mini-btn secondary-btn" onclick="stopPlayback()">Stop</button>
+            </div>
+            <div style="margin-top: 10px; text-align: right;">
+                <a href="/pins" class="mini-link">Pin-Editor</a>
+            </div>
             <div style="margin-top:15px; background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
                 <p style="margin:0 0 5px 0;">Manuelle Geschwindigkeit:</p>
                 <input type="range" id="speedSlider" min="1" max="10" value="9"

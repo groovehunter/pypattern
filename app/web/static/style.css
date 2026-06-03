@@ -8,8 +8,202 @@ body { background: var(--bg); color: var(--text); font-family: sans-serif; margi
 .container { max-width: 500px; margin: 0 auto; }
 .card { background: var(--card); padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 .status-card { border-left: 5px solid var(--accent); }
+.layout-controls-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.layout-select {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.status-icon-wrap {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+}
 button {
   background: var(--accent); color: white; border: none; padding: 15px; width: 100%;
   font-size: 16px; border-radius: 8px; margin-bottom: 10px; cursor: pointer;
 }
 button:hover { filter: brightness(1.2); }
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: none;
+}
+.secondary-btn {
+  background: #5c6370;
+}
+.mini-btn {
+  width: auto;
+  padding: 8px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+}
+.status-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-left: 6px;
+}
+.status-icon.running {
+  background: #1f8f4e;
+  color: #e9ffe9;
+}
+.status-icon.stopped {
+  background: #a53a3a;
+  color: #ffeaea;
+}
+#patternList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+#patternList button {
+  margin-bottom: 0;
+  padding: 12px;
+}
+.pattern-btn.active {
+  outline: 2px solid #9cc2ff;
+  filter: brightness(1.15);
+}
+
+.hint-text {
+  color: #b9c0cc;
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  width: auto;
+  padding: 8px 10px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.tab-btn.active {
+  outline: 2px solid #9cc2ff;
+}
+
+.editor-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mini-link {
+  color: #9cc2ff;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.clone-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.clone-row input {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.pin-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.legend-chip {
+  background: #2f3f55;
+  color: #dfe9ff;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.legend-chip.warn {
+  background: #5a4b2d;
+  color: #ffe2a8;
+}
+
+.legend-chip.err {
+  background: #612f2f;
+  color: #ffd7d7;
+}
+
+.pin-msg {
+  min-height: 18px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.pin-msg.ok {
+  color: #8fd7a6;
+}
+
+.pin-msg.error {
+  color: #ff9b9b;
+}
+
+.layout-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.panel-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: left;
+}
+
+.panel-card h4 {
+  margin: 0 0 10px 0;
+}
+
+.slot-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.slot-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #b8c0ca;
+}
+
+.pin-select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  padding: 7px;
+}
+
